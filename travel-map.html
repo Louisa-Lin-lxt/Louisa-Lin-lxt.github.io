@@ -14,197 +14,270 @@
             padding: 2rem;
         }
         
+        .map-title {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: #fff;
+        }
+        
         .world-map {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 2rem 0;
             position: relative;
+            width: 100%;
+            height: 500px;
+            background: radial-gradient(circle, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 2rem;
         }
         
         .continent {
-            width: 120px;
-            height: 120px;
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
             border-radius: 50%;
-            margin: 1rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            color: #fff;
             font-weight: bold;
-            font-size: 1.1rem;
-            text-align: center;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-        }
-        
-        .continent.visited {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            animation: pulse 2s infinite;
+            font-size: 1.2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
         }
         
         .continent:hover {
             transform: scale(1.1);
-            box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+        
+        .continent.visited {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            animation: pulse 2s infinite;
+        }
+        
+        .continent.not-visited {
+            background: linear-gradient(45deg, #666, #999);
+            opacity: 0.5;
         }
         
         @keyframes pulse {
-            0% { box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
-            50% { box-shadow: 0 8px 25px rgba(240, 147, 251, 0.6); }
-            100% { box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+            0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
         }
         
-        .countries-container {
+        /* 大洲位置 */
+        .asia { top: 20%; left: 60%; width: 120px; height: 120px; }
+        .europe { top: 15%; left: 45%; width: 100px; height: 100px; }
+        .africa { top: 35%; left: 48%; width: 110px; height: 110px; }
+        .north-america { top: 20%; left: 15%; width: 130px; height: 130px; }
+        .south-america { top: 50%; left: 25%; width: 100px; height: 100px; }
+        .oceania { top: 60%; left: 75%; width: 90px; height: 90px; }
+        .antarctica { top: 80%; left: 50%; width: 80px; height: 80px; }
+        
+        .countries-panel {
             display: none;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
             margin-top: 2rem;
+        }
+        
+        .countries-panel.active {
+            display: block;
+        }
+        
+        .countries-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .country-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .country-card:hover {
+            transform: translateY(-5px);
+            border-color: #4ecdc4;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .country-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+        
+        .country-flag {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .places-panel {
+            display: none;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .places-panel.active {
+            display: block;
+        }
+        
+        .places-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .place-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
             text-align: center;
         }
         
-        .countries-container.active {
-            display: block;
-        }
-        
-        .country {
-            display: inline-block;
-            margin: 1rem;
-            padding: 1rem 2rem;
-            background: rgba(255,255,255,0.1);
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.2);
-        }
-        
-        .country:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-5px);
-        }
-        
-        .locations-container {
-            display: none;
-            margin-top: 2rem;
-        }
-        
-        .locations-container.active {
-            display: block;
-        }
-        
-        .location {
-            margin: 2rem 0;
-            padding: 2rem;
-            background: rgba(255,255,255,0.05);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .location-name {
-            font-size: 2rem;
+        .place-name {
+            font-size: 1.8rem;
             font-weight: bold;
             margin-bottom: 1rem;
             color: #fff;
         }
         
-        .photos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+        .photo-gallery {
+            position: relative;
+            margin: 1rem 0;
+        }
+        
+        .photo-container {
+            display: flex;
+            overflow: hidden;
+            border-radius: 10px;
+            position: relative;
+        }
+        
+        .photo-slide {
+            min-width: 100%;
+            display: flex;
+            gap: 0.5rem;
+            transition: transform 0.3s ease;
         }
         
         .photo-item {
-            position: relative;
-            border-radius: 15px;
+            flex: 1;
+            height: 200px;
+            border-radius: 8px;
             overflow: hidden;
-            aspect-ratio: 1;
-            background: rgba(255,255,255,0.1);
+            position: relative;
         }
         
         .photo-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: transform 0.3s ease;
         }
         
-        .photo-item:hover img {
-            transform: scale(1.05);
-        }
-        
-        .coming-soon {
+        .photo-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.7);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .photo-nav:hover {
+            background: rgba(0,0,0,0.9);
+            transform: translateY(-50%) scale(1.1);
+        }
+        
+        .photo-nav.prev {
+            left: 10px;
+        }
+        
+        .photo-nav.next {
+            right: 10px;
+        }
+        
+        .photo-nav:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .coming-soon {
             height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
             color: #ccc;
             font-style: italic;
         }
         
-        .photo-navigation {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .nav-btn {
-            padding: 0.5rem 1rem;
-            background: rgba(255,255,255,0.2);
+        .back-button {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
             border: none;
+            padding: 1rem 2rem;
             border-radius: 25px;
-            color: white;
             cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
             transition: all 0.3s ease;
         }
         
-        .nav-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-        
-        .nav-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .back-btn {
-            position: fixed;
-            top: 100px;
-            left: 2rem;
-            padding: 1rem;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-        
-        .back-btn:hover {
-            background: rgba(255,255,255,0.2);
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         
         @media (max-width: 768px) {
+            .travel-map-container {
+                padding: 1rem;
+            }
+            
+            .map-title {
+                font-size: 2rem;
+            }
+            
+            .world-map {
+                height: 400px;
+            }
+            
             .continent {
-                width: 80px;
-                height: 80px;
-                font-size: 0.9rem;
-                margin: 0.5rem;
+                font-size: 1rem;
             }
             
-            .photos-grid {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            }
-            
-            .back-btn {
-                position: relative;
-                top: auto;
-                left: auto;
-                margin-bottom: 1rem;
-            }
+            .asia { width: 80px; height: 80px; }
+            .europe { width: 70px; height: 70px; }
+            .africa { width: 80px; height: 80px; }
+            .north-america { width: 90px; height: 90px; }
+            .south-america { width: 70px; height: 70px; }
+            .oceania { width: 60px; height: 60px; }
+            .antarctica { width: 50px; height: 50px; }
         }
     </style>
 </head>
@@ -234,45 +307,61 @@
     </header>
     
     <main>
-        <section class="travel-map glass-effect" style="margin-top:80px;">
-            <div class="travel-map-container">
-                <h1 class="travel-title" style="text-align:center;font-size:3rem;margin-bottom:2rem;">
-                    <span class="en">My Travel Map</span>
-                    <span class="zh" style="display:none;">我的旅行地图</span>
-                </h1>
-                
-                <div class="world-map">
-                    <div class="continent visited" data-continent="asia">
-                        <span class="en">Asia</span>
-                        <span class="zh" style="display:none;">亚洲</span>
-                    </div>
-                    <div class="continent visited" data-continent="europe">
-                        <span class="en">Europe</span>
-                        <span class="zh" style="display:none;">欧洲</span>
-                    </div>
-                    <div class="continent" data-continent="africa">
-                        <span class="en">Africa</span>
-                        <span class="zh" style="display:none;">非洲</span>
-                    </div>
-                    <div class="continent" data-continent="americas">
-                        <span class="en">Americas</span>
-                        <span class="zh" style="display:none;">美洲</span>
-                    </div>
-                    <div class="continent" data-continent="oceania">
-                        <span class="en">Oceania</span>
-                        <span class="zh" style="display:none;">大洋洲</span>
-                    </div>
+        <div class="travel-map-container">
+            <h1 class="map-title">
+                <span class="en">My Travel Map</span>
+                <span class="zh" style="display:none;">我的旅行地图</span>
+            </h1>
+            
+            <div class="world-map">
+                <div class="continent asia visited" data-continent="asia">
+                    <span class="en">Asia</span>
+                    <span class="zh" style="display:none;">亚洲</span>
                 </div>
-                
-                <div class="countries-container" id="countries-container">
-                    <!-- Countries will be populated by JavaScript -->
+                <div class="continent europe visited" data-continent="europe">
+                    <span class="en">Europe</span>
+                    <span class="zh" style="display:none;">欧洲</span>
                 </div>
-                
-                <div class="locations-container" id="locations-container">
-                    <!-- Locations will be populated by JavaScript -->
+                <div class="continent africa not-visited" data-continent="africa">
+                    <span class="en">Africa</span>
+                    <span class="zh" style="display:none;">非洲</span>
+                </div>
+                <div class="continent north-america not-visited" data-continent="north-america">
+                    <span class="en">North America</span>
+                    <span class="zh" style="display:none;">北美洲</span>
+                </div>
+                <div class="continent south-america not-visited" data-continent="south-america">
+                    <span class="en">South America</span>
+                    <span class="zh" style="display:none;">南美洲</span>
+                </div>
+                <div class="continent oceania not-visited" data-continent="oceania">
+                    <span class="en">Oceania</span>
+                    <span class="zh" style="display:none;">大洋洲</span>
+                </div>
+                <div class="continent antarctica not-visited" data-continent="antarctica">
+                    <span class="en">Antarctica</span>
+                    <span class="zh" style="display:none;">南极洲</span>
                 </div>
             </div>
-        </section>
+            
+            <div class="countries-panel" id="countries-panel">
+                <button class="back-button" onclick="showMap()">
+                    <span class="en">← Back to Map</span>
+                    <span class="zh" style="display:none;">← 返回地图</span>
+                </button>
+                <h2 id="continent-title"></h2>
+                <div class="countries-grid" id="countries-grid"></div>
+            </div>
+            
+            <div class="places-panel" id="places-panel">
+                <button class="back-button" onclick="showCountries()">
+                    <span class="en">← Back to Countries</span>
+                    <span class="zh" style="display:none;">← 返回国家</span>
+                </button>
+                <h2 id="country-title"></h2>
+                <div class="places-grid" id="places-grid"></div>
+            </div>
+        </div>
     </main>
     
     <footer class="glass-effect">

@@ -47,13 +47,19 @@ let currentLang = localStorage.getItem('language') || 'en';
 document.documentElement.lang = currentLang;
 
 function switchLanguage() {
-  currentLang = currentLang === 'en' ? 'zh' : 'en';
-  localStorage.setItem('language', currentLang);
-  document.documentElement.lang = currentLang;
-  document.querySelector('.current-lang').textContent = currentLang === 'en' ? 'EN' : '中';
-  updateContent(currentLang);
-  // 切换字体
-  document.body.style.fontFamily = currentLang === 'en' ? "'Big Caslon', serif" : "'SimHei', serif";
+    currentLang = currentLang === 'en' ? 'zh' : 'en';
+    localStorage.setItem('language', currentLang);
+    document.documentElement.lang = currentLang;
+    document.querySelector('.current-lang').textContent = currentLang === 'en' ? 'EN' : '中';
+    updateContent(currentLang);
+    // 切换字体
+    document.body.style.fontFamily = currentLang === 'en' ? "'Big Caslon', serif" : "'SimHei', serif";
+    
+    // 触发语言切换事件
+    const event = new CustomEvent('languageChanged', {
+        detail: { language: currentLang }
+    });
+    document.dispatchEvent(event);
 }
 
 function updateContent(lang) {
