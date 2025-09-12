@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <style>
         .travel-map-container {
             max-width: 1400px;
@@ -21,59 +23,82 @@
             color: #fff;
         }
         
-        .world-map {
+        .globe-container {
             position: relative;
             width: 100%;
-            height: 500px;
-            background: radial-gradient(circle, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            height: 600px;
+            background: radial-gradient(circle, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
             border-radius: 20px;
             overflow: hidden;
             margin-bottom: 2rem;
-        }
-        
-        .continent {
-            position: absolute;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #fff;
-            font-weight: bold;
-            font-size: 1.2rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
         }
         
-        .continent:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 20px rgba(255,255,255,0.3);
+        #globe-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
         }
         
-        .continent.visited {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            animation: pulse 2s infinite;
+        .globe-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            padding: 1rem;
+            border-radius: 10px;
+            color: white;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
         }
         
-        .continent.not-visited {
-            background: linear-gradient(45deg, #666, #999);
-            opacity: 0.5;
+        .globe-controls h4 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
         }
         
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+        .globe-controls p {
+            margin: 0.2rem 0;
+            opacity: 0.8;
         }
         
-        /* 大洲位置 */
-        .asia { top: 20%; left: 60%; width: 120px; height: 120px; }
-        .europe { top: 15%; left: 45%; width: 100px; height: 100px; }
-        .africa { top: 35%; left: 48%; width: 110px; height: 110px; }
-        .north-america { top: 20%; left: 15%; width: 130px; height: 130px; }
-        .south-america { top: 50%; left: 25%; width: 100px; height: 100px; }
-        .oceania { top: 60%; left: 75%; width: 90px; height: 90px; }
-        .antarctica { top: 80%; left: 50%; width: 80px; height: 80px; }
+        .travel-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #ff6b6b;
+            border: 3px solid white;
+            border-radius: 50%;
+            cursor: pointer;
+            animation: markerPulse 2s infinite;
+            z-index: 10;
+        }
+        
+        @keyframes markerPulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 107, 107, 0); }
+        }
+        
+        .marker-tooltip {
+            position: absolute;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 20;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .marker-tooltip.show {
+            opacity: 1;
+        }
         
         .countries-panel {
             display: none;
@@ -313,34 +338,25 @@
                 <span class="zh" style="display:none;">我的旅行地图</span>
             </h1>
             
-            <div class="world-map">
-                <div class="continent asia visited" data-continent="asia">
-                    <span class="en">Asia</span>
-                    <span class="zh" style="display:none;">亚洲</span>
-                </div>
-                <div class="continent europe visited" data-continent="europe">
-                    <span class="en">Europe</span>
-                    <span class="zh" style="display:none;">欧洲</span>
-                </div>
-                <div class="continent africa not-visited" data-continent="africa">
-                    <span class="en">Africa</span>
-                    <span class="zh" style="display:none;">非洲</span>
-                </div>
-                <div class="continent north-america not-visited" data-continent="north-america">
-                    <span class="en">North America</span>
-                    <span class="zh" style="display:none;">北美洲</span>
-                </div>
-                <div class="continent south-america not-visited" data-continent="south-america">
-                    <span class="en">South America</span>
-                    <span class="zh" style="display:none;">南美洲</span>
-                </div>
-                <div class="continent oceania not-visited" data-continent="oceania">
-                    <span class="en">Oceania</span>
-                    <span class="zh" style="display:none;">大洋洲</span>
-                </div>
-                <div class="continent antarctica not-visited" data-continent="antarctica">
-                    <span class="en">Antarctica</span>
-                    <span class="zh" style="display:none;">南极洲</span>
+            <div class="globe-container">
+                <canvas id="globe-canvas"></canvas>
+                <div class="globe-controls">
+                    <h4>
+                        <span class="en">Controls</span>
+                        <span class="zh" style="display:none;">控制</span>
+                    </h4>
+                    <p>
+                        <span class="en">🖱️ Drag to rotate</span>
+                        <span class="zh" style="display:none;">🖱️ 拖拽旋转</span>
+                    </p>
+                    <p>
+                        <span class="en">🔍 Scroll to zoom</span>
+                        <span class="zh" style="display:none;">🔍 滚轮缩放</span>
+                    </p>
+                    <p>
+                        <span class="en">📍 Click markers</span>
+                        <span class="zh" style="display:none;">📍 点击标记</span>
+                    </p>
                 </div>
             </div>
             
