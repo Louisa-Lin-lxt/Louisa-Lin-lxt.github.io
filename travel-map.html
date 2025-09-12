@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Map | Xingtong Lin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .travel-map-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .world-map {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+        
+        .continent {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .continent.visited {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            animation: pulse 2s infinite;
+        }
+        
+        .continent:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+            50% { box-shadow: 0 8px 25px rgba(240, 147, 251, 0.6); }
+            100% { box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+        }
+        
+        .countries-container {
+            display: none;
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .countries-container.active {
+            display: block;
+        }
+        
+        .country {
+            display: inline-block;
+            margin: 1rem;
+            padding: 1rem 2rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .country:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-5px);
+        }
+        
+        .locations-container {
+            display: none;
+            margin-top: 2rem;
+        }
+        
+        .locations-container.active {
+            display: block;
+        }
+        
+        .location {
+            margin: 2rem 0;
+            padding: 2rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .location-name {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+        
+        .photos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .photo-item {
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .photo-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .coming-soon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: #ccc;
+            font-style: italic;
+        }
+        
+        .photo-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .nav-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 100px;
+            left: 2rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        @media (max-width: 768px) {
+            .continent {
+                width: 80px;
+                height: 80px;
+                font-size: 0.9rem;
+                margin: 0.5rem;
+            }
+            
+            .photos-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .back-btn {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="glass-effect">
+        <nav style="background:linear-gradient(90deg,#3a3f51 0%,#6a82fb 100%);">
+            <div class="nav-container">
+                <div class="nav-left">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="about.html" class="nav-link">About Me</a>
+                    <a href="portfolio.html" class="nav-link">Portfolio</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                </div>
+                <div class="nav-right">
+                    <button class="language-switch" onclick="switchLanguage()">
+                        <span class="current-lang">EN</span>
+                    </button>
+                    <a href="https://www.instagram.com/louisalxt" target="_blank" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/lxt/" target="_blank" class="social-icon">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="travel-map glass-effect" style="margin-top:80px;">
+            <div class="travel-map-container">
+                <h1 class="travel-title" style="text-align:center;font-size:3rem;margin-bottom:2rem;">
+                    <span class="en">My Travel Map</span>
+                    <span class="zh" style="display:none;">我的旅行地图</span>
+                </h1>
+                
+                <div class="world-map">
+                    <div class="continent visited" data-continent="asia">
+                        <span class="en">Asia</span>
+                        <span class="zh" style="display:none;">亚洲</span>
+                    </div>
+                    <div class="continent visited" data-continent="europe">
+                        <span class="en">Europe</span>
+                        <span class="zh" style="display:none;">欧洲</span>
+                    </div>
+                    <div class="continent" data-continent="africa">
+                        <span class="en">Africa</span>
+                        <span class="zh" style="display:none;">非洲</span>
+                    </div>
+                    <div class="continent" data-continent="americas">
+                        <span class="en">Americas</span>
+                        <span class="zh" style="display:none;">美洲</span>
+                    </div>
+                    <div class="continent" data-continent="oceania">
+                        <span class="en">Oceania</span>
+                        <span class="zh" style="display:none;">大洋洲</span>
+                    </div>
+                </div>
+                
+                <div class="countries-container" id="countries-container">
+                    <!-- Countries will be populated by JavaScript -->
+                </div>
+                
+                <div class="locations-container" id="locations-container">
+                    <!-- Locations will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="glass-effect">
+        <div class="footer-content">
+            <p class="blessing">May your future be filled with endless possibilities</p>
+            <p class="blessing-zh" style="display:none;">愿你得偿所愿</p>
+            <p class="copyright">© 2025 Xingtong Lin. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="js/main.js"></script>
+    <script src="js/travel-map.js"></script>
+</body>
+</html>
