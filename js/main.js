@@ -82,17 +82,13 @@ function updateContent(lang) {
         }
     });
 
-    // 更新简历下载链接
+    // 更新简历下载链接 - 移除原有的href设置，改为点击事件处理
     const cvDownloadLinks = document.querySelectorAll('.cv-download');
     cvDownloadLinks.forEach(link => {
-        if (lang === 'en') {
-            link.href = 'resumes/resume_en.pdf';
-            link.download = 'Xingtong_Lin_Resume_EN.pdf';
-        } else {
-            link.href = 'resumes/resume_zh.pdf';
-            link.download = '林星潼_简历_中文.pdf';
-        }
-        console.log('Updated CV link:', link.href, 'for language:', lang);
+        // 移除原有的href属性，改为点击事件处理
+        link.removeAttribute('href');
+        link.style.cursor = 'pointer';
+        console.log('Updated CV link for click event handling');
     });
 
     // 祝福语字体
@@ -197,18 +193,38 @@ window.addEventListener('DOMContentLoaded', () => {
   document.querySelector('.current-lang').textContent = currentLang === 'en' ? 'EN' : '中';
   updateContent(currentLang);
   
-  // 强制更新简历链接，防止缓存问题
+  // 设置简历下载点击事件
   setTimeout(() => {
     const cvLinks = document.querySelectorAll('.cv-download');
     cvLinks.forEach(link => {
-      if (currentLang === 'en') {
-        link.href = 'resumes/resume_en.pdf';
-        link.download = 'Xingtong_Lin_Resume_EN.pdf';
-      } else {
-        link.href = 'resumes/resume_zh.pdf';
-        link.download = '林星潼_简历_中文.pdf';
-      }
-      console.log('Force updated CV link:', link.href, 'for language:', currentLang);
+      // 移除原有的href属性
+      link.removeAttribute('href');
+      link.style.cursor = 'pointer';
+      
+      // 添加点击事件监听器
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // 创建英文简历下载链接
+        const enLink = document.createElement('a');
+        enLink.href = 'resumes/resume_en.pdf';
+        enLink.download = 'Xingtong_Lin_Resume_EN.pdf';
+        enLink.style.display = 'none';
+        document.body.appendChild(enLink);
+        enLink.click();
+        document.body.removeChild(enLink);
+        
+        // 创建中文简历下载链接
+        const zhLink = document.createElement('a');
+        zhLink.href = 'resumes/resume_zh.pdf';
+        zhLink.download = '林星潼_简历_中文.pdf';
+        zhLink.style.display = 'none';
+        document.body.appendChild(zhLink);
+        zhLink.click();
+        document.body.removeChild(zhLink);
+        
+        console.log('Downloaded both English and Chinese resumes');
+      });
     });
   }, 100);
 }); 
