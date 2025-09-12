@@ -9,6 +9,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        // 检查Three.js是否加载成功
+        window.addEventListener('load', function() {
+            if (typeof THREE === 'undefined') {
+                console.error('Three.js failed to load');
+                document.getElementById('globe-canvas').style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
+                document.getElementById('globe-canvas').innerHTML = '<div style="color: white; text-align: center; padding-top: 200px; font-size: 1.5rem;">Loading 3D Globe...<br><small>If this persists, please refresh the page</small></div>';
+            } else {
+                console.log('Three.js loaded successfully');
+            }
+        });
+    </script>
     <style>
         .travel-map-container {
             max-width: 1400px;

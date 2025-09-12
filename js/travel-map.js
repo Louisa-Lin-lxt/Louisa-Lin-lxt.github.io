@@ -226,8 +226,21 @@ const travelLocations = [
 
 // 初始化3D场景
 function initGlobe() {
+    console.log('Initializing 3D Globe...');
+    
+    // 检查Three.js是否加载
+    if (typeof THREE === 'undefined') {
+        console.error('Three.js is not loaded!');
+        document.getElementById('globe-canvas').style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
+        document.getElementById('globe-canvas').innerHTML = '<div style="color: white; text-align: center; padding-top: 200px; font-size: 1.5rem;">Loading 3D Globe...</div>';
+        return;
+    }
+    
     const canvas = document.getElementById('globe-canvas');
     const container = canvas.parentElement;
+    
+    console.log('Canvas found:', canvas);
+    console.log('Container size:', container.clientWidth, 'x', container.clientHeight);
     
     // 创建场景
     scene = new THREE.Scene();
@@ -237,9 +250,15 @@ function initGlobe() {
     camera.position.z = 3;
     
     // 创建渲染器
-    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    try {
+        renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        console.log('Renderer created successfully');
+    } catch (error) {
+        console.error('Error creating renderer:', error);
+        return;
+    }
     
     // 创建地球
     createGlobe();
@@ -513,11 +532,25 @@ function updateLanguage() {
 document.addEventListener('DOMContentLoaded', function() {
     currentLang = localStorage.getItem('language') || 'en';
     
-    // 初始化3D地球仪
-    initGlobe();
-    
-    // 添加点击事件监听器
-    renderer.domElement.addEventListener('click', onMouseClick);
+    // 延迟初始化3D地球仪，确保Three.js完全加载
+    setTimeout(() => {
+        try {
+            initGlobe();
+            
+            // 添加点击事件监听器
+            if (renderer && renderer.domElement) {
+                renderer.domElement.addEventListener('click', onMouseClick);
+            }
+        } catch (error) {
+            console.error('Error initializing globe:', error);
+            // 显示错误信息
+            const canvas = document.getElementById('globe-canvas');
+            if (canvas) {
+                canvas.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4)';
+                canvas.innerHTML = '<div style="color: white; text-align: center; padding-top: 200px; font-size: 1.5rem;">3D Globe Loading Error<br><small>Please refresh the page</small></div>';
+            }
+        }
+    }, 1000);
     
     updateLanguage();
 });
