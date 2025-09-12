@@ -1,7 +1,7 @@
 // 3D地球仪实现
 let scene, camera, renderer, globe, controls;
 let markers = [];
-let currentLang = 'en';
+let travelCurrentLang = 'en';
 let currentContinent = null;
 let currentCountry = null;
 
@@ -410,7 +410,7 @@ function onMouseClick(event) {
 function showPlaces(continentId, countryId) {
     currentContinent = continentId;
     currentCountry = countryId;
-    const countryData = travelData[continentId][currentLang].countries[countryId];
+    const countryData = travelData[continentId][travelCurrentLang].countries[countryId];
     
     // 隐藏地球仪，显示地点面板
     document.querySelector('.globe-container').style.display = 'none';
@@ -516,9 +516,9 @@ function updateLanguage() {
     // 更新所有.en和.zh元素的显示
     document.querySelectorAll('.en, .zh').forEach(element => {
         if (element.classList.contains('en')) {
-            element.style.display = currentLang === 'en' ? '' : 'none';
+            element.style.display = travelCurrentLang === 'en' ? '' : 'none';
         } else if (element.classList.contains('zh')) {
-            element.style.display = currentLang === 'zh' ? '' : 'none';
+            element.style.display = travelCurrentLang === 'zh' ? '' : 'none';
         }
     });
     
@@ -530,7 +530,7 @@ function updateLanguage() {
 
 // 初始化页面
 document.addEventListener('DOMContentLoaded', function() {
-    currentLang = localStorage.getItem('language') || 'en';
+    travelCurrentLang = localStorage.getItem('language') || 'en';
     
     // 延迟初始化3D地球仪，确保Three.js完全加载
     setTimeout(() => {
@@ -557,6 +557,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 监听语言切换
 document.addEventListener('languageChanged', function(event) {
-    currentLang = event.detail.language;
+    travelCurrentLang = event.detail.language;
     updateLanguage();
 });
