@@ -1,34 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portfolio | Louisa Lin</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio | Xingtong Lin</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="lang-switch">
-    <button id="en-btn">English</button>
-    <button id="zh-btn">中文</button>
-    <a href="index.html" class="back-home" data-en="Home" data-zh="首页">Home</a>
-  </div>
-  <main class="container">
-    <h1 class="portfolio-title" data-en="My Portfolio" data-zh="我的作品集">My Portfolio</h1>
-    <div class="portfolio-actions">
-      <button class="btn" id="upload-btn" data-en="Upload New Work (Only for me)" data-zh="上传新作品（仅本人可见）">Upload New Work (Only for me)</button>
-    </div>
-    <div class="portfolio-list">
-      <!-- 这里可以放作品集条目 -->
-      <div class="portfolio-item">
-        <div class="portfolio-img"></div>
-        <div class="portfolio-info">
-          <h3 data-en="Project Title" data-zh="项目标题">Project Title</h3>
-          <p data-en="Project description goes here." data-zh="这里是项目简介。">Project description goes here.</p>
+    <header class="glass-effect">
+        <nav style="background:linear-gradient(90deg,#3a3f51 0%,#6a82fb 100%);">
+            <div class="nav-container">
+                <div class="nav-left">
+                    <a href="index.html" class="nav-link">Home</a>
+                    <a href="about.html" class="nav-link">About Me</a>
+                    <a href="portfolio.html" class="nav-link active">Portfolio</a>
+                    <a href="contact.html" class="nav-link">Contact</a>
+                </div>
+                <div class="nav-right">
+                    <button class="language-switch" onclick="switchLanguage()">
+                        <span class="current-lang">EN</span>
+                    </button>
+                    <a href="https://www.instagram.com/louisalxt" target="_blank" class="social-icon">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://www.linkedin.com/in/lxt/" target="_blank" class="social-icon">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <section class="portfolio glass-effect" style="margin-top:80px;">
+            <h1 class="portfolio-title" style="text-align:center;font-size:3rem;margin-bottom:2rem;">
+                <span class="en">My Portfolio</span>
+                <span class="zh" style="display:none;">我的作品集</span>
+            </h1>
+            <div class="portfolio-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;max-width:1200px;margin:0 auto;padding:0 1rem;">
+                <div class="portfolio-item glass-effect" style="padding:1.5rem;border-radius:15px;text-align:center;">
+                    <div class="portfolio-img" style="margin-bottom:1rem;">
+                        <img src="portfolio/Meeting of the minds 2025 poster.png" alt="Meeting of the minds 2025 poster" style="width:100%;max-width:400px;height:auto;border-radius:10px;box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+                    </div>
+                    <div class="portfolio-info">
+                        <h3 style="font-size:1.5rem;margin-bottom:1rem;color:#fff;">
+                            <span class="en">Meeting of the Minds 2025</span>
+                            <span class="zh" style="display:none;">思维碰撞 2025</span>
+                        </h3>
+                        <p style="color:#ccc;line-height:1.6;">
+                            <span class="en">Research poster presentation showcasing my work in neural mechanisms and decision-making processes.</span>
+                            <span class="zh" style="display:none;">展示我在神经机制和决策过程研究中的工作成果。</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer class="glass-effect">
+        <div class="footer-content">
+            <p class="blessing">May your future be filled with endless possibilities</p>
+            <p class="blessing-zh" style="display:none;">愿你得偿所愿</p>
+            <p class="copyright">© 2025 Xingtong Lin. All rights reserved.</p>
         </div>
-      </div>
-      <!-- 更多作品可继续添加 -->
-    </div>
-  </main>
-  <script src="main.js"></script>
+    </footer>
+    <script src="js/main.js"></script>
 </body>
 </html> 

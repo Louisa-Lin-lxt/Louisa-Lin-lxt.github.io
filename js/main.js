@@ -57,41 +57,53 @@ function switchLanguage() {
 }
 
 function updateContent(lang) {
-  // 更新导航栏
-  document.querySelectorAll('.nav-link').forEach(link => {
-      const href = link.getAttribute('href');
-      if (href === 'index.html') {
-          link.textContent = translations[lang].home;
-      } else if (href === 'about.html') {
-          link.textContent = translations[lang].about;
-      } else if (href === 'contact.html') {
-          link.textContent = translations[lang].contact;
-      }
-  });
+    // 更新导航栏
+    document.querySelectorAll('.nav-link').forEach(link => {
+        const href = link.getAttribute('href');
+        if (href === 'index.html') {
+            link.textContent = translations[lang].home;
+        } else if (href === 'about.html') {
+            link.textContent = translations[lang].about;
+        } else if (href === 'portfolio.html') {
+            link.textContent = translations[lang].portfolio;
+        } else if (href === 'contact.html') {
+            link.textContent = translations[lang].contact;
+        }
+    });
 
-  // 切换所有.en和.zh内容的显示和字体
-  document.querySelectorAll('.en, .zh').forEach(element => {
-      if (element.classList.contains('en')) {
-          element.style.display = lang === 'en' ? '' : 'none';
-          element.style.fontFamily = "Times New Roman, serif";
-      } else if (element.classList.contains('zh')) {
-          element.style.display = lang === 'zh' ? '' : 'none';
-          element.style.fontFamily = "SimHei, 黑体, sans-serif";
-      }
-  });
+    // 切换所有.en和.zh内容的显示和字体
+    document.querySelectorAll('.en, .zh').forEach(element => {
+        if (element.classList.contains('en')) {
+            element.style.display = lang === 'en' ? '' : 'none';
+            element.style.fontFamily = "Times New Roman, serif";
+        } else if (element.classList.contains('zh')) {
+            element.style.display = lang === 'zh' ? '' : 'none';
+            element.style.fontFamily = "SimHei, 黑体, sans-serif";
+        }
+    });
 
-  // 祝福语字体
-  const blessingEn = document.querySelector('.blessing');
-  const blessingZh = document.querySelector('.blessing-zh');
-  if (blessingEn && blessingZh) {
-      blessingEn.style.display = lang === 'en' ? '' : 'none';
-      blessingZh.style.display = lang === 'zh' ? '' : 'none';
-      blessingEn.style.fontFamily = "Times New Roman, serif";
-      blessingZh.style.fontFamily = "SimHei, 黑体, sans-serif";
-  }
+    // 更新简历下载链接
+    const cvDownloadLinks = document.querySelectorAll('.cv-download');
+    cvDownloadLinks.forEach(link => {
+        if (lang === 'en') {
+            link.href = '最新简历/resume_en.pdf';
+        } else {
+            link.href = '最新简历/resume_zh.pdf';
+        }
+    });
 
-  // 整体body字体
-  document.body.style.fontFamily = lang === 'en' ? "Times New Roman, serif" : "SimHei, 黑体, sans-serif";
+    // 祝福语字体
+    const blessingEn = document.querySelector('.blessing');
+    const blessingZh = document.querySelector('.blessing-zh');
+    if (blessingEn && blessingZh) {
+        blessingEn.style.display = lang === 'en' ? '' : 'none';
+        blessingZh.style.display = lang === 'zh' ? '' : 'none';
+        blessingEn.style.fontFamily = "Times New Roman, serif";
+        blessingZh.style.fontFamily = "SimHei, 黑体, sans-serif";
+    }
+
+    // 整体body字体
+    document.body.style.fontFamily = lang === 'en' ? "Times New Roman, serif" : "SimHei, 黑体, sans-serif";
 
   const elements = {
       '.nav-link[href="#home"]': 'home',
