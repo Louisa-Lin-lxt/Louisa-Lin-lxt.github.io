@@ -86,10 +86,13 @@ function updateContent(lang) {
     const cvDownloadLinks = document.querySelectorAll('.cv-download');
     cvDownloadLinks.forEach(link => {
         if (lang === 'en') {
-            link.href = '最新简历/resume_en.pdf';
+            link.href = 'resumes/resume_en.pdf';
+            link.download = 'Xingtong_Lin_Resume_EN.pdf';
         } else {
-            link.href = '最新简历/resume_zh.pdf';
+            link.href = 'resumes/resume_zh.pdf';
+            link.download = '林星潼_简历_中文.pdf';
         }
+        console.log('Updated CV link:', link.href, 'for language:', lang);
     });
 
     // 祝福语字体
@@ -188,12 +191,24 @@ window.addEventListener('scroll', () => {
 
 // 页面加载时根据 localStorage 设置语言
 window.addEventListener('DOMContentLoaded', () => {
+  const savedLang = localStorage.getItem('language') || 'en';
+  currentLang = savedLang;
   document.documentElement.lang = currentLang;
   document.querySelector('.current-lang').textContent = currentLang === 'en' ? 'EN' : '中';
   updateContent(currentLang);
-  document.body.style.fontFamily = currentLang === 'en' ? "'Big Caslon', serif" : "'SimHei', serif";
-  // 导航栏根据当前语言设置
-  document.querySelectorAll('.nav-link')[0].textContent = translations[currentLang].home;
-  document.querySelectorAll('.nav-link')[1].textContent = translations[currentLang].about;
-  document.querySelectorAll('.nav-link')[2].textContent = translations[currentLang].contact;
+  
+  // 强制更新简历链接，防止缓存问题
+  setTimeout(() => {
+    const cvLinks = document.querySelectorAll('.cv-download');
+    cvLinks.forEach(link => {
+      if (currentLang === 'en') {
+        link.href = 'resumes/resume_en.pdf';
+        link.download = 'Xingtong_Lin_Resume_EN.pdf';
+      } else {
+        link.href = 'resumes/resume_zh.pdf';
+        link.download = '林星潼_简历_中文.pdf';
+      }
+      console.log('Force updated CV link:', link.href, 'for language:', currentLang);
+    });
+  }, 100);
 }); 
