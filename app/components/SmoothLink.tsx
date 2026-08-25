@@ -6,6 +6,8 @@ import { usePathname, useRouter } from "next/navigation";
 export function SmoothLink({ href, className, children, ariaLabel, reveal = false }: { href: string; className?: string; children: ReactNode; ariaLabel?: string; reveal?: boolean }) {
   const router = useRouter();
   const pathname = usePathname();
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  const browserHref = href.startsWith("/") ? `${basePath}${href}` : href;
 
   useEffect(() => {
     const root = document.documentElement;
@@ -19,8 +21,8 @@ export function SmoothLink({ href, className, children, ariaLabel, reveal = fals
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
     event.preventDefault();
     document.documentElement.classList.add("route-leaving");
-    window.setTimeout(() => router.push(href), 260);
+    window.setTimeout(() => router.push(browserHref), 260);
   };
 
-  return <a href={href} className={className} aria-label={ariaLabel} data-reveal={reveal || undefined} onClick={navigate}>{children}</a>;
+  return <a href={browserHref} className={className} aria-label={ariaLabel} data-reveal={reveal || undefined} onClick={navigate}>{children}</a>;
 }
