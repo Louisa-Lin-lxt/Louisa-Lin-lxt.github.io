@@ -7,6 +7,7 @@ import { usePersistentLanguage, type Lang } from "./components/usePersistentLang
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const assetPath = (path: string) => `${basePath}${path}`;
+const contactEndpoint = "https://formsubmit.co/ajax/xingtongl@andrew.cmu.edu";
 
 type Story = {
   title: string;
@@ -77,6 +78,9 @@ const copy = {
     formEmailPlaceholder: "you@example.com",
     formMessagePlaceholder: "What would you like to talk about?",
     formSubmit: "Send message",
+    formSending: "Sending…",
+    formSuccess: "Message sent. Thank you—I’ll get back to you soon.",
+    formError: "The message could not be sent. Please try again or email xingtongl@andrew.cmu.edu.",
     footerLine: "© 2026 By Xingtong Lin",
     updated: "Updated August 2026",
   },
@@ -132,7 +136,10 @@ const copy = {
     formNamePlaceholder: "请输入姓名",
     formEmailPlaceholder: "you@example.com",
     formMessagePlaceholder: "请输入留言内容",
-    formSubmit: "发送邮件",
+    formSubmit: "发送留言",
+    formSending: "正在发送…",
+    formSuccess: "留言已发送。我会尽快回复。",
+    formError: "发送失败。请重试或发送邮件至 xingtongl@andrew.cmu.edu。",
     footerLine: "© 2026 By Xingtong Lin",
     updated: "更新于 2026 年 8 月",
   },
@@ -215,6 +222,7 @@ export default function Home() {
   const [activeStory, setActiveStory] = useState<Story | null>(null);
   const [copied, setCopied] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [submitState, setSubmitState] = useState<"idle" | "sending" | "success" | "error">("idle");
   const t = copy[lang];
   const navHrefs = ["#about", "#research", "#experience", "/interests", "#contact"];
   useEffect(() => {
@@ -262,15 +270,43 @@ export default function Home() {
     setCopied(true);
     window.setTimeout(() => setCopied(false), 2200);
   };
-  const sendMessage = (event: FormEvent<HTMLFormElement>) => {
+  const sendMessage = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const data = new FormData(form);
     const name = String(data.get("name") ?? "");
     const email = String(data.get("email") ?? "");
     const message = String(data.get("message") ?? "");
-    const subject = encodeURIComponent(lang === "en" ? `Portfolio message from ${name}` : `来自个人网站的留言：${name}`);
-    const body = encodeURIComponent(lang === "en" ? `Name: ${name}\nEmail: ${email}\n\n${message}` : `姓名：${name}\n邮箱：${email}\n\n${message}`);
-    window.location.href = `mailto:xingtongl@andrew.cmu.edu?subject=${subject}&body=${body}`;
+    const honey = String(data.get("_honey") ?? "");
+    if (honey) {
+      form.reset();
+      setSubmitState("success");
+      return;
+    }
+
+    setSubmitState("sending");
+    try {
+      const response = await fetch(contactEndpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          message,
+          _replyto: email,
+          _subject: lang === "en" ? `Portfolio message from ${name}` : `来自个人网站的留言：${name}`,
+          _template: "table",
+          _captcha: "false",
+        }),
+      });
+      const result = await response.json().catch(() => null) as { success?: boolean | string } | null;
+      const accepted = result?.success === true || result?.success === "true";
+      if (!response.ok || !accepted) throw new Error("Submission rejected");
+      form.reset();
+      setSubmitState("success");
+    } catch {
+      setSubmitState("error");
+    }
   };
   const tiltNetwork = (event: ReactPointerEvent<HTMLDivElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -361,11 +397,13 @@ export default function Home() {
     <section className="contact section-pad" id="contact" data-reveal>
       <div className="contact-shell">
         <div className="contact-intro"><p className="eyebrow">{t.contactKicker}</p><h2>{t.contactTitle}</h2><p>{t.contactBody}</p></div>
-        <form className="contact-form" onSubmit={sendMessage}>
+        <form className="contact-form" onSubmit={sendMessage} onChange={() => submitState !== "sending" && setSubmitState("idle")} aria-busy={submitState === "sending"}>
           <label><span>{t.formName}</span><input name="name" type="text" placeholder={t.formNamePlaceholder} required /></label>
           <label><span>{t.formEmail}</span><input name="email" type="email" placeholder={t.formEmailPlaceholder} required /></label>
           <label className="message-field"><span>{t.formMessage}</span><textarea name="message" rows={5} placeholder={t.formMessagePlaceholder} required /></label>
-          <button className="send-button" type="submit"><span>{t.formSubmit}</span><i>↗</i></button>
+          <div className="form-honey" aria-hidden="true"><label>Leave this field empty<input name="_honey" type="text" tabIndex={-1} autoComplete="off" /></label></div>
+          <button className="send-button" type="submit" disabled={submitState === "sending"}><span>{submitState === "sending" ? t.formSending : t.formSubmit}</span><i>{submitState === "sending" ? "…" : "↗"}</i></button>
+          <p className={`form-status ${submitState}`} role={submitState === "error" ? "alert" : "status"} aria-live="polite">{submitState === "success" ? t.formSuccess : submitState === "error" ? t.formError : ""}</p>
         </form>
         <div className="social-icons">
           <a href="https://www.linkedin.com/in/lxt/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><b className="app-logo"><img src={assetPath("/social/linkedin.svg")} alt="" /></b></a>
