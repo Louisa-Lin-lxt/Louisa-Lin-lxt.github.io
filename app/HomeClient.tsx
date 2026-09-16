@@ -3,11 +3,11 @@
 import { useEffect, useState, type FormEvent, type PointerEvent as ReactPointerEvent } from "react";
 import { HeroNeuralField } from "./components/HeroNeuralField";
 import { SmoothLink } from "./components/SmoothLink";
+import { usePersistentLanguage, type Lang } from "./components/usePersistentLanguage";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const assetPath = (path: string) => `${basePath}${path}`;
 
-type Lang = "en" | "zh";
 type Story = {
   title: string;
   org: string;
@@ -25,7 +25,15 @@ type Story = {
 
 const copy = {
   en: {
-    nav: ["About", "Research", "Experience", "Pub / Projects", "Interests", "Contact"],
+    nav: ["About", "Research", "Experience", "Interests", "Contact"],
+    navAria: "Primary navigation",
+    menu: "Menu",
+    menuKicker: "Explore the portfolio",
+    menuNote: "Neuroscience, technology, and the work that connects them.",
+    portraitLabel: "NEUROSCIENCE · NEUROENGINEERING",
+    scroll: "SCROLL",
+    lifeLabel: "OFF DUTY",
+    life: "LIFE",
     name: "Xingtong Lin",
     alias: "You can also call me Louisa Lin.",
     eyebrow: "COMPUTATIONAL NEUROSCIENCE · NEUROENGINEERING · CMU",
@@ -48,23 +56,17 @@ const copy = {
     experienceKicker: "03 · EXPERIENCE",
     experienceTitle: "What I’ve worked on beyond research.",
     experienceIntro: "Beyond the lab, I’ve worked across early-stage investing, product design, healthcare business development, and teaching—roles where I had to turn complex ideas into clear next steps.",
-    projectsKicker: "04 · PUBLICATIONS / PROJECTS",
-    projectsTitle: "Publications and projects.",
-    projectsIntro: "A dedicated home for publications, posters, and selected projects. The shelves are ready; the work is being prepared.",
-    publication: "Publication",
-    project: "Selected project",
-    comingSoon: "Coming soon",
     open: "View more",
     close: "Close",
     whatIDid: "What I did",
     toolkitKicker: "SKILLS ACROSS MY WORK",
     toolkitTitle: "Skills, grouped by how I use them.",
-    interestsKicker: "05 · OFF DUTY",
+    interestsKicker: "04 · OFF DUTY",
     interestsTitle: "My world beyond the lab.",
     interestsBody: "Music, animals, and travel keep me curious, grounded, and open to new places. I’m saving this space for the stories behind each one.",
     interestsCta: "Explore my world of interests",
     nodes: ["MUSIC", "ANIMAL LOVER", "TRAVELLER"],
-    contactKicker: "06 · CONTACT",
+    contactKicker: "05 · CONTACT",
     contactTitle: "Let’s start a conversation.",
     contactBody: "If you’d like to learn more about my work, are currently interested in fundraising, or simply want to have a coffee chat, I’d be happy to hear from you.",
     email: "Email me",
@@ -79,56 +81,58 @@ const copy = {
     updated: "Updated August 2026",
   },
   zh: {
-    nav: ["关于我", "科研经历", "其他经历", "论文 / 项目", "兴趣", "联系我"],
+    nav: ["关于我", "科研经历", "其他经历", "兴趣", "联系我"],
+    navAria: "主要导航",
+    menu: "菜单",
+    menuKicker: "浏览网站",
+    menuNote: "神经科学、技术实践与个人生活。",
+    portraitLabel: "神经科学 · 神经工程",
+    scroll: "向下浏览",
+    lifeLabel: "研究之外",
+    life: "生活",
     name: "林星潼",
-    alias: "也可以叫我 Louisa。",
+    alias: "英文名 Louisa Lin。",
     eyebrow: "计算神经科学 · 神经工程 · CMU",
-    headline: "我想弄清楚，神经信号如何变成选择。",
-    intro: "我做过脑电、动物行为和细胞相关研究，也一直在想：怎样用更合适的实验、分析和技术，把大脑里的问题测得更清楚。",
-    researchCta: "看看我的科研经历",
+    headline: "研究神经信号如何影响行为与决策。",
+    intro: "我的研究涉及人类脑电、动物行为和细胞实验。重点关注神经活动的测量方法及其与行为的关系。",
+    researchCta: "查看科研经历",
     resume: "查看英文简历",
     latest: "最新动态",
     latestDate: "2026.07",
-    latestBody: "加入嘉程资本，担任 Venture Capital Fellow，关注医疗健康和科技领域的早期项目。",
+    latestBody: "现任嘉程资本 Venture Capital Fellow。主要关注医疗健康与科技领域的早期项目。",
     aboutKicker: "01 · 关于我",
-    aboutTitle: "关于我。",
-    aboutBody: "我是卡内基梅隆大学大三学生，主修神经科学（计算神经科学方向），同时修读生物医学技术第二专业（神经工程方向）和工商管理辅修。我最感兴趣的是神经信号怎样影响行为，也喜欢把实验、数据分析和产品思维放在一起解决问题。",
-    facts: [["学位", "神经科学理学学士"], ["神经科学方向", "计算神经科学"], ["第二专业", "生物医学技术 · 神经工程方向"], ["辅修", "工商管理"], ["语言", "普通话 · 英语 · 粤语 · 法语"], ["荣誉", "Dean’s List with High Honors"]],
-    coursesLabel: "部分课程",
+    aboutTitle: "教育与研究背景",
+    aboutBody: "我就读于卡内基梅隆大学。主修神经科学并选择计算神经科学方向。同时修读生物医学技术第二专业与工商管理辅修。生物医学技术专业方向为神经工程。",
+    facts: [["主修", "神经科学"], ["专业方向", "计算神经科学"], ["第二专业", "生物医学技术 · 神经工程方向"], ["辅修", "工商管理"], ["语言", "普通话 · 英语 · 粤语 · 法语"], ["荣誉", "Dean’s List with High Honors"]],
+    coursesLabel: "相关课程",
     courses: ["脑机接口：原理与应用", "神经科学导论", "生理学", "生物医学工程实验", "概率论与随机过程", "命令式计算原理"],
-    researchKicker: "02 · 研究",
-    researchTitle: "我的科研经历。",
-    researchIntro: "我先在暑研中接触细胞培养和水凝胶实验，之后在 Yttri Lab 参与了更完整的行为神经科学流程：从每天的 27 孔小鼠实验，到数据整理，再到 trial-pair 分析。现在，我的研究重心已经转到 Bin He Lab，参与人类 EEG 实验和深度学习相关工作。",
-    experienceKicker: "03 · 经历",
-    experienceTitle: "实验室之外，我也做过这些。",
-    experienceIntro: "除了科研，我还做过早期投资、产品设计、医疗产品的海外业务拓展和课程辅导。这些经历让我学会把复杂问题讲清楚，也把想法一步步推进下去。",
-    projectsKicker: "04 · 论文 / 项目",
-    projectsTitle: "论文与项目。",
-    projectsIntro: "这里会集中展示论文、海报和我想长期保留的项目。内容还在整理，之后会陆续补上。",
-    publication: "论文成果",
-    project: "精选项目",
-    comingSoon: "整理中",
+    researchKicker: "02 · 科研经历",
+    researchTitle: "科研方向与实验经历",
+    researchIntro: "我从细胞培养和水凝胶实验开始接触湿实验。随后在 Yttri Lab 参与行为神经科学研究。工作包括独立运行 27 孔开放场实验、整理数据和开展 trial-pair 分析。目前在 Bin He Lab 参与人类 EEG 实验及深度学习相关研究。",
+    experienceKicker: "03 · 其他经历",
+    experienceTitle: "科研之外的实践经历",
+    experienceIntro: "我还参与过早期投资、产品设计、医疗产品海外商务拓展和课程辅导。这些经历提升了我的信息分析、沟通协作和项目推进能力。",
     open: "查看详情",
     close: "关闭",
-    whatIDid: "我做了什么",
+    whatIDid: "主要职责",
     toolkitKicker: "能力汇总",
-    toolkitTitle: "这些经历里，我实际用到的能力。",
-    interestsKicker: "05 · 实验室之外",
-    interestsTitle: "实验室之外的我。",
-    interestsBody: "我喜欢音乐、动物和旅行。它们没有写进科研问题里，但同样组成了我看世界的方式。具体故事会在下一步慢慢补进来。",
-    interestsCta: "看看我的兴趣世界",
-    nodes: ["音乐", "动物爱好者", "旅行者"],
-    contactKicker: "06 · 联系",
-    contactTitle: "想聊聊的话，欢迎来找我。",
-    contactBody: "如果你想了解我的研究、最近在关注 fundraising，或者只是想约一次 coffee chat，都可以给我留言。",
+    toolkitTitle: "研究与实践中的核心能力",
+    interestsKicker: "04 · 实验室之外",
+    interestsTitle: "研究之外",
+    interestsBody: "音乐、动物和旅行构成了我的日常生活。这里记录科研之外的兴趣与经历。",
+    interestsCta: "查看兴趣内容",
+    nodes: ["音乐", "动物", "旅行"],
+    contactKicker: "05 · 联系我",
+    contactTitle: "欢迎联系",
+    contactBody: "欢迎就科研、医疗健康或科技领域相关问题与我联系。如需进一步交流可通过下方表单留言。",
     email: "给我发邮件",
     formName: "姓名",
     formEmail: "邮箱",
     formMessage: "留言",
-    formNamePlaceholder: "你的名字",
+    formNamePlaceholder: "请输入姓名",
     formEmailPlaceholder: "you@example.com",
-    formMessagePlaceholder: "你想聊些什么？",
-    formSubmit: "发送信息",
+    formMessagePlaceholder: "请输入留言内容",
+    formSubmit: "发送邮件",
     footerLine: "© 2026 By Xingtong Lin",
     updated: "更新于 2026 年 8 月",
   },
@@ -142,10 +146,10 @@ const skillGroups = {
     { number: "04", title: "Communication", skills: ["Scientific communication", "Teaching", "Session design", "Facilitation", "Cross-cultural communication", "Training"] },
   ],
   zh: [
-    { number: "01", title: "数据与计算", skills: ["Python", "MATLAB", "Trial-pair 分析", "数据分析", "深度学习辅助"] },
+    { number: "01", title: "数据与计算", skills: ["Python", "MATLAB", "Trial-pair 分析", "数据分析", "深度学习研究支持"] },
     { number: "02", title: "实验与研究方法", skills: ["人类 EEG", "EEG capping", "动物行为实验", "27 孔实验", "细胞培养", "无菌操作", "水凝胶实验"] },
-    { number: "03", title: "产品与商业", skills: ["项目搜寻", "市场研究", "技术尽调", "产品设计", "用户流程", "商务拓展", "合作推进"] },
-    { number: "04", title: "沟通与协作", skills: ["科研表达", "教学", "课程设计", "讨论引导", "跨文化沟通", "培训"] },
+    { number: "03", title: "产品与商业", skills: ["项目挖掘", "市场研究", "技术尽调", "产品设计", "用户流程", "商务拓展", "合作推进"] },
+    { number: "04", title: "沟通与协作", skills: ["学术沟通", "教学", "课程设计", "讨论引导", "跨文化沟通", "研究培训"] },
   ],
 };
 
@@ -156,9 +160,9 @@ const research: Record<Lang, Story[]> = {
     { title: "Summer Cell-Culture Exploration", org: "Wang Lab · Tsinghua University", date: "May — Aug 2025", image: "/orgs/wang-research.jpg", alt: "Neural stem cell migration research figure from Tsinghua University", summary: "My first step was a summer research project that gave me an initial understanding of wet-lab work through cell cultivation and hydrogel-related experiments.", details: ["Prepare cell work::Ready materials and follow sterile technique for neural stem cell, neuroglia, HAPI, and HUVIC cultures.", "Cultivate and maintain::Carry out routine cultivation and monitor cell condition so cultures remain suitable for the next experimental step.", "Learn the hydrogel workflow::Use the summer project to understand how cell-culture preparation connects with hydrogel-related experiments, without presenting it as my primary research focus or exposing measurements."], tags: ["Cell culture", "Sterile technique", "Hydrogel experiments"], sourceUrl: "https://www.mse.tsinghua.edu.cn/info/1061/2080.htm", sourceLabel: "Tsinghua research feature", imageClass: "official-wang" },
   ],
   zh: [
-    { title: "EEG 与深度学习", org: "Bin He Lab · CMU 生物医学工程系", date: "2025.05 — 至今", image: "/orgs/he-lab.gif", alt: "He Lab 官网的脑成像动画", summary: "现在我继续进入 Bin He Lab，从人类 EEG 实验记录开始，并把工作推进到实验室的深度学习研究流程。", details: ["准备实验::协助参与者完成 EEG 记录前准备，处理采集开始前需要确认的实际设置。", "佩戴 EEG 帽::完成 EEG capping，并帮助确认记录系统已经适合进行一致的实验。", "推进到计算环节::在实验设置之后，为实验室的深度学习模型提供辅助支持，同时不公开模型细节和研究结果。"], tags: ["人类 EEG", "EEG capping", "信号采集", "深度学习辅助"], sourceUrl: "https://www.cmu.edu/bme/helab/", sourceLabel: "He Lab 官网", imageClass: "official-he" },
-    { title: "行为实验 → Trial Pairs", org: "Yttri Lab · CMU 生物科学系", date: "2025.01 — 2026.09", image: "/orgs/yttri-lab.png", alt: "Yttri Lab 官网的荧光脑切片", summary: "我从独立运行 27 孔开放场中的日常行为实验，推进到使用 Python/MATLAB 比较 rewarded 与 unrewarded trials 的 trial-pair 分析，但不会公开底层数据。", details: ["准备行为任务::训练小鼠，检查 27 孔开放场与 Arduino 支持的装置，并观察相关手术流程。", "运行日常实验::独立执行小鼠行为实验，让每次 session 都遵循一致的任务流程。", "让流程可交接::培训博士生完成行为任务并理解相关数据结构，使新实验能够进入同样的分析格式。", "建立 trial pairs::按照结果整理每个 trial，把 rewarded 和 unrewarded trials 组成结构化对照，并在 Python 与 MATLAB 中实现分析。", "检查可重复性::判断分析在不同动物中是否保持一致，记录整个 pipeline，并让实验室可以继续用于后续研究；不披露数值或结果方向。", "表达研究过程::把行为实验与分析流程整合进 SURA 2025 关于开放场决策研究的海报。"], tags: ["行为实验", "Trial-pair 分析", "Python", "MATLAB", "Arduino", "研究培训"], sourceUrl: "https://labs.bio.cmu.edu/yttri/", sourceLabel: "Yttri Lab 官网", imageClass: "official-yttri" },
-    { title: "暑期细胞实验初探", org: "王秀梅课题组 · 清华大学", date: "2025.05 — 2025.08", image: "/orgs/wang-research.jpg", alt: "清华大学官网发布的神经干细胞迁移研究图", summary: "我的第一步是一段暑期研究项目，通过细胞培养和水凝胶相关实验，对湿实验研究形成初步了解。", details: ["准备细胞工作::为神经干细胞、神经胶质细胞、HAPI 和 HUVIC 培养准备材料，并遵循无菌操作。", "培养与维护::进行日常培养并观察细胞状态，让细胞适合进入后续实验步骤。", "了解水凝胶流程::通过暑期项目理解细胞培养如何与水凝胶相关实验衔接；不把它描述为主要研究方向，也不公开实验测量结果。"], tags: ["细胞培养", "无菌操作", "水凝胶实验"], sourceUrl: "https://www.mse.tsinghua.edu.cn/info/1061/2080.htm", sourceLabel: "清华官方研究报道", imageClass: "official-wang" },
+    { title: "EEG 与深度学习", org: "Bin He Lab · CMU 生物医学工程系", date: "2025.05 — 至今", image: "/orgs/he-lab.gif", alt: "He Lab 官网的脑成像动画", summary: "我目前在 Bin He Lab 参与人类 EEG 实验。工作包括受试者准备、信号采集和深度学习研究支持。", details: ["实验准备::协助受试者完成 EEG 记录前准备并检查采集设置。", "佩戴 EEG 帽::完成 EEG capping 并确认电极与记录系统状态。", "计算研究支持::协助深度学习模型相关工作。具体模型与研究结果暂不公开。"], tags: ["人类 EEG", "EEG capping", "信号采集", "深度学习研究支持"], sourceUrl: "https://www.cmu.edu/bme/helab/", sourceLabel: "He Lab 官网", imageClass: "official-he" },
+    { title: "行为实验 → Trial Pairs", org: "Yttri Lab · CMU 生物科学系", date: "2025.01 — 2026.09", image: "/orgs/yttri-lab.png", alt: "Yttri Lab 官网的荧光脑切片", summary: "我独立运行 27 孔开放场行为实验。使用 Python 和 MATLAB 建立 trial-pair 分析流程。该流程用于比较获得奖励与未获得奖励的试次。", details: ["行为任务准备::训练小鼠并检查 27 孔开放场与 Arduino 实验装置。了解相关手术流程。", "实验执行::按照统一流程独立完成日常小鼠行为实验。确保不同场次之间的一致性。", "流程交接::向博士生讲解行为任务与数据结构。支持后续实验使用统一分析格式。", "Trial-pair 分析::按实验结果整理试次。将获得奖励与未获得奖励的 trial 配对并使用 Python 和 MATLAB 完成分析。", "可重复性检查::比较分析流程在不同动物上的稳定性。记录完整步骤并整理为实验室可继续使用的流程。具体数值和结果方向不公开。", "研究展示::将行为实验与分析流程整理为 SURA 2025 开放场决策研究海报。"], tags: ["行为实验", "Trial-pair 分析", "Python", "MATLAB", "Arduino", "研究培训"], sourceUrl: "https://labs.bio.cmu.edu/yttri/", sourceLabel: "Yttri Lab 官网", imageClass: "official-yttri" },
+    { title: "暑期细胞实验", org: "王秀梅课题组 · 清华大学", date: "2025.05 — 2025.08", image: "/orgs/wang-research.jpg", alt: "清华大学官网发布的神经干细胞迁移研究图", summary: "该暑期研究项目使我系统接触湿实验。主要工作包括细胞培养和水凝胶相关实验。", details: ["实验准备::为神经干细胞、神经胶质细胞、HAPI 和 HUVIC 培养准备材料。严格遵循无菌操作规范。", "细胞培养与维护::完成日常培养并观察细胞状态。为后续实验步骤做好准备。", "水凝胶实验::学习细胞培养与水凝胶实验的衔接流程。具体测量结果不公开。"], tags: ["细胞培养", "无菌操作", "水凝胶实验"], sourceUrl: "https://www.mse.tsinghua.edu.cn/info/1061/2080.htm", sourceLabel: "清华官方研究报道", imageClass: "official-wang" },
   ],
 };
 
@@ -175,10 +179,10 @@ const experience: Record<Lang, Story[]> = {
     { title: "Product Design Intern", org: "Yovo · AI Counselor", date: "Sep 2024 — Jan 2025", image: "/orgs/yovo.png", alt: "Yovo official logo", summary: "I worked on early product flows for Yovo, turning an AI counseling idea into the screens, decisions, and interactions a student would actually move through.", details: ["Map the journey::Lay out an end-to-end product flow for college, career, and extracurricular guidance.", "Define the interactions::Clarify the key user actions and screen-to-screen logic for the pre-launch experience.", "Guide the first interface::Translate product requirements into clear flow diagrams that could support early UI development and team discussions."], tags: ["Product design", "User flows", "UX"], sourceUrl: "https://yovo.ai/home", sourceLabel: "Yovo website", imageClass: "official-yovo" },
   ],
   zh: [
-    { title: "风险投资 Fellow", org: "Next Capital · 嘉程资本", date: "2026.07 — 至今", image: "/orgs/jiacheng-capital.webp", alt: "嘉程资本标志", summary: "我参与投资流程最前端的项目寻找，把一个初步信号整理成更适合继续讨论和判断的问题。", details: ["项目寻找::寻找可能适合美元基金的公司与项目，重点关注医疗健康与科技方向。", "初步筛选::整理团队、产品、市场和融资背景等已知信息，让有潜力的机会能够被高效讨论。", "技术转译::把专业产品或研究主张转化为关于真实问题、差异化、采用路径和下一步尽调的具体问题。"], tags: ["项目搜寻", "市场研究", "技术尽调"], sourceUrl: "https://www.jiachengcap.com/", sourceLabel: "嘉程资本官网", imageClass: "official-next" },
-    { title: "海外商务拓展实习生", org: "Glunovo · 九诺医疗", date: "2025.02 — 2025.06", image: "/orgs/glunovo.png", alt: "九诺医疗官网的 Glunovo 持续血糖监测产品", summary: "我协助持续血糖监测公司的跨境合作沟通，也理解了同一个技术产品如何面对不同市场讲清自己的价值。", details: ["合作沟通::向美国、乌兹别克斯坦和马来西亚的潜在合作方介绍公司与产品。", "信息调整::根据不同组织和地区，调整技术、临床和商业信息的表达重点。", "后续推进::整理沟通背景与下一步，让一次初步会面能够继续走向更具体的合作讨论。"], tags: ["商务拓展", "合作沟通", "跨文化沟通"], sourceUrl: "https://cn.infinovo.com/", sourceLabel: "九诺医疗官网", imageClass: "official-glunovo" },
-    { title: "SI Leader", org: "CMU 学术成功中心", date: "2025.08 — 至今", image: "/orgs/cmu-logo.png", alt: "卡内基梅隆大学标志", summary: "我负责 Modern Biology 的协作学习活动，帮助同学不只记住知识点，也能把概念之间的关系讲清楚。", details: ["准备每周活动::把课程内容变成引导问题、练习和适合小组一起完成的讨论流程。", "根据现场调整::判断大家真正卡住的地方，换一种方式解释复杂概念，并根据理解程度调整节奏。", "和课程团队配合::与授课教师及学术成功中心沟通，让活动跟上课程进度，也把常见问题带回下一次准备。"], tags: ["教学", "课程设计", "讨论引导"], sourceUrl: "https://www.cmu.edu/student-success/", sourceLabel: "CMU 学术成功中心", imageClass: "official-cmu" },
-    { title: "产品设计实习生", org: "Yovo · AI 升学与职业规划产品", date: "2024.09 — 2025.01", image: "/orgs/yovo.png", alt: "Yovo 官方标志", summary: "我参与了 Yovo 的早期产品流程设计，把 AI 顾问从一个想法拆成用户真正会走过的页面、步骤和交互。", details: ["梳理完整路径::整理大学专业、职业和课外活动咨询的端到端用户流程。", "明确关键交互::确定核心操作和页面之间的跳转逻辑，让团队对产品行为有一致理解。", "支持早期界面设计::用清楚的产品流程图表达需求，为早期 UI 开发和团队讨论提供依据。"], tags: ["产品设计", "用户流程", "UX"], sourceUrl: "https://yovo.ai/home", sourceLabel: "Yovo 官网", imageClass: "official-yovo" },
+    { title: "风险投资 Fellow", org: "Next Capital · 嘉程资本", date: "2026.07 — 至今", image: "/orgs/jiacheng-capital.webp", alt: "嘉程资本标志", summary: "我参与投资流程前端的项目挖掘与初步评估。重点关注医疗健康和科技领域的早期项目。", details: ["项目挖掘::寻找可能适合美元基金的早期公司与项目。重点覆盖医疗健康和科技领域。", "初步评估::梳理团队、产品、市场和融资背景。支持团队高效讨论潜在机会。", "技术分析::将专业产品或研究主张转化为可验证的问题。重点评估真实需求、差异化、落地路径和后续尽调方向。"], tags: ["项目挖掘", "市场研究", "技术尽调"], sourceUrl: "https://www.jiachengcap.com/", sourceLabel: "嘉程资本官网", imageClass: "official-next" },
+    { title: "海外商务拓展实习生", org: "Glunovo · 九诺医疗", date: "2025.02 — 2025.06", image: "/orgs/glunovo.png", alt: "九诺医疗官网的 Glunovo 持续血糖监测产品", summary: "我参与持续血糖监测产品的海外商务拓展。工作涉及合作方沟通、信息调整和后续推进。", details: ["合作方沟通::向美国、乌兹别克斯坦和马来西亚的潜在合作方介绍公司与产品。", "信息调整::根据机构类型和地区差异调整技术、临床与商业信息。", "后续推进::整理会谈背景、核心问题和下一步安排。推动初步接触进入后续讨论。"], tags: ["商务拓展", "合作沟通", "跨文化沟通"], sourceUrl: "https://cn.infinovo.com/", sourceLabel: "九诺医疗官网", imageClass: "official-glunovo" },
+    { title: "SI Leader", org: "CMU 学术成功中心", date: "2025.08 — 至今", image: "/orgs/cmu-logo.png", alt: "卡内基梅隆大学标志", summary: "我负责 Modern Biology 协作学习活动。目标是帮助学生理解概念之间的联系。", details: ["活动设计::将课程内容整理为引导问题、练习和小组讨论流程。", "现场教学::识别学生的理解难点。调整解释方式与活动节奏。", "课程协作::与授课教师及学术成功中心保持沟通。确保活动内容与课程进度一致。"], tags: ["教学", "课程设计", "讨论引导"], sourceUrl: "https://www.cmu.edu/student-success/", sourceLabel: "CMU 学术成功中心", imageClass: "official-cmu" },
+    { title: "产品设计实习生", org: "Yovo · AI 升学与职业规划产品", date: "2024.09 — 2025.01", image: "/orgs/yovo.png", alt: "Yovo 官方标志", summary: "我参与 Yovo 的早期产品流程设计。工作重点是将 AI 顾问概念转化为具体页面、步骤和交互。", details: ["用户路径::梳理专业选择、职业规划和课外活动咨询的完整流程。", "关键交互::定义核心操作与页面跳转逻辑。统一团队对产品体验的理解。", "界面设计支持::使用流程图表达产品需求。为早期 UI 开发和团队讨论提供依据。"], tags: ["产品设计", "用户流程", "UX"], sourceUrl: "https://yovo.ai/home", sourceLabel: "Yovo 官网", imageClass: "official-yovo" },
   ],
 };
 
@@ -190,7 +194,7 @@ function StoryModal({ story, lang, onClose }: { story: Story; lang: Lang; onClos
     document.body.classList.add("modal-open");
     return () => { document.removeEventListener("keydown", closeOnEscape); document.body.classList.remove("modal-open"); };
   }, [onClose]);
-  return <div className="story-modal" role="dialog" aria-modal="true" aria-label={story.title} onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+  return <div className="story-modal" role="dialog" aria-modal="true" aria-label={story.title}>
     <article>
       <button className="modal-close" onClick={onClose} aria-label={t.close}>×</button>
       {story.placeholder ? <div className="confidential-art"><span>CONFIDENTIAL</span><b>Product × Flow</b><i>Details intentionally withheld</i></div> : <img className={story.imageClass} src={assetPath(story.image)} alt={story.alt} />}
@@ -207,11 +211,12 @@ function StoryCard({ story, index, lang, onOpen }: { story: Story; index: number
 }
 
 export default function Home() {
-  const [lang, setLang] = useState<Lang>("en");
+  const { lang, toggleLang } = usePersistentLanguage();
   const [activeStory, setActiveStory] = useState<Story | null>(null);
   const [copied, setCopied] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const t = copy[lang];
-  const navHrefs = ["#about", "#research", "#experience", "#projects", "/interests", "#contact"];
+  const navHrefs = ["#about", "#research", "#experience", "/interests", "#contact"];
   useEffect(() => {
     const revealItems = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
     const observer = new IntersectionObserver((entries) => {
@@ -231,6 +236,16 @@ export default function Home() {
       window.removeEventListener("scroll", onScroll);
     };
   }, [lang]);
+
+  useEffect(() => {
+    const closeOnEscape = (event: KeyboardEvent) => event.key === "Escape" && setMenuOpen(false);
+    document.addEventListener("keydown", closeOnEscape);
+    document.body.classList.toggle("nav-open", menuOpen);
+    return () => {
+      document.removeEventListener("keydown", closeOnEscape);
+      document.body.classList.remove("nav-open");
+    };
+  }, [menuOpen]);
 
   const copyWeChat = async () => {
     const id = "13910969793";
@@ -253,8 +268,8 @@ export default function Home() {
     const name = String(data.get("name") ?? "");
     const email = String(data.get("email") ?? "");
     const message = String(data.get("message") ?? "");
-    const subject = encodeURIComponent(`Portfolio message from ${name}`);
-    const body = encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`);
+    const subject = encodeURIComponent(lang === "en" ? `Portfolio message from ${name}` : `来自个人网站的留言：${name}`);
+    const body = encodeURIComponent(lang === "en" ? `Name: ${name}\nEmail: ${email}\n\n${message}` : `姓名：${name}\n邮箱：${email}\n\n${message}`);
     window.location.href = `mailto:xingtongl@andrew.cmu.edu?subject=${subject}&body=${body}`;
   };
   const tiltNetwork = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -271,10 +286,20 @@ export default function Home() {
   return <main className="portfolio">
     <div className="scroll-progress" aria-hidden="true"><i /></div>
     <header className="site-nav">
-      <a className="xl-mark" href="#home" aria-label="Home">XL</a>
-      <nav>{t.nav.map((item, index) => index === 4 ? <SmoothLink href="/interests" key={item}>{item} ↗</SmoothLink> : <a href={navHrefs[index]} key={item}>{item}</a>)}</nav>
-      <button className="language-switch" onClick={() => setLang(lang === "en" ? "zh" : "en")} aria-label="Switch language"><span className={lang === "en" ? "active" : ""}>EN</span><i /><span className={lang === "zh" ? "active" : ""}>中</span></button>
+      <a className="xl-mark" href="#home" aria-label={lang === "en" ? "Home" : "返回首页"} onClick={() => setMenuOpen(false)}>XL</a>
+      <nav className="desktop-nav" aria-label={t.navAria}>{t.nav.map((item, index) => index === 3 ? <SmoothLink href="/interests" key={item}>{item} ↗</SmoothLink> : <a href={navHrefs[index]} key={item}>{item}</a>)}</nav>
+      <div className="nav-actions">
+        <button className="language-switch" onClick={toggleLang} aria-label={lang === "en" ? "切换到中文" : "Switch to English"}><span className={lang === "en" ? "active" : ""}>EN</span><i /><span className={lang === "zh" ? "active" : ""}>中</span></button>
+        <button className={`menu-toggle ${menuOpen ? "is-open" : ""}`} type="button" aria-expanded={menuOpen} aria-controls="mobile-navigation" aria-label={menuOpen ? (lang === "en" ? "Close menu" : "关闭菜单") : t.menu} onClick={() => setMenuOpen((open) => !open)}><span /><span /><b>{t.menu}</b></button>
+      </div>
     </header>
+    <aside className={`mobile-nav-panel ${menuOpen ? "is-open" : ""}`} id="mobile-navigation" aria-hidden={!menuOpen}>
+      <div className="mobile-nav-inner">
+        <p>{t.menuKicker}</p>
+        <nav aria-label={t.navAria}>{t.nav.map((item, index) => index === 3 ? <SmoothLink href="/interests" onNavigate={() => setMenuOpen(false)} key={item}><i>0{index + 1}</i><span>{item}</span><b>↗</b></SmoothLink> : <a href={navHrefs[index]} key={item} onClick={() => setMenuOpen(false)}><i>0{index + 1}</i><span>{item}</span><b>↓</b></a>)}</nav>
+        <small>{t.menuNote}</small>
+      </div>
+    </aside>
 
     <section className="hero" id="home">
       <HeroNeuralField />
@@ -290,18 +315,18 @@ export default function Home() {
         </div>
         <aside className="hero-visual" aria-label={lang === "en" ? "Portrait of Xingtong Lin" : "林星潼个人照片"}>
           <div className="hero-profile">
-            <div className="profile-photo"><div className="portrait-label"><span>CMU</span><b>NEUROSCIENCE · NEUROENGINEERING</b></div><img src={assetPath("/xingtong-profile.jpg")} alt={`Portrait of ${t.name}`} /></div>
+            <div className="profile-photo"><div className="portrait-label"><span>CMU</span><b>{t.portraitLabel}</b></div><img src={assetPath("/xingtong-profile.jpg")} alt={lang === "en" ? `Portrait of ${t.name}` : `${t.name}的个人照片`} /></div>
             <div className="latest-card"><div><strong>{t.latest}</strong><time>{t.latestDate}</time></div><p>{t.latestBody}</p></div>
           </div>
         </aside>
       </div>
-      <a className="scroll-cue" href="#about" aria-label="Scroll to about"><span>SCROLL</span><i /></a>
+      <a className="scroll-cue" href="#about" aria-label={lang === "en" ? "Scroll to about" : "向下浏览关于我"}><span>{t.scroll}</span><i /></a>
     </section>
 
     <section className="about section-pad" id="about" data-reveal>
       <div className="section-lead"><p className="eyebrow">{t.aboutKicker}</p><h2>{t.aboutTitle}</h2><div className="course-list"><p>{t.coursesLabel}</p>{t.courses.map((course, index) => <span key={course}><i>{String(index + 1).padStart(2, "0")}</i><b>{course}</b></span>)}</div></div>
       <div className="about-body">
-        {lang === "en" ? <p>I’m a junior at <a className="inline-link" href="https://www.cmu.edu/" target="_blank" rel="noreferrer">Carnegie Mellon University</a>, pursuing a <span className="soft-emphasis">B.S. in Neuroscience</span> on the <span className="soft-emphasis">Computational Neuroscience track</span>, with an additional major in <span className="soft-emphasis">Biomedical Technology</span> on the <span className="soft-emphasis">Neuroengineering track</span> and a minor in <span className="soft-emphasis">Business Administration</span>. I’m most curious about how neural signals become behavior—and how better experiments, analysis, and products can turn that curiosity into something useful.</p> : <p>我是<a className="inline-link" href="https://www.cmu.edu/" target="_blank" rel="noreferrer">卡内基梅隆大学</a>大三学生，主修<span className="soft-emphasis">神经科学</span>，选择<span className="soft-emphasis">计算神经科学方向</span>；同时修读<span className="soft-emphasis">生物医学技术</span>第二专业，选择<span className="soft-emphasis">神经工程方向</span>，并辅修<span className="soft-emphasis">工商管理</span>。我最感兴趣的是神经信号怎样影响行为，也喜欢把实验、数据分析和产品思维放在一起解决问题。</p>}
+        {lang === "en" ? <p>I’m a junior at <a className="inline-link" href="https://www.cmu.edu/" target="_blank" rel="noreferrer">Carnegie Mellon University</a>, pursuing a <span className="soft-emphasis">B.S. in Neuroscience</span> on the <span className="soft-emphasis">Computational Neuroscience track</span>, with an additional major in <span className="soft-emphasis">Biomedical Technology</span> on the <span className="soft-emphasis">Neuroengineering track</span> and a minor in <span className="soft-emphasis">Business Administration</span>. I’m most curious about how neural signals become behavior—and how better experiments, analysis, and products can turn that curiosity into something useful.</p> : <p>我就读于<a className="inline-link" href="https://www.cmu.edu/" target="_blank" rel="noreferrer">卡内基梅隆大学</a>。主修<span className="soft-emphasis">神经科学</span>并选择<span className="soft-emphasis">计算神经科学方向</span>。同时修读<span className="soft-emphasis">生物医学技术</span>第二专业与<span className="soft-emphasis">工商管理</span>辅修。生物医学技术专业方向为<span className="soft-emphasis">神经工程</span>。研究兴趣集中于神经信号、行为和实验测量方法之间的关系。</p>}
         <div className="fact-grid">{t.facts.map(([label, value]) => <div key={label}><span>{label}</span><strong>{value}</strong></div>)}</div>
       </div>
     </section>
@@ -316,14 +341,6 @@ export default function Home() {
       <div className="story-grid experience-grid">{experience[lang].map((story, index) => <StoryCard key={story.title} story={story} index={index} lang={lang} onOpen={() => setActiveStory(story)} />)}</div>
     </section>
 
-    <section className="projects-section section-pad" id="projects" data-reveal>
-      <div className="section-top"><div><p className="eyebrow">{t.projectsKicker}</p><h2>{t.projectsTitle}</h2></div><p>{t.projectsIntro}</p></div>
-      <div className="project-placeholders">
-        <article><span>01</span><div><p>{t.publication}</p><h3>{t.comingSoon}</h3></div><i>DOI</i></article>
-        <article><span>02</span><div><p>{t.project}</p><h3>{t.comingSoon}</h3></div><i>LAB</i></article>
-      </div>
-    </section>
-
     <section className="toolkit section-pad" data-reveal>
       <div><p className="eyebrow">{t.toolkitKicker}</p><h2>{t.toolkitTitle}</h2></div>
       <div className="skill-groups">{skillGroups[lang].map((group) => <article key={group.title}><header><span>{group.number}</span><h3>{group.title}</h3></header><div>{group.skills.map((skill) => <span key={skill}>{skill}</span>)}</div></article>)}</div>
@@ -336,7 +353,7 @@ export default function Home() {
           <i className="triangle-edge edge-left" /><i className="triangle-edge edge-right" /><i className="triangle-edge edge-bottom" />
           <i className="triangle-spoke spoke-top" /><i className="triangle-spoke spoke-left" /><i className="triangle-spoke spoke-right" />
           {t.nodes.map((node, index) => <div className={`triangle-node triangle-node-${index + 1}`} key={node}><span>0{index + 1}</span><b className={`node-symbol node-symbol-${index + 1}`}><i /></b><strong>{node}</strong></div>)}
-          <div className="life-core"><span>OFF DUTY</span><b>LIFE</b></div>
+          <div className="life-core"><span>{t.lifeLabel}</span><b>{t.life}</b></div>
         </div>
       </div>
     </SmoothLink>

@@ -3,8 +3,7 @@
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type WheelEvent as ReactWheelEvent } from "react";
 import { InterestWorld } from "../components/InterestWorld";
 import { SmoothLink } from "../components/SmoothLink";
-
-type Lang = "en" | "zh";
+import { usePersistentLanguage } from "../components/usePersistentLanguage";
 
 const copy = {
   en: {
@@ -16,6 +15,9 @@ const copy = {
     modalTitle: "More stories are on the way.",
     modalBody: "I’m keeping this space ready for the playlists, photos, places, and small stories I’ll add next.",
     close: "Close",
+    worldsAria: "Interest worlds",
+    previous: "Previous world",
+    next: "Next world",
     worlds: [
       { label: "MUSIC", title: "The soundtrack to everyday life.", body: "Music is where I reset, focus, and keep small moments from passing too quickly.", status: "STORIES COMING SOON" },
       { label: "ANIMAL LOVER", title: "Life is better with animals around.", body: "Taotao gets the first introduction. More stories about animals and companionship will come next.", status: "STORIES COMING SOON" },
@@ -23,24 +25,27 @@ const copy = {
     ],
   },
   zh: {
-    back: "返回个人主页",
-    kicker: "05 · 实验室之外",
-    hint: "点击会动的图标打开内容 · 滚动或滑动切换",
-    dragHint: "拖动淘淘可以转圈 · 点击可以打开内容",
-    open: "看看这个兴趣",
-    modalTitle: "更多故事，之后慢慢补上。",
-    modalBody: "这里先保留好位置。下一步会加入歌单、照片、去过的地方，还有更具体的小故事。",
+    back: "返回主页",
+    kicker: "04 · 研究之外",
+    hint: "点击图形查看 · 滚动或滑动切换",
+    dragHint: "拖动淘淘旋转 · 点击查看",
+    open: "查看内容",
+    modalTitle: "更多内容正在整理",
+    modalBody: "后续将补充歌单、照片、旅行记录和其他相关内容。",
     close: "关闭",
+    worldsAria: "兴趣主题",
+    previous: "上一个主题",
+    next: "下一个主题",
     worlds: [
-      { label: "音乐", title: "日常生活里，音乐一直都在。", body: "听歌、弹琴，或者只是找到刚好适合当下的一首歌，都会让我重新进入自己的节奏。", status: "具体内容之后补上" },
-      { label: "喜欢动物", title: "有动物在身边，生活会更好一点。", body: "先让淘淘和大家见面。以后这里会放更多关于它、关于动物，也关于陪伴的小故事。", status: "具体内容之后补上" },
-      { label: "旅行", title: "我喜欢看看别的地方怎样生活。", body: "这里之后会放旅行照片、去过的地方，还有那些我不想忘记的细节。", status: "具体内容之后补上" },
+      { label: "音乐", title: "音乐与日常生活", body: "音乐用于放松、集中注意力和调整日常节奏。这里将记录相关歌单与演奏经历。", status: "内容整理中" },
+      { label: "动物", title: "动物与陪伴", body: "淘淘是这一部分的主要成员。这里将记录与动物和日常陪伴相关的内容。", status: "内容整理中" },
+      { label: "旅行", title: "旅行与观察", body: "旅行帮助我理解不同地区的生活方式。这里将记录旅行照片、地点和观察。", status: "内容整理中" },
     ],
   },
 };
 
 export default function InterestsPage() {
-  const [lang, setLang] = useState<Lang>("en");
+  const { lang, toggleLang } = usePersistentLanguage();
   const [active, setActive] = useState(0);
   const [open, setOpen] = useState(false);
   const wheelLock = useRef(false);
@@ -68,14 +73,14 @@ export default function InterestsPage() {
   };
 
   const pointerDown = (event: ReactPointerEvent<HTMLElement>) => {
-    if ((event.target as HTMLElement).closest(".interest-world-canvas")) {
+    if ((event.target as HTMLElement).closest(".interest-world-canvas, .interest-placeholder-modal")) {
       pointerStart.current = null;
       return;
     }
     pointerStart.current = event.clientX;
   };
   const pointerUp = (event: ReactPointerEvent<HTMLElement>) => {
-    if ((event.target as HTMLElement).closest(".interest-world-canvas")) {
+    if ((event.target as HTMLElement).closest(".interest-world-canvas, .interest-placeholder-modal")) {
       pointerStart.current = null;
       return;
     }
@@ -92,7 +97,7 @@ export default function InterestsPage() {
     <header className="interest-header">
       <SmoothLink className="interest-xl" href="/" ariaLabel={t.back}>XL</SmoothLink>
       <SmoothLink className="interest-back" href="/">← {t.back}</SmoothLink>
-      <button className="interest-language" onClick={() => setLang(lang === "en" ? "zh" : "en")}><span className={lang === "en" ? "active" : ""}>EN</span><i /><span className={lang === "zh" ? "active" : ""}>中</span></button>
+      <button className="interest-language" onClick={toggleLang} aria-label={lang === "en" ? "切换到中文" : "Switch to English"}><span className={lang === "en" ? "active" : ""}>EN</span><i /><span className={lang === "zh" ? "active" : ""}>中</span></button>
     </header>
 
     <div className="interest-scene-name" aria-live="polite"><span>{String(active + 1).padStart(2, "0")}</span><strong>{world.label}</strong></div>
@@ -105,13 +110,13 @@ export default function InterestsPage() {
       <small>{world.status}</small>
     </section>
 
-    <nav className="interest-dots" aria-label="Interest worlds">{t.worlds.map((item, index) => <button className={index === active ? "active" : ""} onClick={() => setActive(index)} key={item.label} aria-label={item.label}><i /><span>{item.label}</span></button>)}</nav>
-    <button className="interest-arrow interest-arrow-left" onClick={() => changeWorld(-1)} aria-label="Previous world">‹</button>
-    <button className="interest-arrow interest-arrow-right" onClick={() => changeWorld(1)} aria-label="Next world">›</button>
+    <nav className="interest-dots" aria-label={t.worldsAria}>{t.worlds.map((item, index) => <button className={index === active ? "active" : ""} onClick={() => setActive(index)} key={item.label} aria-label={item.label}><i /><span>{item.label}</span></button>)}</nav>
+    <button className="interest-arrow interest-arrow-left" onClick={() => changeWorld(-1)} aria-label={t.previous}>‹</button>
+    <button className="interest-arrow interest-arrow-right" onClick={() => changeWorld(1)} aria-label={t.next}>›</button>
     <div className={`interest-hint ${active === 1 ? "dog-drag-hint" : ""}`}><i /><span>{active === 1 ? t.dragHint : t.hint}</span></div>
     <p className="interest-copyright">© 2026 By Xingtong Lin</p>
 
-    {open && <div className="interest-placeholder-modal" role="dialog" aria-modal="true" aria-label={t.modalTitle} onPointerDown={(event) => event.stopPropagation()} onMouseDown={(event) => event.target === event.currentTarget && setOpen(false)}>
+    {open && <div className="interest-placeholder-modal" role="dialog" aria-modal="true" aria-label={t.modalTitle}>
       <article><button onClick={() => setOpen(false)} aria-label={t.close}>×</button><span>{world.label}</span><h2>{t.modalTitle}</h2><p>{t.modalBody}</p><i>{String(active + 1).padStart(2, "0")}</i></article>
     </div>}
   </main>;
