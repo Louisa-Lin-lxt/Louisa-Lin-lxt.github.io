@@ -7,7 +7,7 @@ import { usePersistentLanguage, type Lang } from "./components/usePersistentLang
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const assetPath = (path: string) => `${basePath}${path}`;
-const contactEndpoint = "https://formsubmit.co/ajax/xingtongl@andrew.cmu.edu";
+const contactEndpoint = "https://formsubmit.co/ajax/linxingtong2023@outlook.com";
 
 type Story = {
   title: string;
@@ -80,7 +80,7 @@ const copy = {
     formSubmit: "Send message",
     formSending: "Sending…",
     formSuccess: "Message sent. Thank you—I’ll get back to you soon.",
-    formError: "The message could not be sent. Please try again or email xingtongl@andrew.cmu.edu.",
+    formError: "The message could not be sent. Please try again later.",
     footerLine: "© 2026 By Xingtong Lin",
     updated: "Updated August 2026",
   },
@@ -139,7 +139,7 @@ const copy = {
     formSubmit: "发送留言",
     formSending: "正在发送…",
     formSuccess: "留言已发送。我会尽快回复。",
-    formError: "发送失败。请重试或发送邮件至 xingtongl@andrew.cmu.edu。",
+    formError: "发送失败。请稍后重试。",
     footerLine: "© 2026 By Xingtong Lin",
     updated: "更新于 2026 年 8 月",
   },
