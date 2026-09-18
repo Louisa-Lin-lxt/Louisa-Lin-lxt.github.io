@@ -7,7 +7,8 @@ import { usePersistentLanguage, type Lang } from "./components/usePersistentLang
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const assetPath = (path: string) => `${basePath}${path}`;
-const contactEndpoint = "https://formsubmit.co/ajax/linxingtong2023@outlook.com";
+const contactEndpoint = "https://formsubmit.co/ajax/xingtonl@andrew.cmu.edu";
+const contactCategories = ["Research", "Collaboration", "Other"] as const;
 
 type Story = {
   title: string;
@@ -74,6 +75,11 @@ const copy = {
     formName: "Name",
     formEmail: "Email",
     formMessage: "Message",
+    formCategory: "Inquiry type",
+    formCategories: ["Research inquiry", "Collaboration", "Other"],
+    formSubject: "Subject",
+    formSubjectPlaceholder: "Briefly describe your inquiry",
+    formActivation: "The contact form is awaiting mailbox verification. Please try again after activation.",
     formNamePlaceholder: "Your name",
     formEmailPlaceholder: "you@example.com",
     formMessagePlaceholder: "What would you like to talk about?",
@@ -133,6 +139,11 @@ const copy = {
     formName: "姓名",
     formEmail: "邮箱",
     formMessage: "留言",
+    formCategory: "联系类别",
+    formCategories: ["科研交流", "合作咨询", "其他"],
+    formSubject: "主题",
+    formSubjectPlaceholder: "请简要说明联系事由",
+    formActivation: "收件邮箱尚未完成验证。请在表单启用后重试。",
     formNamePlaceholder: "请输入姓名",
     formEmailPlaceholder: "you@example.com",
     formMessagePlaceholder: "请输入留言内容",
@@ -222,7 +233,7 @@ export default function Home() {
   const [activeStory, setActiveStory] = useState<Story | null>(null);
   const [copied, setCopied] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [submitState, setSubmitState] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const [submitState, setSubmitState] = useState<"idle" | "sending" | "success" | "error" | "activation">("idle");
   const t = copy[lang];
   const navHrefs = ["#about", "#research", "#experience", "/interests", "#contact"];
   useEffect(() => {
@@ -272,11 +283,18 @@ export default function Home() {
   };
   const sendMessage = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (submitState === "sending") return;
     const form = event.currentTarget;
     const data = new FormData(form);
     const name = String(data.get("name") ?? "");
     const email = String(data.get("email") ?? "");
     const message = String(data.get("message") ?? "");
+    const subject = String(data.get("subject") ?? "").trim().replace(/[\r\n]/g, " ");
+    const category = String(data.get("category") ?? "Other");
+    if (!subject || !name.trim() || !message.trim() || !contactCategories.some((value) => value === category)) {
+      setSubmitState("error");
+      return;
+    }
     const honey = String(data.get("_honey") ?? "");
     if (honey) {
       form.reset();
@@ -293,14 +311,20 @@ export default function Home() {
           name,
           email,
           message,
+          subject,
+          category,
           _replyto: email,
-          _subject: lang === "en" ? `Portfolio message from ${name}` : `来自个人网站的留言：${name}`,
+          _subject: `[Website][${category}] ${subject}`,
           _template: "table",
           _captcha: "false",
         }),
       });
-      const result = await response.json().catch(() => null) as { success?: boolean | string } | null;
+      const result = await response.json().catch(() => null) as { success?: boolean | string; message?: string } | null;
       const accepted = result?.success === true || result?.success === "true";
+      if (!accepted && /needs activation/i.test(result?.message ?? "")) {
+        setSubmitState("activation");
+        return;
+      }
       if (!response.ok || !accepted) throw new Error("Submission rejected");
       form.reset();
       setSubmitState("success");
@@ -400,10 +424,12 @@ export default function Home() {
         <form className="contact-form" onSubmit={sendMessage} onChange={() => submitState !== "sending" && setSubmitState("idle")} aria-busy={submitState === "sending"}>
           <label><span>{t.formName}</span><input name="name" type="text" placeholder={t.formNamePlaceholder} required /></label>
           <label><span>{t.formEmail}</span><input name="email" type="email" placeholder={t.formEmailPlaceholder} required /></label>
+          <label className="message-field"><span>{t.formCategory}</span><select name="category" defaultValue="Research" required>{contactCategories.map((value, index) => <option key={value} value={value}>{t.formCategories[index]}</option>)}</select></label>
+          <label className="message-field"><span>{t.formSubject}</span><input name="subject" type="text" maxLength={160} placeholder={t.formSubjectPlaceholder} required /></label>
           <label className="message-field"><span>{t.formMessage}</span><textarea name="message" rows={5} placeholder={t.formMessagePlaceholder} required /></label>
           <div className="form-honey" aria-hidden="true"><label>Leave this field empty<input name="_honey" type="text" tabIndex={-1} autoComplete="off" /></label></div>
           <button className="send-button" type="submit" disabled={submitState === "sending"}><span>{submitState === "sending" ? t.formSending : t.formSubmit}</span><i>{submitState === "sending" ? "…" : "↗"}</i></button>
-          <p className={`form-status ${submitState}`} role={submitState === "error" ? "alert" : "status"} aria-live="polite">{submitState === "success" ? t.formSuccess : submitState === "error" ? t.formError : ""}</p>
+          <p className={`form-status ${submitState}`} role={submitState === "error" || submitState === "activation" ? "alert" : "status"} aria-live="polite">{submitState === "success" ? t.formSuccess : submitState === "activation" ? t.formActivation : submitState === "error" ? t.formError : ""}</p>
         </form>
         <div className="social-icons">
           <a href="https://www.linkedin.com/in/lxt/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><b className="app-logo"><img src={assetPath("/social/linkedin.svg")} alt="" /></b></a>
