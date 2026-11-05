@@ -1,6 +1,6 @@
 # Research media sources
 
-These are laboratory-authored visual materials, presented beside the portfolio research descriptions. They are not authored by the portfolio owner.
+These are laboratory-authored visual materials, presented within the portfolio research descriptions. They are not authored by the portfolio owner.
 
 ## He Lab
 - Source page: https://www.cmu.edu/bme/helab/

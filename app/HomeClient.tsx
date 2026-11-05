@@ -1,12 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Fragment, useEffect, useRef, useState, type FormEvent } from "react";
 import { HeroNeuralField } from "./components/HeroNeuralField";
 import { NeuralProgress } from "./components/NeuralProgress";
 import { InterestArtwork } from "./components/InterestArtwork";
 import { ProjectShelf } from "./components/ProjectShelf";
 import { DetailDialog } from "./components/DetailDialog";
-import { ResearchMedia } from "./components/ResearchMedia";
+import { ResearchFilm, ResearchSupplement } from "./components/ResearchMedia";
 import { SmoothLink } from "./components/SmoothLink";
 import { usePersistentLanguage } from "./components/usePersistentLanguage";
 import { copy, experience, researchTimeline, ui, type Story } from "./content/portfolio";
@@ -92,10 +92,15 @@ export default function Home() {
   }
 
   function renderStoryDetail(story: Story) {
-    return <>
-      {selected?.kind === "research" && selected.index < 2 ? <ResearchMedia key={selected.index} index={selected.index} lang={lang} /> : <div className={`detail-media ${story.imageClass ?? ""}`}><img src={asset(story.image)} alt={story.alt} />{story.sourceUrl && <a href={story.sourceUrl} target="_blank" rel="noreferrer">{story.sourceLabel}<Arrow external /></a>}</div>}
-      <div className="detail-copy"><p className="meta">{story.date}</p><h2>{story.title}</h2><p className="detail-org">{story.org}</p><h3>{formCopy.whatIDid}</h3><ol className="detail-steps">{story.details.map(item => {const [title,body] = item.split("::"); return <li key={title}><h4>{title}</h4><p>{body}</p></li>;})}</ol></div>
-    </>;
+    const researchVideoIndex = selected?.kind === "research" && selected.index < 2 ? selected.index : null;
+    return <article className="detail-copy">
+      <header className="detail-heading"><p className="meta">{story.date}</p><h2>{story.title}</h2><p className="detail-org">{story.org}</p>{story.sourceUrl && <a className="detail-source-link" href={story.sourceUrl} target="_blank" rel="noreferrer">{story.sourceLabel}<Arrow external /></a>}</header>
+      <div className="detail-prose">{story.narrative.map((paragraph, index) => <Fragment key={index}>
+        <p>{paragraph}</p>
+        {index === 0 && (researchVideoIndex !== null ? <ResearchFilm index={researchVideoIndex} lang={lang} /> : <figure className={`inline-media story-figure ${story.imageClass ?? ""}`}><div className="inline-media-frame"><img src={asset(story.image)} alt={story.alt} /></div><figcaption>{story.alt}</figcaption></figure>)}
+        {index === 1 && researchVideoIndex !== null && <ResearchSupplement index={researchVideoIndex} lang={lang} />}
+      </Fragment>)}</div>
+    </article>;
   }
 
   return <>
@@ -159,7 +164,7 @@ export default function Home() {
     </main>
     <footer className="site-footer content-width"><span>© 2026 Xingtong Lin</span></footer>
     <div className={`toast ${toast ? 'is-visible' : ''}`} role="status" aria-live="polite">{toast}</div>
-    {activeStory && <DetailDialog className={selected?.kind === "research" ? "research-detail-dialog" : ""} title={activeStory.title} closeLabel={t.close} onClose={() => setSelected(null)}>{renderStoryDetail(activeStory)}</DetailDialog>}
+    {activeStory && <DetailDialog className="story-detail-dialog" title={activeStory.title} closeLabel={t.close} onClose={() => setSelected(null)}>{renderStoryDetail(activeStory)}</DetailDialog>}
     {menuOpen && <DetailDialog title={formCopy.navAria} closeLabel={t.closeMenu} onClose={() => setMenuOpen(false)} className="mobile-menu-dialog"><nav aria-label={formCopy.navAria}>{sectionIds.map((id,i) => <a href={`#${id}`} key={id} aria-current={activeSection===id?'location':undefined} onClick={() => setMenuOpen(false)}>{t.nav[i]}<Arrow /></a>)}</nav><a className="menu-resume" href={asset('/Xingtong-Lin-Resume.pdf')} target="_blank" rel="noreferrer">{t.resume}<Arrow external /></a></DetailDialog>}
   </>;
 }

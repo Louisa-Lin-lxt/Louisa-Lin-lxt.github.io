@@ -1,13 +1,15 @@
-# Current local preview — 2026-11-04
+# Current local preview — 2026-11-05
 
 http://localhost:5175/
 
-The current version uses one pixel-signal motif, a clear portrait, edge-to-edge card image stages, and concise card previews. Research and Work Experience retain horizontal browsing.
+The current version keeps the horizontal Research and Work Experience cards. Their details read as short prose, with media placed between paragraphs and source links shown in blue with an underline.
 
 ![Desktop home, Chinese](./previews/refined-desktop-home-zh.png)
 ![Desktop research, Chinese](./previews/refined-desktop-research-zh.png)
 ![Desktop work experience, Chinese](./previews/refined-desktop-work-zh.png)
-![Research detail with top video](./previews/refined-desktop-research-detail-zh.png)
+![Research detail with an inline video](./previews/detail-inline-yttri-desktop-zh.png)
+![CARL figure within the Yttri narrative](./previews/detail-inline-carl-desktop-zh.png)
+![Mobile research detail](./previews/detail-inline-yttri-mobile-zh.png)
 ![Desktop interests](./previews/refined-desktop-interests-zh.png)
 ![Mobile home](./previews/refined-mobile-home-zh.png)
 ![Mobile horizontal research cards](./previews/refined-mobile-research-en.png)
