@@ -95,7 +95,7 @@ export default function Home() {
   function renderStoryDetail(story: Story, identity: NonNullable<typeof activeIdentity>) {
     const researchVideoIndex = selected?.kind === "research" && selected.index < 2 ? selected.index : null;
     return <article className="detail-copy">
-      <header className="detail-heading"><h2>{identity.organization}</h2><p className="detail-role">{identity.position}</p><p className="detail-context">{identity.affiliation && <span>{identity.affiliation}</span>}<time>{story.date}</time></p>{story.sourceUrl && <a className="detail-source-link" href={story.sourceUrl} target="_blank" rel="noreferrer">{story.sourceLabel}<Arrow external /></a>}</header>
+      <header className="detail-heading"><h2>{story.sourceUrl ? <a className="detail-heading-link" href={story.sourceUrl} target="_blank" rel="noreferrer" aria-label={`${identity.organization} · ${story.sourceLabel ?? identity.organization}`} title={story.sourceLabel}>{identity.organization}<Arrow external /></a> : identity.organization}</h2><p className="detail-role">{identity.position}</p><p className="detail-context">{identity.affiliation && <span>{identity.affiliation}</span>}<time>{story.date}</time></p></header>
       <div className="detail-prose">{story.narrative.map((paragraph, index) => <Fragment key={index}>
         <p>{paragraph}</p>
         {index === 0 && (researchVideoIndex !== null ? <ResearchFilm index={researchVideoIndex} lang={lang} /> : <figure className={`inline-media story-figure ${story.imageClass ?? ""}`}><div className="inline-media-frame"><img src={asset(story.image)} alt={story.alt} /></div><figcaption>{story.alt}</figcaption></figure>)}

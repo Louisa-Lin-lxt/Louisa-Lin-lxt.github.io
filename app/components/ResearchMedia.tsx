@@ -56,7 +56,7 @@ export function ResearchFilm({ index, lang }: { index: number; lang: "en" | "zh"
         ? <img src={asset(lab.poster)} alt={lang === "zh" ? lab.captionZh : lab.caption} />
         : <video ref={videoRef} src={asset(`/research-media/${lab.video}`)} poster={asset(lab.poster)} muted loop playsInline preload="metadata" onError={() => setFailed(true)} aria-label={lang === "zh" ? lab.captionZh : lab.caption} />}
     </div>
-    <figcaption><span>{lang === "zh" ? lab.captionZh : lab.caption}</span><a href={lab.source} target="_blank" rel="noreferrer">{lang === "zh" ? lab.sourceLabelZh : lab.sourceLabel}<span aria-hidden="true">↗</span></a></figcaption>
+    <figcaption><span>{lang === "zh" ? lab.captionZh : lab.caption}</span>{index !== 0 && <a href={lab.source} target="_blank" rel="noreferrer">{lang === "zh" ? lab.sourceLabelZh : lab.sourceLabel}<span aria-hidden="true">↗</span></a>}</figcaption>
   </figure>;
 }
 
@@ -65,6 +65,6 @@ export function ResearchSupplement({ index, lang }: { index: number; lang: "en" 
 
   return <figure className="inline-media research-supporting-figure">
     <a className="inline-media-frame" href={asset("/research-media/yttri-carl.png")} target="_blank" rel="noreferrer" aria-label={lang === "zh" ? "打开 CARL 实验任务原图" : "Open full-size CARL task figure"}><img src={asset("/research-media/yttri-carl.png")} alt={lang === "zh" ? "Yttri Lab CARL 实验任务：选择端口与奖励概率示意图" : "Yttri Lab CARL task: choice ports and reward probabilities"} width="1200" height="329" /></a>
-    <figcaption><span>{lang === "zh" ? "CARL 实验任务示意图" : "CARL task figure"}</span><a href="https://labs.bio.cmu.edu/yttri/research/" target="_blank" rel="noreferrer">{lang === "zh" ? "Yttri Lab 官网" : "Yttri Lab website"}<span aria-hidden="true">↗</span></a></figcaption>
+    <figcaption><span>{lang === "zh" ? "CARL 实验任务示意图" : "CARL task figure"}</span><a href="https://labs.bio.cmu.edu/yttri/research/" target="_blank" rel="noreferrer">{lang === "zh" ? "Yttri Lab 研究页面" : "Yttri Lab research page"}<span aria-hidden="true">↗</span></a></figcaption>
   </figure>;
 }
