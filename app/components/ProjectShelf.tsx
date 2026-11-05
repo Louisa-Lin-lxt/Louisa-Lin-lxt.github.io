@@ -1,17 +1,21 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
-import { experience, researchTimeline } from "../content/portfolio";
+import { experience, researchTimeline, type Story } from "../content/portfolio";
 import type { Lang } from "./usePersistentLanguage";
 
 export type ShelfKind = 'research' | 'experience';
 const basePath=process.env.NEXT_PUBLIC_BASE_PATH??'';
-function ShelfCard({kind,index,lang,onOpen,onKeyDown}:{kind:ShelfKind;index:number;lang:Lang;onOpen:(index:number)=>void;onKeyDown:(event:KeyboardEvent<HTMLButtonElement>)=>void}) {
-  const story=(kind==='research'?researchTimeline:experience)[lang][index];
-  const organization=story.org.split(' · ')[0];
+export function storyIdentity(story:Story,kind:ShelfKind,index:number,lang:Lang) {
+  const [organization,...affiliation]=story.org.split(' · ');
   const position=kind==='research'
     ? (index===2 ? (lang==='en'?'Summer Research Participant':'暑期研究参与者') : (lang==='en'?'Research Assistant':'研究助理'))
     : story.title;
+  return {organization,affiliation:affiliation.join(' · '),position};
+}
+function ShelfCard({kind,index,lang,onOpen,onKeyDown}:{kind:ShelfKind;index:number;lang:Lang;onOpen:(index:number)=>void;onKeyDown:(event:KeyboardEvent<HTMLButtonElement>)=>void}) {
+  const story=(kind==='research'?researchTimeline:experience)[lang][index];
+  const {organization,position}=storyIdentity(story,kind,index,lang);
   const titleId=`${kind}-card-${index}-title`;
   return <article className={`project-card ${kind}-card`} aria-labelledby={titleId}>
     <figure className="shelf-figure"><div className="shelf-image"><img src={`${basePath}${story.image}`} alt={story.alt} loading="lazy"/></div></figure>

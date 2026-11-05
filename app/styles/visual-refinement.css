@@ -36,21 +36,22 @@ section[id] { scroll-margin-top: 20px; }
 .contact-form-panel textarea { min-height: 128px; }
 .submit-button { min-height: 48px; font-size: 14px; }
 .site-footer p,.site-footer>span { font-size: 12px; }
-.story-detail-dialog { width: min(900px, calc(100% - 64px)); }
+.story-detail-dialog { width: min(900px, calc(100% - 64px)); border-color: #e1ebf2; background: linear-gradient(180deg, #f4f9fc 0, #ffffff 220px); box-shadow: 0 28px 80px #173b552c; }
+.story-detail-dialog::backdrop { background: #18314658; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 .story-detail-dialog .dialog-surface { display: block; min-height: 0; }
-.story-detail-dialog .dialog-close { float: right; margin: 16px 16px -58px 0; }
+.story-detail-dialog .dialog-close { float: right; margin: 16px 16px -58px 0; background: #ffffffde; border-color: #d7e5ed; }
 .story-detail-dialog .detail-copy { max-width: 780px; margin: 0 auto; padding: 68px 48px 52px; }
-.story-detail-dialog .detail-heading { padding-bottom: 22px; border-bottom: 1px solid #e1e9ef; margin-bottom: 27px; }
-.story-detail-dialog .detail-heading .meta { font-size: 13px; color: #647689; }
-.story-detail-dialog .detail-heading h2 { max-width: 650px; margin: 8px 0 11px; font-size: clamp(27px, 3vw, 34px); line-height: 1.18; letter-spacing: -.03em; }
-.story-detail-dialog .detail-org { margin: 0; font-size: 15px; line-height: 1.5; color: #4c6173; }
-.story-detail-dialog .detail-source-link { display: inline-flex; align-items: center; gap: 5px; min-height: 31px; margin-top: 9px; color: #145c9d; font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
-.story-detail-dialog .detail-source-link:hover, .story-detail-dialog .inline-media a:hover { color: #0b4079; }
+.story-detail-dialog .detail-heading { padding-bottom: 23px; border-bottom: 1px solid #d8e6ef; margin-bottom: 27px; }
+.story-detail-dialog .detail-heading h2 { max-width: 650px; margin: 0 0 10px; color: #142b42; font-size: clamp(30px, 3.2vw, 37px); line-height: 1.16; letter-spacing: -.035em; }
+.story-detail-dialog .detail-role { margin: 0 0 5px; color: #315570; font-size: 16px; font-weight: 600; line-height: 1.5; }
+.story-detail-dialog .detail-context { display: flex; flex-wrap: wrap; gap: 3px 18px; margin: 0; color: #667b8c; font-size: 13px; line-height: 1.6; }
+.story-detail-dialog .detail-source-link { display: inline-flex; align-items: center; gap: 5px; min-height: 31px; margin-top: 11px; color: #1767b2; font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.story-detail-dialog .detail-source-link:hover, .story-detail-dialog .inline-media a:hover { color: #0d4e87; }
 .story-detail-dialog .detail-source-link .arrow-icon { width: 15px; height: 15px; }
-.story-detail-dialog .detail-prose > p { margin: 0 0 20px; color: #34495b; font-size: 16px; line-height: 1.85; }
+.story-detail-dialog .detail-prose > p { margin: 0 0 20px; color: #2d4354; font-size: 16px; line-height: 1.82; }
 .story-detail-dialog .detail-prose > p:last-child { margin-bottom: 0; }
 .story-detail-dialog .inline-media { width: 100%; margin: 27px 0 29px; }
-.story-detail-dialog .inline-media-frame { overflow: hidden; border: 1px solid #dce7ee; border-radius: 14px; background: #f3f7fa; box-shadow: 0 8px 24px #1b41560a; }
+.story-detail-dialog .inline-media-frame { overflow: hidden; border: 1px solid #d6e5ee; border-radius: 14px; background: #f0f6fa; box-shadow: 0 10px 28px #2246600d; }
 .story-detail-dialog .research-film-screen { height: auto; aspect-ratio: 1052 / 606; }
 .story-detail-dialog .research-film-1 .research-film-screen { aspect-ratio: 960 / 722; }
 .story-detail-dialog .research-film-screen video, .story-detail-dialog .research-film-screen > img { object-fit: contain; }
@@ -62,8 +63,8 @@ section[id] { scroll-margin-top: 20px; }
 .story-detail-dialog .story-figure.official-glunovo img { max-width: 470px; }
 .story-detail-dialog .research-supporting-figure .inline-media-frame { padding: 12px; }
 .story-detail-dialog .research-supporting-figure img { display: block; width: 100%; height: auto; max-height: none; }
-.story-detail-dialog .inline-media figcaption { display: flex; justify-content: space-between; gap: 6px 18px; flex-wrap: wrap; margin-top: 10px; color: #647689; font-size: 13px; line-height: 1.55; }
-.story-detail-dialog .inline-media figcaption a { display: inline-flex; align-items: center; gap: 5px; color: #145c9d; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.story-detail-dialog .inline-media figcaption { display: flex; justify-content: space-between; gap: 6px 18px; flex-wrap: wrap; margin-top: 10px; color: #667b8c; font-size: 13px; line-height: 1.55; }
+.story-detail-dialog .inline-media figcaption a { display: inline-flex; align-items: center; gap: 5px; color: #1767b2; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 .story-detail-dialog :is(.detail-source-link, .inline-media a):focus-visible { outline: 3px solid #2885d1; outline-offset: 4px; border-radius: 3px; }
 
 /* Let the portrait, project images and one pixel signal carry the visual identity. */
