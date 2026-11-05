@@ -18,7 +18,7 @@ function ShelfCard({kind,index,lang,onOpen,onKeyDown}:{kind:ShelfKind;index:numb
   const {organization,position}=storyIdentity(story,kind,index,lang);
   const titleId=`${kind}-card-${index}-title`;
   return <article className={`project-card ${kind}-card`} aria-labelledby={titleId}>
-    <figure className="shelf-figure"><div className="shelf-image"><img src={`${basePath}${story.image}`} alt={story.alt} loading="lazy"/></div></figure>
+    <figure className="shelf-figure"><div className={`shelf-image ${story.imageClass ?? ''}`}><img src={`${basePath}${story.image}`} alt={story.alt} loading="lazy"/></div></figure>
     <div className="shelf-card-copy">
       <h3 id={titleId}>{organization}</h3>
       <p className="shelf-position">{position}</p>

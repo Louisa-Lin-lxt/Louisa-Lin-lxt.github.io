@@ -122,7 +122,6 @@ export default function Home() {
             <h1>{t.name}</h1>
             <p className="hero-intro">{t.heroIntro}</p><p className="hero-work">{t.heroWork}</p>
             <div className="hero-actions"><a className="button button-primary" href="#research">{t.research}<Arrow /></a><a className="button button-secondary" href={asset('/Xingtong-Lin-Resume.pdf')} target="_blank" rel="noreferrer">{t.resume}<Arrow external /></a></div>
-            <a href="#contact" className="quiet-link">{t.contact}<Arrow /></a>
           </div>
           <div className="hero-composition">
             <figure className="hero-portrait"><img src={asset('/optimized/louisa-portrait.jpg')} alt={lang === "en" ? "Portrait of Louisa Lin" : "林星潼的个人照片"} width="722" height="900" fetchPriority="high" /><figcaption><strong>{t.photoCaption}</strong><span>{t.photoMeta}</span></figcaption></figure>

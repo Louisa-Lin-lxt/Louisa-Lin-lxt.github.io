@@ -16,8 +16,8 @@ section[id] { scroll-margin-top: 20px; }
 .hero .current-role { width: 73%; padding: 18px 22px; }
 .about-section { gap: 76px; }
 .about-copy h2 { max-width: 465px; }
-.education-list dd { font-size: 13px; line-height: 1.55; max-width: 180px; }
-.honor { font-size: 12px; }
+.education-list dd { font-size: 14px; line-height: 1.55; max-width: 210px; }
+.honor { font-size: 13px; }
 .supporting-details { font-size: 14px; }
 .shelf-image { height: 168px; }
 .experience-card .shelf-image { height: 150px; }
@@ -40,8 +40,8 @@ section[id] { scroll-margin-top: 20px; }
 .story-detail-dialog::backdrop { background: #18314658; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
 .story-detail-dialog .dialog-surface { display: block; min-height: 0; }
 .story-detail-dialog .dialog-close { float: right; margin: 16px 16px -58px 0; background: #ffffffde; border-color: #d7e5ed; }
-.story-detail-dialog .detail-copy { max-width: 780px; margin: 0 auto; padding: 68px 48px 52px; }
-.story-detail-dialog .detail-heading { padding-bottom: 23px; border-bottom: 1px solid #d8e6ef; margin-bottom: 27px; }
+.story-detail-dialog .detail-copy { max-width: 780px; margin: 0 auto; padding: 54px 48px 44px; }
+.story-detail-dialog .detail-heading { padding-bottom: 20px; border-bottom: 1px solid #d8e6ef; margin-bottom: 20px; }
 .story-detail-dialog .detail-heading h2 { max-width: 650px; margin: 0 0 10px; color: #142b42; font-size: clamp(30px, 3.2vw, 37px); line-height: 1.16; letter-spacing: -.035em; }
 .story-detail-dialog .detail-role { margin: 0 0 5px; color: #315570; font-size: 16px; font-weight: 600; line-height: 1.5; }
 .story-detail-dialog .detail-context { display: flex; flex-wrap: wrap; gap: 3px 18px; margin: 0; color: #667b8c; font-size: 13px; line-height: 1.6; }
@@ -50,7 +50,7 @@ section[id] { scroll-margin-top: 20px; }
 .story-detail-dialog .detail-source-link .arrow-icon { width: 15px; height: 15px; }
 .story-detail-dialog .detail-prose > p { margin: 0 0 20px; color: #2d4354; font-size: 16px; line-height: 1.82; }
 .story-detail-dialog .detail-prose > p:last-child { margin-bottom: 0; }
-.story-detail-dialog .inline-media { width: 100%; margin: 27px 0 29px; }
+.story-detail-dialog .inline-media { width: 100%; margin: 22px 0 24px; }
 .story-detail-dialog .inline-media-frame { overflow: hidden; border: 1px solid #d6e5ee; border-radius: 14px; background: #f0f6fa; box-shadow: 0 10px 28px #2246600d; }
 .story-detail-dialog .research-film-screen { height: auto; aspect-ratio: 1052 / 606; }
 .story-detail-dialog .research-film-1 .research-film-screen { aspect-ratio: 960 / 722; }
@@ -77,7 +77,6 @@ section[id] { scroll-margin-top: 20px; }
 .hero .hero-portrait { top: 0; left: 4%; width: 92%; height: 500px; border: 1px solid #dce6ed; border-radius: 22px; box-shadow: 0 30px 70px #29466318, 0 1px 3px #2946630b; }
 .hero .hero-portrait img { object-position: 50% 34%; }
 .hero-actions { margin-top: 34px; }
-.hero-copy>.quiet-link { margin-top: 18px; font-size: 14px; }
 .site-header { box-shadow: 0 1px 0 #dfe8ef9e; }
 .section { padding-block: 74px; }
 .research-section, .experience-section, .interests-section { padding-block: 64px; }
@@ -87,7 +86,11 @@ section[id] { scroll-margin-top: 20px; }
 .project-card:hover { transform: translateY(-4px); border-color: #a9c9dc; box-shadow: 0 17px 36px #1e425a16; }
 .shelf-figure, .experience-card .shelf-figure { padding: 0; }
 .shelf-image, .experience-card .shelf-image { height: 206px; padding: 20px; border: 0; border-bottom: 1px solid #e3ebf0; border-radius: 18px 18px 0 0; background: radial-gradient(ellipse at 50% 10%, #ffffff 0, #ecf3f7 100%); }
-.experience-card .shelf-image { height: 178px; padding: 25px; background: linear-gradient(145deg, #f4f8fa, #eaf2f7); }
+.experience-card .shelf-image { height: 178px; padding: 16px 20px; background: linear-gradient(145deg, #f4f8fa, #eaf2f7); }
+.experience-card .shelf-image.official-next>img { width: min(88%, 225px); }
+.experience-card .shelf-image.official-glunovo>img { width: min(100%, 230px); }
+.experience-card .shelf-image.official-cmu>img { width: min(100%, 128px); }
+.experience-card .shelf-image.official-yovo>img { width: min(85%, 225px); }
 .shelf-image>img { filter: drop-shadow(0 9px 14px #26465b0b); }
 .project-card:hover .shelf-image>img { transform: scale(1.025); }
 .shelf-card-copy, .experience-card .shelf-card-copy { padding: 21px 22px 17px; }
@@ -133,9 +136,8 @@ section[id] { scroll-margin-top: 20px; }
   .hero-work { font-size: 15px; }
   .hero .hero-composition { height: 360px; }
   .hero .hero-portrait { left: 3%; width: 94%; height: 360px; border-radius: 19px; }
-  .hero .hero-copy>.quiet-link { font-size: 14px; }
   .hero-actions .button { min-height: 48px; font-size: 14px; }
-  .education-list dd { font-size: 12px; max-width: 160px; }
+  .education-list dd { font-size: 13px; max-width: 175px; }
   .shelf-image { height: 194px; }
   .experience-card .shelf-image { height: 168px; }
   .card-rail { scrollbar-width: none; }
@@ -159,8 +161,8 @@ section[id] { scroll-margin-top: 20px; }
   .site-footer p,.site-footer>span { font-size: 11px; }
   .detail-dialog .dialog-close { width: 44px; height: 44px; }
   .story-detail-dialog { width: calc(100% - 24px); }
-  .story-detail-dialog .detail-copy { padding: 66px 23px 36px; }
-  .story-detail-dialog .detail-heading { margin-bottom: 23px; }
+  .story-detail-dialog .detail-copy { padding: 58px 23px 34px; }
+  .story-detail-dialog .detail-heading { margin-bottom: 18px; }
   .story-detail-dialog .detail-heading h2 { font-size: 27px; }
   .story-detail-dialog .detail-prose > p { font-size: 15px; line-height: 1.82; }
   .story-detail-dialog .story-figure .inline-media-frame { min-height: 150px; padding: 14px; }
