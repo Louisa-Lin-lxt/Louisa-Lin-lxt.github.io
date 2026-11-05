@@ -1,100 +1,48 @@
-# vinext-starter
+# Louisa Lin — personal website
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+Bilingual personal portfolio for Xingtong “Louisa” Lin: neuroscience / neuroengineering, technology, and early-stage investing. Built with React, Vinext and a lightweight pixel Canvas hero. Supports static GitHub Pages hosting.
 
-## Prerequisites
+## Run locally
 
-- Node.js `>=22.13.0`
+Requires Node.js 22.13+.
 
-## Quick Start
-
-```bash
+```sh
 npm install
-npm run dev
-npm run build
+npm run dev -- --port 5174
 ```
 
-This starter does not use `wrangler.jsonc`.
+## Validate and preview the GitHub Pages build
 
-## Included Shape
-
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
-
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```sh
+npm run lint
+npm run typecheck:frontend
+npm test
+npm run preview:pages
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+The static preview runs at `http://localhost:5175`. `npm test` builds with the existing GitHub Pages configuration and then checks the exported routes, assets, résumé PDF and core links. To check an already built export, use `npm run test:export`.
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+`npm run build:pages` writes deployable static files to **`dist/client`**. Publish that directory through the existing GitHub Pages deployment. This redesign does not publish or change the remote site automatically. The canonical site URL is `https://louisa-lin-lxt.github.io/`.
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+## Edit content and presentation
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+- `app/content/portfolio.ts`: English and Chinese biography, roles, research contributions, source credits and UI copy.
+- `app/HomeClient.tsx`: page structure, navigation, contact form and project details.
+- `app/globals.css`: shared typography, layout, responsive breakpoints and motion.
+- `app/components/DetailDialog.tsx`: native dialog, focus loop, Escape and focus restoration.
+- `app/components/HeroNeuralField.tsx`: original live-site neural background reworked into pixel paths and pointer-triggered signals.
+- `app/components/NeuralProgress.tsx`: one fixed pixel neuron that lights with reading progress; desktop nodes navigate sections.
+- `app/components/ProjectShelf.tsx`: compact horizontal research/experience cards and manual browsing.
+- Project cards contain no decorative neurons, folders or signal controls.
+- `app/interactive-portfolio.css`: scoped hero, horizontal shelf and interaction styling.
+- `app/interests/InterestsClient.tsx`: interest tabs and deep links; normal scrolling.
+- `public/optimized`: resized web images. Original source files remain in `public`.
+- `public/Xingtong-Lin-Resume.pdf`: existing résumé, unchanged.
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+English uses Arial. Chinese requests DengXian / 等线, with PingFang SC and Microsoft YaHei fallbacks; a licensed DengXian web font is not bundled. Research images use `object-fit: contain`. Cards show organization, position and dates; full project descriptions and institutional links live in details.
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+The contact form retains the existing FormSubmit service. Delivery and recipient activation need an authorized real submission to verify. Contact uses platform-logo links and a WeChat copy control; the personal email and duplicate bottom résumé link are intentionally hidden. Personal photo collections, playlists and travel entries are still awaiting source content.
 
-## Useful Commands
+## Scope of checks
 
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
-
-## Learn More
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+See `docs/visual-redesign.md` for design decisions and `docs/verification.md` for the test record and preview images. The frontend typecheck deliberately excludes the optional Cloudflare worker/database starter. The repository-wide TypeScript command still needs those pre-existing Cloudflare binding declarations.

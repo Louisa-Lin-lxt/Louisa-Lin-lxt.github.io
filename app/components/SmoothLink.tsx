@@ -1,29 +1,10 @@
 "use client";
 
-import { useEffect, type MouseEvent, type ReactNode } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import type { ReactNode } from "react";
 
+/** Use real links so static exports, new tabs, and browser history keep working. */
 export function SmoothLink({ href, className, children, ariaLabel, reveal = false, onNavigate }: { href: string; className?: string; children: ReactNode; ariaLabel?: string; reveal?: boolean; onNavigate?: () => void }) {
-  const router = useRouter();
-  const pathname = usePathname();
   const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   const browserHref = href.startsWith("/") ? `${basePath}${href}` : href;
-
-  useEffect(() => {
-    const root = document.documentElement;
-    root.classList.remove("route-leaving");
-    root.classList.add("route-arriving");
-    const timer = window.setTimeout(() => root.classList.remove("route-arriving"), 520);
-    return () => window.clearTimeout(timer);
-  }, [pathname]);
-
-  const navigate = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    onNavigate?.();
-    document.documentElement.classList.add("route-leaving");
-    window.setTimeout(() => router.push(browserHref), 260);
-  };
-
-  return <a href={browserHref} className={className} aria-label={ariaLabel} data-reveal={reveal || undefined} onClick={navigate}>{children}</a>;
+  return <a href={browserHref} className={className} aria-label={ariaLabel} data-reveal={reveal || undefined} onClick={onNavigate}>{children}</a>;
 }

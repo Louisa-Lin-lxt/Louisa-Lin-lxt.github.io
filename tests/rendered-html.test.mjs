@@ -1,91 +1,59 @@
-import assert from "node:assert/strict";
-import { access, readFile, readdir } from "node:fs/promises";
-import test from "node:test";
+import assert from 'node:assert/strict';
+import { readFile, access, stat } from 'node:fs/promises';
+import test from 'node:test';
+const root = new URL('../dist/client/',import.meta.url);
+const home = await readFile(new URL('index.html',root),'utf8');
+const interests = await readFile(new URL('interests.html',root),'utf8');
 
-const developmentPreviewMeta =
-  /<meta(?=[^>]*\bname=["']codex-preview["'])(?=[^>]*\bcontent=["']development["'])[^>]*>/i;
-const templateRoot = new URL("../", import.meta.url);
-const previewRoot = new URL("../app/_sites-preview/", import.meta.url);
-
-async function render() {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
-
-  return worker.fetch(
-    new Request("http://localhost/", {
-      headers: { accept: "text/html" },
-    }),
-    {
-      ASSETS: {
-        fetch: async () => new Response("Not found", { status: 404 }),
-      },
-    },
-    {
-      waitUntil() {},
-      passThroughOnException() {},
-    },
-  );
-}
-
-test("server-renders the starter loading skeleton", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-
-  const html = await response.text();
-  assert.match(html, developmentPreviewMeta);
-  assert.match(html, /<title>Your site is taking shape<\/title>/i);
-  assert.match(html, /Building your site/);
-  assert.match(html, /Your site is taking shape/);
-  assert.match(
-    html,
-    /Your first version will appear here automatically when it’s ready\./,
-  );
-  assert.doesNotMatch(html, /Codex/);
-  assert.match(html, /react-loading-skeleton/);
-  assert.match(html, /role="status"/);
+test('static export renders the portfolio and navigable sections without a worker',()=>{
+  assert.match(home,/<h1\b/);
+  assert.match(home,/Xingtong/);
+  assert.match(home,/Research Assistant/);
+  assert.match(home,/Beyond Academics/);
+  assert.match(home,/Work Experience/);
+  assert.match(home,/Venture Fellow/);
+  for (const id of ['home','about','research','experience','interests','contact']) {
+    assert.ok(home.includes(`id="${id}"`),`Missing section ${id}`);
+    assert.ok(home.includes(`href="#${id}"`),`Missing anchor for ${id}`);
+  }
+  assert.doesNotMatch(home,/Your site is taking shape|Building your site/);
 });
 
-test("keeps the loading skeleton scoped and disposable", async () => {
-  const [preview, css, page, layout, packageJson, files] = await Promise.all([
-    readFile(new URL("SkeletonPreview.tsx", previewRoot), "utf8"),
-    readFile(new URL("preview.css", previewRoot), "utf8"),
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../package.json", import.meta.url), "utf8"),
-    readdir(previewRoot),
-  ]);
+test('all local image, script, stylesheet and PDF references exist in exported pages',async()=>{
+  const refs=new Set([...`${home}${interests}`.matchAll(/(?:src|href)="(\/[^"?#]*)/g)].map(match=>match[1]).filter(path=>/\.(?:js|css|png|jpg|jpeg|webp|gif|svg|pdf)$/.test(path)));
+  assert.ok(refs.size>10,'Expected real asset references');
+  await Promise.all([...refs].map(path=>access(new URL(`.${path}`,root))));
+  const pdf=await readFile(new URL('Xingtong-Lin-Resume.pdf',root));
+  assert.equal(pdf.subarray(0,5).toString(),'%PDF-');
+  assert.ok((await stat(new URL('optimized/louisa-portrait.jpg',root))).size < 200_000);
+  assert.ok((await stat(new URL('optimized/he-lab.jpg',root))).size < 150_000);
+});
 
-  assert.deepEqual(files.sort(), ["SkeletonPreview.tsx", "preview.css"]);
-  assert.match(preview, /from "react-loading-skeleton"/);
-  assert.match(preview, /baseColor="#eceae7"/);
-  assert.match(preview, /highlightColor="#f9f8f6"/);
-  assert.match(preview, /duration=\{2\.8\}/);
-  assert.match(preview, /sites-skeleton-search-placeholder/);
-  assert.match(packageJson, /"react-loading-skeleton": "3\.5\.0"/);
+test('research cards identify the labs and retain direct contact links',()=>{
+  assert.match(home,/Bin He Lab/);
+  assert.match(home,/Yttri Lab/);
+  assert.match(home,/Wang Lab/);
+  assert.doesNotMatch(home,/href="mailto:/);
+  for (const name of ["linkedin", "wechat", "xiaohongshu"]) assert.ok(home.includes(`/social/${name}.svg`));
+  assert.match(home,/href="https:\/\/www.linkedin.com\/in\/lxt\/"/);
+});
 
-  const shellIndex = preview.indexOf('className="sites-skeleton-shell"');
-  const statusIndex = preview.indexOf('className="sites-skeleton-status"');
-  assert.ok(shellIndex >= 0 && statusIndex > shellIndex);
-  assert.match(css, /position:\s*fixed/);
-  assert.match(css, /inset:\s*0/);
-  assert.match(css, /opacity:\s*0\.52/);
-  assert.match(css, /prefers-reduced-motion:\s*reduce/);
-  assert.doesNotMatch(css, /#020617|canvas|pets|progress/i);
-  assert.doesNotMatch(
-    preview,
-    /loading-spinner|status-mark|status-progress|canvas|cookie|random/i,
-  );
+test('static HTML keeps all seven horizontal cards and usable interaction fallbacks',()=>{
+  assert.equal([...home.matchAll(/class="project-card research-card"/g)].length,3);
+  assert.equal([...home.matchAll(/class="project-card experience-card"/g)].length,4);
+  assert.equal([...home.matchAll(/class="card-open"/g)].length,7);
+  assert.equal([...home.matchAll(/aria-haspopup="dialog"/g)].length,7);
+  assert.match(home,/class="hero-neural-field"/);
+  assert.match(home,/class="neural-progress"/);
+  assert.match(home,/aria-label="Reading progress"/);
+  assert.doesNotMatch(home,/Send a signal|Illustrative signal|memo-folder|neural-explorer|shelf-signal|shelf-contribution|topic-controls|contact-resume/);
+});
 
-  assert.match(page, /export const metadata:\s*Metadata/);
-  assert.match(page, /"codex-preview": "development"/);
-  assert.match(page, /<SkeletonPreview \/>/);
-  assert.match(layout, /title:\s*"Starter Project"/);
-  assert.doesNotMatch(layout, /codex-preview|_sites-preview|themeColor|\bViewport\b/);
-  assert.doesNotMatch(css, /(^|\s)(html|body)\s*\{/m);
-
-  await assert.rejects(
-    access(new URL("public/_sites-preview", templateRoot)),
-  );
+test('interest route exports direct topic links and keyboard tabs',()=>{
+  for(const topic of ['music','taotao','travel']) assert.ok(home.includes(`/interests#${topic}`));
+  assert.match(interests,/role="tablist"/);
+  assert.match(interests,/role="tabpanel"/);
+  assert.match(interests,/href="\/" class="brand home-link"/);
+  assert.match(interests,/Music, Taotao, and travel are part of my life beyond research/);
+  assert.doesNotMatch(interests,/Personal collections are being prepared|Content in preparation|STORIES COMING SOON/);
 });

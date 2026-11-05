@@ -3,13 +3,11 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-export function InterestWorld({ active, onOpen, label }: { active: number; onOpen: () => void; label: string }) {
+export function InterestWorld({ active, label }: { active: number; label: string }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(active);
-  const onOpenRef = useRef(onOpen);
 
   useEffect(() => { activeRef.current = active; }, [active]);
-  useEffect(() => { onOpenRef.current = onOpen; }, [onOpen]);
 
   useEffect(() => {
     const host = hostRef.current;
@@ -18,8 +16,9 @@ export function InterestWorld({ active, onOpen, label }: { active: number; onOpe
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
     camera.position.set(0, 0.1, 9.6);
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    let renderer: THREE.WebGLRenderer;
+    try { renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "low-power" }); } catch { return; }
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.06;
@@ -51,9 +50,9 @@ export function InterestWorld({ active, onOpen, label }: { active: number; onOpe
     const dark = new THREE.MeshPhysicalMaterial({ color: 0x09172b, roughness: 0.3, clearcoat: .7 });
     const dogFur = new THREE.MeshPhysicalMaterial({ color: 0xf7f2e7, roughness: .72, clearcoat: .12 });
     const dogCream = new THREE.MeshPhysicalMaterial({ color: 0xfffcf4, roughness: .68, clearcoat: .1 });
-    const dogShadow = new THREE.MeshPhysicalMaterial({ color: 0xded8cb, roughness: .76, clearcoat: .08 });
-    const vestBlue = new THREE.MeshPhysicalMaterial({ color: 0x6f8799, roughness: .48, clearcoat: .35 });
-    const vestAccent = new THREE.MeshPhysicalMaterial({ color: 0x4f9fe9, roughness: .4, clearcoat: .5 });
+    const dogShadow = new THREE.MeshPhysicalMaterial({ color: 0xe6ddcd, roughness: .76, clearcoat: .08 });
+    const vestBlue = new THREE.MeshPhysicalMaterial({ color: 0x4e6385, roughness: .48, clearcoat: .35 });
+    const vestAccent = new THREE.MeshPhysicalMaterial({ color: 0x4e6385, roughness: .4, clearcoat: .5 });
 
     const music = new THREE.Group();
     const record = new THREE.Mesh(new THREE.CylinderGeometry(1.58, 1.58, .22, 72), navy);
@@ -84,19 +83,10 @@ export function InterestWorld({ active, onOpen, label }: { active: number; onOpe
 
     const animal = new THREE.Group();
     const body = new THREE.Mesh(new THREE.SphereGeometry(1.02, 48, 34), dogFur);
-    body.scale.set(.92, 1.08, .82);
+    body.scale.set(.7, 1.12, .72);
     body.position.y = -.86;
     body.castShadow = true;
     animal.add(body);
-    const vest = new THREE.Mesh(new THREE.SphereGeometry(.91, 48, 34), vestBlue);
-    vest.scale.set(.94, .96, .9);
-    vest.position.set(0, -.9, .1);
-    vest.castShadow = true;
-    animal.add(vest);
-    const vestBib = new THREE.Mesh(new THREE.SphereGeometry(.72, 40, 28), vestBlue);
-    vestBib.scale.set(1.15, .56, .34);
-    vestBib.position.set(0, -.61, .87);
-    animal.add(vestBib);
     const head = new THREE.Mesh(new THREE.SphereGeometry(1.12, 56, 40), dogFur);
     head.scale.set(1.12, 1, .88);
     head.position.y = .63;
@@ -109,14 +99,14 @@ export function InterestWorld({ active, onOpen, label }: { active: number; onOpe
       animal.add(curl);
     });
     [-1, 1].forEach((side) => {
-      const ear = new THREE.Mesh(new THREE.CapsuleGeometry(.29, .44, 10, 24), dogShadow);
-      ear.scale.set(.82, 1, .52);
-      ear.position.set(side * 1.07, .48, -.03);
+      const ear = new THREE.Mesh(new THREE.CapsuleGeometry(.38, .37, 10, 24), dogShadow);
+      ear.scale.set(1.05, 1.05, .78);
+      ear.position.set(side * 1.08, .38, .12);
       ear.rotation.z = side * -.18;
       animal.add(ear);
       const eye = new THREE.Mesh(new THREE.SphereGeometry(.095, 20, 14), dark);
       eye.scale.set(.9, 1.06, .68);
-      eye.position.set(side * .31, .7, 1.08);
+      eye.position.set(side * .36, .7, 1.08);
       animal.add(eye);
       const leg = new THREE.Mesh(new THREE.CapsuleGeometry(.26, .42, 10, 24), dogFur);
       leg.position.set(side * .58, -1.48, .52);
@@ -126,11 +116,6 @@ export function InterestWorld({ active, onOpen, label }: { active: number; onOpe
       paw.scale.set(1.1, .7, .86);
       paw.position.set(side * .58, -1.82, .66);
       animal.add(paw);
-      const shoulder = new THREE.Mesh(new THREE.CapsuleGeometry(.16, .48, 8, 20), vestAccent);
-      shoulder.scale.set(1, 1, .4);
-      shoulder.position.set(side * .68, -.43, .66);
-      shoulder.rotation.z = side * -.42;
-      animal.add(shoulder);
     });
     const muzzle = new THREE.Mesh(new THREE.SphereGeometry(.46, 32, 24), dogCream);
     muzzle.scale.set(1.13, .7, .5);
@@ -142,17 +127,34 @@ export function InterestWorld({ active, onOpen, label }: { active: number; onOpe
     animal.add(nose);
     [-1, 1].forEach((side) => {
       const eyeGlint = new THREE.Mesh(new THREE.SphereGeometry(.028, 10, 8), cream);
-      eyeGlint.position.set(side * .285, .73, 1.158);
+      eyeGlint.position.set(side * .335, .73, 1.158);
       animal.add(eyeGlint);
-      const cheek = new THREE.Mesh(new THREE.SphereGeometry(.11, 16, 12), new THREE.MeshBasicMaterial({ color: 0xeabfba, transparent: true, opacity: .42 }));
-      cheek.scale.set(1.25, .62, .35);
-      cheek.position.set(side * .5, .29, 1.16);
-      animal.add(cheek);
     });
-    const vestEdge = new THREE.Mesh(new THREE.TorusGeometry(.67, .055, 12, 48), paleBlue);
-    vestEdge.rotation.x = Math.PI / 2;
-    vestEdge.position.set(0, -.2, .04);
-    animal.add(vestEdge);
+    // The photo shows narrow patterned straps, rather than a solid vest.
+    const harnessCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-.62, -.35, .4), new THREE.Vector3(-.43, -.72, .7),
+      new THREE.Vector3(0, -.91, .79), new THREE.Vector3(.43, -.72, .7),
+      new THREE.Vector3(.62, -.35, .4),
+    ]);
+    animal.add(new THREE.Mesh(new THREE.TubeGeometry(harnessCurve, 32, .075, 8, false), vestBlue));
+    const chestStrap = new THREE.Mesh(new THREE.CapsuleGeometry(.075, .69, 6, 12), vestAccent);
+    chestStrap.position.set(0, -1.25, .75);
+    animal.add(chestStrap);
+    const harnessSpot = new THREE.MeshPhysicalMaterial({ color: 0xcbd3dd, roughness: .8 });
+    for (let i = 1; i < 10; i++) {
+      const point = harnessCurve.getPoint(i / 10);
+      const spot = new THREE.Mesh(new THREE.SphereGeometry(.038, 8, 6), i % 3 ? harnessSpot : navy);
+      spot.scale.z = .35;
+      spot.position.copy(point); spot.position.z += .07;
+      animal.add(spot);
+    }
+    const muzzleShade = new THREE.MeshPhysicalMaterial({ color: 0xd5bea0, roughness: .85 });
+    [-1, 1].forEach(side => {
+      const tuft = new THREE.Mesh(new THREE.SphereGeometry(.19, 20, 14), muzzleShade);
+      tuft.scale.set(1, .85, .45);
+      tuft.position.set(side * .24, .32, 1.24);
+      animal.add(tuft);
+    });
     const tail = new THREE.Mesh(new THREE.TorusGeometry(.4, .16, 14, 34, Math.PI * 1.55), dogFur);
     tail.position.set(1.02, -.93, -.5);
     tail.rotation.set(.3, -.4, -.35);
@@ -206,14 +208,6 @@ export function InterestWorld({ active, onOpen, label }: { active: number; onOpe
     floor.position.set(1.05, -2.45, -.4);
     floor.scale.y = .35;
     scene.add(floor);
-
-    const bubbles = Array.from({ length: 22 }, (_, index) => {
-      const bubble = new THREE.Mesh(new THREE.SphereGeometry(.025 + (index % 5) * .018, 12, 8), new THREE.MeshBasicMaterial({ color: index % 3 === 1 ? 0xffd447 : 0x8fd1ff, transparent: true, opacity: .5 }));
-      bubble.position.set((Math.random() - .5) * 12, (Math.random() - .5) * 7, -1 - Math.random() * 4);
-      bubble.userData.speed = .25 + Math.random() * .4;
-      scene.add(bubble);
-      return bubble;
-    });
 
     const resize = () => {
       const rect = host.getBoundingClientRect();
@@ -278,24 +272,20 @@ export function InterestWorld({ active, onOpen, label }: { active: number; onOpe
       pointerDownY = event.clientY;
       lastDragX = event.clientX;
       lastDragY = event.clientY;
-      if (activeRef.current === 1) {
-        dragging = true;
-        dragVelocity = 0;
-        host.classList.add("is-dragging");
-      }
+      dragging = true;
+      dragVelocity = 0;
+      host.classList.add("is-dragging");
       renderer.domElement.setPointerCapture(event.pointerId);
       event.preventDefault();
       event.stopPropagation();
     };
     const onPointerUp = (event: PointerEvent) => {
       if (!pointerDownHit) return;
-      const moved = Math.hypot(event.clientX - pointerDownX, event.clientY - pointerDownY);
-      const shouldOpen = moved < 8 && hitsActiveIcon(event);
+      if (Math.hypot(event.clientX - pointerDownX, event.clientY - pointerDownY) < 8 && hitsActiveIcon(event)) dragYaw += .4;
       dragging = false;
       pointerDownHit = false;
       if (renderer.domElement.hasPointerCapture(event.pointerId)) renderer.domElement.releasePointerCapture(event.pointerId);
       host.classList.remove("is-dragging");
-      if (shouldOpen) onOpenRef.current();
       event.preventDefault();
       event.stopPropagation();
     };
@@ -305,29 +295,49 @@ export function InterestWorld({ active, onOpen, label }: { active: number; onOpe
       if (renderer.domElement.hasPointerCapture(event.pointerId)) renderer.domElement.releasePointerCapture(event.pointerId);
       host.classList.remove("is-dragging");
     };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") dragYaw -= .22;
+      else if (event.key === "ArrowRight") dragYaw += .22;
+      else if (event.key === "ArrowUp") dragPitch = THREE.MathUtils.clamp(dragPitch - .12, -.32, .32);
+      else if (event.key === "ArrowDown") dragPitch = THREE.MathUtils.clamp(dragPitch + .12, -.32, .32);
+      else if (event.key === "Enter" || event.key === " ") dragYaw += .4;
+      else return;
+      event.preventDefault();
+      dragVelocity = 0;
+    };
     window.addEventListener("pointermove", onPointerMove);
+    host.addEventListener("keydown", onKeyDown);
     renderer.domElement.addEventListener("pointerdown", onPointerDown);
     renderer.domElement.addEventListener("pointerup", onPointerUp);
     renderer.domElement.addEventListener("pointercancel", onPointerCancel);
 
     const animationStarted = performance.now();
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    let frame = 0;
-    const animate = () => {
+    const motionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let frame = 0, lastFrame = 0;
+    let visible = true;
+    const visibilityObserver = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; });
+    visibilityObserver.observe(host);
+    const animate = (now: number) => {
+      frame = requestAnimationFrame(animate);
+      if (document.hidden || !visible || now-lastFrame < 32) return;
+      lastFrame = now;
+      const reducedMotion = motionQuery.matches;
       const time = (performance.now() - animationStarted) * .001;
-      stage.rotation.y += (pointerX - stage.rotation.y) * .035;
-      stage.rotation.x += (-pointerY - stage.rotation.x) * .035;
+      stage.rotation.y += ((reducedMotion ? 0 : pointerX) - stage.rotation.y) * .035;
+      stage.rotation.x += ((reducedMotion ? 0 : -pointerY) - stage.rotation.x) * .035;
       groups.forEach((group, index) => {
         const selected = index === activeRef.current;
         group.visible = selected || group.scale.x > .015;
         const targetScale = selected ? 1 : .001;
-        const nextScale = group.scale.x + (targetScale - group.scale.x) * .095;
+        const nextScale = reducedMotion ? targetScale : group.scale.x + (targetScale - group.scale.x) * .095;
         group.scale.setScalar(nextScale);
         const targetX = selected ? 0 : (index < activeRef.current ? -3.2 : 3.2);
-        group.position.x += (targetX - group.position.x) * .09;
+        group.position.x += (targetX - group.position.x) * (reducedMotion ? 1 : .09);
       });
-      const motionScale = reducedMotion ? .24 : 1;
+      const motionScale = reducedMotion ? 0 : 1;
       music.rotation.z += .006 * motionScale;
+      music.rotation.y = dragYaw;
+      music.rotation.x = dragPitch;
       equalizer.forEach((bar, index) => { bar.scale.y = .82 + Math.sin(time * 2.7 + index * .7) * .25 * motionScale; });
       if (!dragging) {
         dragYaw += dragVelocity;
@@ -337,26 +347,24 @@ export function InterestWorld({ active, onOpen, label }: { active: number; onOpe
       animal.rotation.y = dragYaw + Math.sin(time * .8) * .055 * motionScale;
       animal.rotation.x = dragPitch + Math.sin(time * .62) * .02 * motionScale;
       tail.rotation.z = -.35 + Math.sin(time * 3.4) * .28 * motionScale;
-      travel.rotation.y += .005 * motionScale;
+      travel.rotation.y = dragYaw + time * .16 * motionScale;
+      travel.rotation.x = dragPitch;
       plane.position.y = 1.35 + Math.sin(time * 1.35) * .22 * motionScale;
       plane.rotation.z = -.18 + Math.sin(time * .9) * .08 * motionScale;
       clouds.forEach((cloud, index) => { cloud.position.x += Math.sin(time * .5 + index) * .003 * motionScale; });
-      bubbles.forEach((bubble) => {
-        bubble.position.y += bubble.userData.speed * .0035 * motionScale;
-        if (bubble.position.y > 4) bubble.position.y = -4;
-      });
       renderer.render(scene, camera);
-      frame = requestAnimationFrame(animate);
     };
-    animate();
+    frame = requestAnimationFrame(animate);
 
     return () => {
       cancelAnimationFrame(frame);
+      visibilityObserver.disconnect();
       cancelAnimationFrame(firstResizeFrame);
       window.clearTimeout(routeResizeTimer);
       resizeObserver.disconnect();
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onPointerMove);
+      host.removeEventListener("keydown", onKeyDown);
       renderer.domElement.removeEventListener("pointerdown", onPointerDown);
       renderer.domElement.removeEventListener("pointerup", onPointerUp);
       renderer.domElement.removeEventListener("pointercancel", onPointerCancel);
@@ -373,16 +381,10 @@ export function InterestWorld({ active, onOpen, label }: { active: number; onOpe
   }, []);
 
   return <div
-    className={`interest-world-canvas ${active === 1 ? "is-draggable" : ""}`}
+    className="interest-world-canvas is-draggable"
     ref={hostRef}
     role="button"
     tabIndex={0}
-    aria-label={`${label}. Click to open details.`}
-    onKeyDown={(event) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        onOpen();
-      }
-    }}
+    aria-label={label}
   />;
 }

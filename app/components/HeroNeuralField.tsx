@@ -40,7 +40,8 @@ export function HeroNeuralField() {
     let signalStarted = -10;
     const nodes: NodePoint[] = [];
     const edges: Edge[] = [];
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    let visible=true, lastDraw=0, dirty=true;
 
     const seedNetwork = () => {
       nodes.length = 0;
@@ -90,6 +91,7 @@ export function HeroNeuralField() {
       canvas.style.height = `${height}px`;
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       seedNetwork();
+      dirty=true;
     };
 
     const updatePointer = (event: PointerEvent) => {
@@ -98,84 +100,65 @@ export function HeroNeuralField() {
       if (!pointerActive) return;
       pointerX = event.clientX - rect.left;
       pointerY = event.clientY - rect.top;
+      dirty=true;
     };
     const sendSignal = (event: PointerEvent) => {
       updatePointer(event);
-      if (!pointerActive || reducedMotion) return;
+      if (!pointerActive || motion.matches || (event.target as Element).closest("a,button,input")) return;
+      canvas.dataset.pulse=String(Number(canvas.dataset.pulse??0)+1);
       signalX = pointerX;
       signalY = pointerY;
       signalStarted = performance.now() * .001;
     };
-    const pointerLeave = () => { pointerActive = false; };
+    const pointerLeave = () => { pointerActive = false; dirty=true; };
 
+    const square=(x:number,y:number,size:number,color:string)=>{
+      context.fillStyle=color;
+      context.fillRect(Math.round(x/4)*4,Math.round(y/4)*4,size,size);
+    };
     const draw = (timestamp: number) => {
-      const time = timestamp * .001;
-      context.clearRect(0, 0, width, height);
-      const signalRadius = Math.max(0, (time - signalStarted) * 320);
-
-      edges.forEach((edge) => {
-        const a = nodes[edge.from];
-        const b = nodes[edge.to];
-        if (!a || !b) return;
-        const distanceToPointer = pointerActive ? Math.min(Math.hypot(a.x - pointerX, a.y - pointerY), Math.hypot(b.x - pointerX, b.y - pointerY)) : 999;
-        const awake = Math.max(0, 1 - distanceToPointer / 230);
-        const waveDistance = Math.abs(Math.hypot((a.x + b.x) / 2 - signalX, (a.y + b.y) / 2 - signalY) - signalRadius);
-        const wave = signalRadius < 700 ? Math.max(0, 1 - waveDistance / 95) : 0;
-        const sample = quadraticPoint(a, b, edge.bend, .5);
-        context.beginPath();
-        context.moveTo(a.x, a.y);
-        context.quadraticCurveTo(sample.controlX, sample.controlY, b.x, b.y);
-        context.strokeStyle = `rgba(40,122,218,${.07 + awake * .22 + wave * .28})`;
-        context.lineWidth = .75 + awake * .65 + wave * .7;
-        context.stroke();
-
-        const progress = reducedMotion ? edge.phase : (time * edge.speed + edge.phase + awake * .18 + wave * .24) % 1;
-        const pulse = quadraticPoint(a, b, edge.bend, progress);
-        const pulseStrength = .18 + awake * .72 + wave * .7;
-        context.beginPath();
-        context.arc(pulse.x, pulse.y, 1.5 + pulseStrength * 2.3, 0, Math.PI * 2);
-        context.fillStyle = `rgba(${edge.from % 7 === 0 ? "255,205,49" : "68,160,244"},${Math.min(.92, pulseStrength)})`;
-        context.shadowBlur = 7 + pulseStrength * 12;
-        context.shadowColor = edge.from % 7 === 0 ? "rgba(255,205,49,.55)" : "rgba(47,141,240,.48)";
-        context.fill();
-        context.shadowBlur = 0;
+      frame=requestAnimationFrame(draw);
+      if(!visible||document.hidden||timestamp-lastDraw<40||motion.matches&&!dirty)return;
+      lastDraw=timestamp;dirty=false;
+      const time=timestamp*.001;
+      context.clearRect(0,0,width,height);
+      const signalRadius=Math.max(0,(time-signalStarted)*320);
+      edges.forEach(edge=>{
+        const a=nodes[edge.from],b=nodes[edge.to];
+        const distance=pointerActive?Math.min(Math.hypot(a.x-pointerX,a.y-pointerY),Math.hypot(b.x-pointerX,b.y-pointerY)):999;
+        const awake=motion.matches?0:Math.max(0,1-distance/210);
+        const waveDistance=Math.abs(Math.hypot((a.x+b.x)/2-signalX,(a.y+b.y)/2-signalY)-signalRadius);
+        const wave=!motion.matches&&signalRadius<900?Math.max(0,1-waveDistance/80):0;
+        const count=Math.ceil(Math.hypot(b.x-a.x,b.y-a.y)/3);
+        const seen=new Set<string>();
+        for(let i=0;i<=count;i++){
+          const point=quadraticPoint(a,b,edge.bend,i/count),x=Math.round(point.x/4)*4,y=Math.round(point.y/4)*4,key=`${x}:${y}`;
+          if(seen.has(key))continue;seen.add(key);
+          square(x,y,2,`rgba(72,133,188,${.10+awake*.16+wave*.28})`);
+        }
+        const t=motion.matches?edge.phase:(time*edge.speed+edge.phase)%1;
+        const pulse=quadraticPoint(a,b,edge.bend,t);
+        square(pulse.x,pulse.y,4,`rgba(${edge.from%7===0?'197,163,65':'52,130,192'},${.35+awake*.3+wave*.3})`);
       });
-
-      nodes.forEach((node) => {
-        const distance = pointerActive ? Math.hypot(node.x - pointerX, node.y - pointerY) : 999;
-        const awake = Math.max(0, 1 - distance / 190);
-        const waveDistance = Math.abs(Math.hypot(node.x - signalX, node.y - signalY) - signalRadius);
-        const wave = signalRadius < 700 ? Math.max(0, 1 - waveDistance / 70) : 0;
-        const pulse = reducedMotion ? 1 : 1 + Math.sin(time * 1.2 + node.phase * Math.PI * 2) * .12;
-        context.beginPath();
-        context.arc(node.x, node.y, node.radius * pulse + awake * 2.2 + wave * 2.6, 0, Math.PI * 2);
-        context.fillStyle = node.yellow ? `rgba(255,205,49,${.46 + awake * .35 + wave * .2})` : `rgba(47,141,240,${.32 + awake * .42 + wave * .24})`;
-        context.shadowBlur = 8 + awake * 18 + wave * 16;
-        context.shadowColor = node.yellow ? "rgba(255,205,49,.5)" : "rgba(47,141,240,.42)";
-        context.fill();
-        context.shadowBlur = 0;
+      nodes.forEach(node=>{
+        const distance=pointerActive?Math.hypot(node.x-pointerX,node.y-pointerY):999;
+        const awake=motion.matches?0:Math.max(0,1-distance/180);
+        const waveDistance=Math.abs(Math.hypot(node.x-signalX,node.y-signalY)-signalRadius);
+        const wave=!motion.matches&&signalRadius<900?Math.max(0,1-waveDistance/70):0;
+        const color=`rgba(${node.yellow?'195,160,56':'45,126,187'},${.4+awake*.3+wave*.3})`;
+        square(node.x,node.y,4,color);
+        for(const [x,y] of [[-4,0],[4,0],[0,-4],[0,4]])square(node.x+x,node.y+y,3,color);
+        if(awake+wave>.6)for(const [x,y]of[[-8,0],[8,0],[0,-8],[0,8]])square(node.x+x,node.y+y,2,color);
       });
-
-      if (pointerActive && !reducedMotion) {
-        const glow = context.createRadialGradient(pointerX, pointerY, 0, pointerX, pointerY, 180);
-        glow.addColorStop(0, "rgba(47,141,240,.085)");
-        glow.addColorStop(.55, "rgba(255,212,71,.028)");
-        glow.addColorStop(1, "rgba(47,141,240,0)");
-        context.fillStyle = glow;
-        context.fillRect(pointerX - 180, pointerY - 180, 360, 360);
-      }
-      if (signalRadius > 1 && signalRadius < 700 && !reducedMotion) {
-        context.beginPath();
-        context.arc(signalX, signalY, signalRadius, 0, Math.PI * 2);
-        context.strokeStyle = `rgba(255,205,49,${Math.max(0, .24 - signalRadius / 3000)})`;
-        context.lineWidth = 1.2;
-        context.stroke();
-      }
-      frame = requestAnimationFrame(draw);
     };
 
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(hero);
+    const intersection=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;dirty=true;});
+    intersection.observe(hero);
+    const refresh=()=>{dirty=true;};
+    motion.addEventListener("change",refresh);
+    document.addEventListener("visibilitychange",refresh);
     window.addEventListener("pointermove", updatePointer, { passive: true });
     window.addEventListener("pointerdown", sendSignal);
     hero.addEventListener("pointerleave", pointerLeave);
@@ -184,6 +167,9 @@ export function HeroNeuralField() {
     return () => {
       cancelAnimationFrame(frame);
       resizeObserver.disconnect();
+      intersection.disconnect();
+      motion.removeEventListener("change",refresh);
+      document.removeEventListener("visibilitychange",refresh);
       window.removeEventListener("pointermove", updatePointer);
       window.removeEventListener("pointerdown", sendSignal);
       hero.removeEventListener("pointerleave", pointerLeave);

@@ -6,6 +6,7 @@ export type Lang = "en" | "zh";
 
 const storageKey = "xingtong-portfolio-language";
 const languageEvent = "xingtong-language-change";
+let fallbackLanguage: Lang = "en";
 
 function subscribe(callback: () => void) {
   window.addEventListener("storage", callback);
@@ -17,7 +18,7 @@ function subscribe(callback: () => void) {
 }
 
 function getSnapshot(): Lang {
-  return window.localStorage.getItem(storageKey) === "zh" ? "zh" : "en";
+  try { return window.localStorage.getItem(storageKey) === "zh" ? "zh" : "en"; } catch { return fallbackLanguage; }
 }
 
 function getServerSnapshot(): Lang {
@@ -32,7 +33,8 @@ export function usePersistentLanguage() {
   }, [lang]);
 
   const setLang = useCallback((next: Lang) => {
-    window.localStorage.setItem(storageKey, next);
+    fallbackLanguage = next;
+    try { window.localStorage.setItem(storageKey, next); } catch { /* Session language still works with storage disabled. */ }
     document.documentElement.lang = next === "zh" ? "zh-CN" : "en";
     window.dispatchEvent(new Event(languageEvent));
   }, []);

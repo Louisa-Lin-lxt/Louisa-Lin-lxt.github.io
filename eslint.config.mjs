@@ -10,6 +10,7 @@ import tseslint from "typescript-eslint";
 const eslintConfig = defineConfig([
   globalIgnores([
     ".next/**",
+    ".agents/**",
     "dist/**",
     "out/**",
     "build/**",
@@ -23,6 +24,8 @@ const eslintConfig = defineConfig([
   jsxA11y.flatConfigs.recommended,
   next.configs["core-web-vitals"],
   {
+    // Static GitHub Pages assets are optimized ahead of time; no image server.
+    rules: { "@next/next/no-img-element": "off" },
     languageOptions: {
       globals: {
         ...globals.browser,

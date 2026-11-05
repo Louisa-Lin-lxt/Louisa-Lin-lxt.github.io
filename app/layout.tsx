@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./interactive-portfolio.css";
+import "./styles/visual-refinement.css";
 
 export const dynamic = "force-static";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://xingtong-lin-world.louisa20051018.chatgpt.site";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://louisa-lin-lxt.github.io";
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const base = new URL(siteUrl);
 const title = "Xingtong (Louisa) Lin — Neuroscience & Biomedical Technology";
 const description =
-  "The interactive portfolio of Xingtong (Louisa) Lin, a Carnegie Mellon neuroscience and biomedical technology student researching EEG, behavior, cells, and useful technology.";
+  "Xingtong (Louisa) Lin — CMU Neuroscience and Biomedical Technology, a Business Administration minor, and Venture Fellow at Next Capital. Explore research, experience, and interests.";
 
 export const metadata: Metadata = {
     metadataBase: base,

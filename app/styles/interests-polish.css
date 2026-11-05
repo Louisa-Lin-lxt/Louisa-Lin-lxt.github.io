@@ -1,0 +1,147 @@
+.interests-page .interests-intro {
+  max-width: 680px;
+  padding-top: clamp(54px, 7vw, 86px);
+}
+
+.interests-page .interests-intro h1 {
+  font-size: clamp(38px, 4.6vw, 56px);
+  line-height: 1.08;
+  letter-spacing: -.045em;
+}
+
+.interests-page .interests-intro > p:last-child {
+  max-width: 520px;
+  margin-top: 18px;
+  color: #526476;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.interests-page .interest-tabs {
+  gap: 8px;
+  margin-top: 36px;
+}
+
+.interests-page .interest-tabs button {
+  min-height: 44px;
+  padding: 10px 22px;
+  border-color: #dce6ee;
+  background: rgba(255, 255, 255, .72);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease;
+}
+
+.interests-page .interest-tabs button:hover:not([aria-selected="true"]) {
+  background: #eaf3f9;
+  border-color: #c8dce9;
+}
+
+.interests-page .interest-tabs button[aria-selected="true"] {
+  background: #173650;
+  border-color: #173650;
+  color: #fff;
+}
+
+.interests-page .interest-stage:not(.is-pixel-gallery) {
+  min-height: 500px;
+  background: radial-gradient(ellipse at 74% 37%, rgba(214, 233, 246, .74), transparent 51%),
+    linear-gradient(130deg, #f8fbfd, #edf4f9);
+  border-color: #dfe9f0;
+}
+
+.interests-page .interest-story {
+  width: 32%;
+  max-width: 320px;
+  margin: 70px 0 0 58px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.interests-page .interest-story h2 {
+  font-size: clamp(32px, 3vw, 40px);
+  letter-spacing: -.035em;
+}
+
+.interests-page .interest-story > p {
+  margin-top: 18px;
+  color: #526476;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.interests-page .interest-world-canvas canvas {
+  cursor: default;
+}
+
+.interests-page .interest-world-canvas.is-clickable canvas {
+  cursor: grab;
+}
+
+.interests-page .interest-world-canvas.is-dragging canvas {
+  cursor: grabbing;
+}
+
+.interests-page .interest-hint {
+  right: 30px;
+  bottom: 26px;
+  color: #607587;
+  font-size: 12px;
+}
+
+.interests-page .interests-footer {
+  justify-content: flex-end;
+  color: #708193;
+  font-size: 12px;
+}
+
+@media (max-width: 760px) {
+  .interests-page .interests-intro {
+    padding-top: 46px;
+  }
+
+  .interests-page .interests-intro h1 {
+    font-size: clamp(36px, 10vw, 44px);
+  }
+
+  .interests-page .interests-intro > p:last-child {
+    font-size: 15px;
+  }
+
+  .interests-page .interest-tabs {
+    margin-top: 28px;
+  }
+
+  .interests-page .interest-stage:not(.is-pixel-gallery) {
+    min-height: 540px;
+    border-radius: 22px;
+  }
+
+  .interests-page .interest-story {
+    width: auto;
+    max-width: 330px;
+    margin: 30px 28px 0;
+  }
+
+  .interests-page .interest-story h2 {
+    font-size: 32px;
+  }
+
+  .interests-page .interest-story > p {
+    margin-top: 12px;
+    font-size: 15px;
+  }
+
+  .interests-page .interest-world-canvas {
+    inset: 176px 0 30px;
+  }
+
+  .interests-page .interest-hint {
+    right: 20px;
+    bottom: 18px;
+    left: 20px;
+    font-size: 12px;
+  }
+}
