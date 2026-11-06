@@ -41,7 +41,19 @@ export function HeroNeuralField() {
     const nodes: NodePoint[] = [];
     const edges: Edge[] = [];
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
-    let visible=true, lastDraw=0, dirty=true;
+    let visible = false;
+    let lastDraw = 0;
+    let dirty = true;
+
+    const cancelDraw = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = 0;
+    };
+    const scheduleDraw = () => {
+      if (!frame && visible && !document.hidden && (dirty || !motion.matches)) {
+        frame = requestAnimationFrame(draw);
+      }
+    };
 
     const seedNetwork = () => {
       nodes.length = 0;
@@ -91,7 +103,8 @@ export function HeroNeuralField() {
       canvas.style.height = `${height}px`;
       context.setTransform(ratio, 0, 0, ratio, 0, 0);
       seedNetwork();
-      dirty=true;
+      dirty = true;
+      scheduleDraw();
     };
 
     const updatePointer = (event: PointerEvent) => {
@@ -100,7 +113,8 @@ export function HeroNeuralField() {
       if (!pointerActive) return;
       pointerX = event.clientX - rect.left;
       pointerY = event.clientY - rect.top;
-      dirty=true;
+      dirty = true;
+      scheduleDraw();
     };
     const sendSignal = (event: PointerEvent) => {
       updatePointer(event);
@@ -109,17 +123,24 @@ export function HeroNeuralField() {
       signalX = pointerX;
       signalY = pointerY;
       signalStarted = performance.now() * .001;
+      dirty = true;
+      scheduleDraw();
     };
-    const pointerLeave = () => { pointerActive = false; dirty=true; };
+    const pointerLeave = () => { pointerActive = false; dirty = true; scheduleDraw(); };
 
     const square=(x:number,y:number,size:number,color:string)=>{
       context.fillStyle=color;
       context.fillRect(Math.round(x/4)*4,Math.round(y/4)*4,size,size);
     };
     const draw = (timestamp: number) => {
-      frame=requestAnimationFrame(draw);
-      if(!visible||document.hidden||timestamp-lastDraw<40||motion.matches&&!dirty)return;
-      lastDraw=timestamp;dirty=false;
+      frame = 0;
+      if (!visible || document.hidden || (motion.matches && !dirty)) return;
+      if (timestamp - lastDraw < 40 && !motion.matches) {
+        scheduleDraw();
+        return;
+      }
+      lastDraw = timestamp;
+      dirty = false;
       const time=timestamp*.001;
       context.clearRect(0,0,width,height);
       const signalRadius=Math.max(0,(time-signalStarted)*320);
@@ -134,7 +155,7 @@ export function HeroNeuralField() {
         for(let i=0;i<=count;i++){
           const point=quadraticPoint(a,b,edge.bend,i/count),x=Math.round(point.x/4)*4,y=Math.round(point.y/4)*4,key=`${x}:${y}`;
           if(seen.has(key))continue;seen.add(key);
-          square(x,y,2,`rgba(72,133,188,${.10+awake*.16+wave*.28})`);
+          square(x,y,2,`rgba(72,133,188,${.14+awake*.16+wave*.28})`);
         }
         const t=motion.matches?edge.phase:(time*edge.speed+edge.phase)%1;
         const pulse=quadraticPoint(a,b,edge.bend,t);
@@ -145,27 +166,36 @@ export function HeroNeuralField() {
         const awake=motion.matches?0:Math.max(0,1-distance/180);
         const waveDistance=Math.abs(Math.hypot(node.x-signalX,node.y-signalY)-signalRadius);
         const wave=!motion.matches&&signalRadius<900?Math.max(0,1-waveDistance/70):0;
-        const color=`rgba(${node.yellow?'195,160,56':'45,126,187'},${.4+awake*.3+wave*.3})`;
+        const color=`rgba(${node.yellow?'195,160,56':'45,126,187'},${.46+awake*.3+wave*.3})`;
         square(node.x,node.y,4,color);
         for(const [x,y] of [[-4,0],[4,0],[0,-4],[0,4]])square(node.x+x,node.y+y,3,color);
         if(awake+wave>.6)for(const [x,y]of[[-8,0],[8,0],[0,-8],[0,8]])square(node.x+x,node.y+y,2,color);
       });
+      scheduleDraw();
     };
 
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(hero);
-    const intersection=new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;dirty=true;});
+    const intersection=new IntersectionObserver(([entry])=>{
+      visible = entry.isIntersecting;
+      dirty = true;
+      if (visible) scheduleDraw();
+      else cancelDraw();
+    });
     intersection.observe(hero);
-    const refresh=()=>{dirty=true;};
+    const refresh=()=>{
+      dirty = true;
+      if (document.hidden) cancelDraw();
+      else scheduleDraw();
+    };
     motion.addEventListener("change",refresh);
     document.addEventListener("visibilitychange",refresh);
     window.addEventListener("pointermove", updatePointer, { passive: true });
     window.addEventListener("pointerdown", sendSignal);
     hero.addEventListener("pointerleave", pointerLeave);
     resize();
-    frame = requestAnimationFrame(draw);
     return () => {
-      cancelAnimationFrame(frame);
+      cancelDraw();
       resizeObserver.disconnect();
       intersection.disconnect();
       motion.removeEventListener("change",refresh);

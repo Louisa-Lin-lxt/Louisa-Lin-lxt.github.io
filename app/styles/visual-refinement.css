@@ -84,25 +84,27 @@ section[id] { scroll-margin-top: 36px; }
 .research-section, .experience-section { padding-bottom: 44px; }
 .section-heading { margin-bottom: 30px; }
 .research-section { background: linear-gradient(160deg, #edf4f8, #f5f9fb 72%); }
-.project-card { border-radius: 19px; border-color: #dce6ed; background: #fdfefe; box-shadow: 0 7px 24px #1e425a0a; overflow: hidden; }
-.project-card:hover { transform: translateY(-3px); border-color: #9dc6dc; box-shadow: 0 16px 34px #1e425a15; }
+.project-card { border-radius: 19px; border-color: #d9e3e9; background: #fcfdfd; box-shadow: 0 5px 17px #1e425a08, 0 1px 2px #1e425a06; overflow: hidden; }
+.project-card:hover { transform: translateY(-3px); border-color: #80b4d0; box-shadow: 0 17px 36px #1e425a16; }
 .shelf-figure, .experience-card .shelf-figure { padding: 0; }
-.shelf-image, .experience-card .shelf-image { height: 196px; padding: 20px; border: 0; border-bottom: 1px solid #e3ebf0; border-radius: 18px 18px 0 0; background: radial-gradient(ellipse at 50% 10%, #ffffff 0, #ecf3f7 100%); }
-.shelf-image::after { content: ""; position: absolute; right: 0; bottom: 0; left: 0; height: 3px; background: linear-gradient(90deg, #4f9ac0, #2f78b2 77%, #cbb05c); transform: scaleX(0); transform-origin: left; transition: transform .25s cubic-bezier(.2,.75,.25,1); pointer-events: none; }
+.shelf-image, .experience-card .shelf-image { height: 196px; padding: 20px; border: 0; border-bottom: 1px solid #dfe8ed; border-radius: 18px 18px 0 0; background: #edf3f6; }
+.research-card .shelf-image { padding: 17px 20px; background: linear-gradient(145deg, #eaf2f6, #f1f6f8); }
+.research-card .shelf-image>img { width: 100%; height: 100%; padding: 9px; object-fit: contain; background: #fff; border: 1px solid #d9e5eb; border-radius: 8px; box-shadow: 0 3px 9px #173b550b; }
+.shelf-image::after { content: ""; position: absolute; right: 0; bottom: 0; left: 0; height: 3px; background: linear-gradient(90deg, #5b9fc0, #2f78b2 81%, #cbb05c); transform: scaleX(0); transform-origin: left; transition: transform .19s cubic-bezier(.2,.75,.25,1); pointer-events: none; }
 .project-card:is(:hover, :focus-within) .shelf-image::after { transform: scaleX(1); }
-.experience-card .shelf-image { height: 170px; padding: 16px 20px; background: linear-gradient(145deg, #f4f8fa, #eaf2f7); }
+.experience-card .shelf-image { height: 170px; padding: 16px 20px; background: linear-gradient(145deg, #f4f8fa, #eaf2f6); }
 .experience-card .shelf-image.official-next>img { width: min(88%, 225px); }
 .experience-card .shelf-image.official-glunovo>img { width: min(100%, 230px); }
 .experience-card .shelf-image.official-cmu>img { width: min(100%, 128px); }
 .experience-card .shelf-image.official-yovo>img { width: min(85%, 225px); }
-.shelf-image>img { filter: drop-shadow(0 9px 14px #26465b0b); }
+.shelf-image>img { filter: none; }
 .project-card:hover .shelf-image>img { transform: scale(1.025); }
 .shelf-card-copy, .experience-card .shelf-card-copy { padding: 20px 22px 16px; }
 .shelf-card-copy h3, .experience-card .shelf-card-copy h3 { font-size: 22px; line-height: 1.25; min-height: 0; margin-bottom: 8px; }
 .experience-card .shelf-card-copy h3 { font-size: 20px; }
-.shelf-position, .experience-card .shelf-position { min-height: 0; margin-bottom: 8px; color: #41647c; font-size: 14px; line-height: 1.5; }
+.shelf-position, .experience-card .shelf-position { min-height: 0; margin-top: auto; margin-bottom: 8px; color: #41647c; font-size: 14px; line-height: 1.5; }
 .shelf-card-copy>time { color: #66798a; margin-bottom: 12px; }
-.shelf-card-bottom { min-height: 48px; border-color: #e4edf2; }
+.shelf-card-bottom { min-height: 48px; margin-top: 0; border-color: #e4edf2; }
 .card-open { font-size: 14px; }
 .interest-list { gap: 0; border-block: 1px solid #dce6ed; }
 .interests-section { background: #f7f9fb; }
@@ -131,7 +133,7 @@ section[id] { scroll-margin-top: 36px; }
   .experience-card .shelf-image { height: 166px; }
 }
 @media (max-width: 700px) {
-  .site-header { height: 66px; }
+  .site-header { height: 66px; background: #fafbfd; backdrop-filter: none; -webkit-backdrop-filter: none; }
   .hero { padding-top: 66px; }
   .section { padding-block: 60px; }
   .about-section, .research-section, .experience-section { padding-bottom: 42px; }
