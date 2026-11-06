@@ -136,13 +136,13 @@ export default function Home() {
       </section>
 
       <section id="research" className="section research-section" aria-labelledby="research-heading">
-        <div className="content-width"><div className="section-heading" data-reveal><div><h2 id="research-heading">{t.researchTitle}</h2></div></div>
+        <div className="content-width"><div className="section-heading" data-reveal><div><h2 id="research-heading">{t.researchTitle}</h2></div><p className="section-summary">{t.researchIntro}</p></div>
           <ProjectShelf kind="research" lang={lang} onOpen={index=>setSelected({kind:'research',index})}/>
         </div>
       </section>
 
       <section id="experience" className="section content-width experience-section" aria-labelledby="experience-heading">
-        <div className="section-heading" data-reveal><div><h2 id="experience-heading">{t.experienceTitle}</h2></div></div>
+        <div className="section-heading" data-reveal><div><h2 id="experience-heading">{t.experienceTitle}</h2></div><p className="section-summary">{t.experienceIntro}</p></div>
         <ProjectShelf kind="experience" lang={lang} onOpen={index=>setSelected({kind:'experience',index})}/>
       </section>
 
