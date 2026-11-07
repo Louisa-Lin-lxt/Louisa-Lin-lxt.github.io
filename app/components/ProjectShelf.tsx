@@ -11,16 +11,17 @@ export function storyIdentity(story:Story,kind:ShelfKind,index:number,lang:Lang)
   const position=kind==='research'
     ? (index===2 ? (lang==='en'?'Summer Research Participant':'暑期研究参与者') : (lang==='en'?'Research Assistant':'研究助理'))
     : story.title;
-  return {organization,affiliation:affiliation.join(' · '),position};
+  return {organization,affiliation:affiliation.join(' · '),institution:affiliation[0]??'',position};
 }
 function ShelfCard({kind,index,lang,onOpen,onKeyDown}:{kind:ShelfKind;index:number;lang:Lang;onOpen:(index:number)=>void;onKeyDown:(event:KeyboardEvent<HTMLButtonElement>)=>void}) {
   const story=(kind==='research'?researchTimeline:experience)[lang][index];
-  const {organization,position}=storyIdentity(story,kind,index,lang);
+  const {organization,institution,position}=storyIdentity(story,kind,index,lang);
   const titleId=`${kind}-card-${index}-title`;
   return <article className={`project-card ${kind}-card`} aria-labelledby={titleId}>
     <figure className="shelf-figure"><div className={`shelf-image ${story.imageClass ?? ''}`}><img src={`${basePath}${story.image}`} alt={story.alt} loading="lazy"/></div></figure>
     <div className="shelf-card-copy">
       <h3 id={titleId}>{organization}</h3>
+      {kind==='research'&&institution&&<p className="shelf-institution">{institution}</p>}
       <p className="shelf-position">{position}</p>
       <time>{story.date}</time>
       <div className="shelf-card-bottom"><button type="button" className="card-open" onKeyDown={onKeyDown} aria-haspopup="dialog" aria-label={`${lang==='en'?'View details':'查看详情'}: ${organization}`} onClick={()=>onOpen(index)}><span>{lang==='en'?'View details':'查看详情'}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div>

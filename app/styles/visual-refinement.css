@@ -16,8 +16,7 @@ section[id] { scroll-margin-top: 36px; }
 .hero .current-role { width: 73%; padding: 18px 22px; }
 .about-section { gap: 76px; }
 .about-copy h2 { max-width: 465px; }
-.about-copy>p:first-of-type { color: #233c50; font-size: 18px; font-weight: 500; line-height: 1.7; }
-.about-copy>p:last-of-type { color: #516575; font-size: 15px; line-height: 1.75; }
+.about-copy>p { color: #314a5e; font-size: 18px; font-weight: 400; line-height: 1.7; }
 .education-list dd { font-size: 14px; line-height: 1.55; max-width: 210px; }
 .honor { font-size: 14px; font-weight: 600; }
 .supporting-details { font-size: 14px; }
@@ -104,6 +103,7 @@ section[id] { scroll-margin-top: 36px; }
 .project-card:hover .shelf-image>img { transform: scale(1.025); }
 .shelf-card-copy, .experience-card .shelf-card-copy { padding: 20px 22px 16px; }
 .shelf-card-copy h3, .experience-card .shelf-card-copy h3 { font-size: 22px; line-height: 1.25; min-height: 0; margin-bottom: 8px; }
+.research-card .shelf-institution { margin: 0 0 13px; color: #526d80; font-size: 14px; line-height: 1.45; }
 .experience-card .shelf-card-copy h3 { font-size: 20px; }
 .shelf-position, .experience-card .shelf-position { min-height: 0; margin-top: auto; margin-bottom: 8px; color: #41647c; font-size: 14px; line-height: 1.5; }
 .shelf-card-copy>time { color: #66798a; margin-bottom: 12px; }
@@ -142,7 +142,7 @@ section[id] { scroll-margin-top: 36px; }
   .about-section, .research-section, .experience-section { padding-bottom: 42px; }
   .section-heading { margin-bottom: 24px; }
   .section-heading>.section-summary { margin-top: 11px; max-width: 500px; font-size: 14px; line-height: 1.55; }
-  .about-copy>p:first-of-type { font-size: 17px; line-height: 1.65; }
+  .about-copy>p { font-size: 17px; line-height: 1.65; }
   .hero .hero-inner { grid-template-columns: 1fr; padding-block: 37px 42px; gap: 38px; }
   .hero h1 { font-size: clamp(46px, 11vw, 61px); }
   .hero-intro { font-size: 18px; }
