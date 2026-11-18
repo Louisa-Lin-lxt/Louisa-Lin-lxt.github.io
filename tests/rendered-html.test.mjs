@@ -25,6 +25,8 @@ test('all local image, script, stylesheet and PDF references exist in exported p
   await Promise.all([...refs].map(path=>access(new URL(`.${path}`,root))));
   const pdf=await readFile(new URL('Xingtong-Lin-Resume.pdf',root));
   assert.equal(pdf.subarray(0,5).toString(),'%PDF-');
+  const chinesePdf=await readFile(new URL('Xingtong-Lin-Resume-ZH.pdf',root));
+  assert.equal(chinesePdf.subarray(0,5).toString(),'%PDF-');
   const posterPdf=await readFile(new URL('research-media/yttri-2025-first-year-poster.pdf',root));
   assert.equal(posterPdf.subarray(0,5).toString(),'%PDF-');
   assert.ok((await stat(new URL('optimized/louisa-portrait.jpg',root))).size < 200_000);

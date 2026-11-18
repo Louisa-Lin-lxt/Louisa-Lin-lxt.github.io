@@ -26,6 +26,7 @@ export default function Home() {
   const { lang, toggleLang } = usePersistentLanguage();
   const t = ui[lang];
   const formCopy = copy[lang];
+  const resumeHref = asset(lang === "zh" ? "/Xingtong-Lin-Resume-ZH.pdf" : "/Xingtong-Lin-Resume.pdf");
   const [selected, setSelected] = useState<{ kind: "research" | "experience"; index: number } | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
@@ -122,7 +123,7 @@ export default function Home() {
           <div className="hero-copy">
             <h1>{t.name}</h1>
             <p className="hero-intro">{t.heroIntro}</p><p className="hero-work">{t.heroWork}</p>
-            <div className="hero-actions"><a className="button button-primary" href="#contact">{t.contact}<Arrow /></a><a className="button button-secondary" href={asset('/Xingtong-Lin-Resume.pdf')} target="_blank" rel="noreferrer">{t.resume}<Arrow external /></a></div>
+            <div className="hero-actions"><a className="button button-primary" href="#contact">{t.contact}<Arrow /></a><a className="button button-secondary" href={resumeHref} target="_blank" rel="noreferrer">{t.resume}<Arrow external /></a></div>
           </div>
           <div className="hero-composition">
             <figure className="hero-portrait"><img src={asset('/optimized/louisa-portrait.jpg')} alt={lang === "en" ? "Portrait of Louisa Lin" : "林星潼的个人照片"} width="722" height="900" fetchPriority="high" /><figcaption><strong>{t.photoCaption}</strong><span>{t.photoMeta}</span></figcaption></figure>
@@ -168,6 +169,6 @@ export default function Home() {
     <footer className="site-footer content-width"><span>© 2026 Xingtong Lin</span></footer>
     <div className={`toast ${toast ? 'is-visible' : ''}`} role="status" aria-live="polite">{toast}</div>
     {activeStory && activeIdentity && <DetailDialog className="story-detail-dialog" title={activeIdentity.organization} closeLabel={t.close} onClose={() => setSelected(null)}>{renderStoryDetail(activeStory, activeIdentity)}</DetailDialog>}
-    {menuOpen && <DetailDialog title={formCopy.navAria} closeLabel={t.closeMenu} onClose={() => setMenuOpen(false)} className="mobile-menu-dialog"><nav aria-label={formCopy.navAria}>{sectionIds.map((id,i) => <a href={`#${id}`} key={id} aria-current={activeSection===id?'location':undefined} onClick={() => setMenuOpen(false)}>{t.nav[i]}<Arrow /></a>)}</nav><a className="menu-resume" href={asset('/Xingtong-Lin-Resume.pdf')} target="_blank" rel="noreferrer">{t.resume}<Arrow external /></a></DetailDialog>}
+    {menuOpen && <DetailDialog title={formCopy.navAria} closeLabel={t.closeMenu} onClose={() => setMenuOpen(false)} className="mobile-menu-dialog"><nav aria-label={formCopy.navAria}>{sectionIds.map((id,i) => <a href={`#${id}`} key={id} aria-current={activeSection===id?'location':undefined} onClick={() => setMenuOpen(false)}>{t.nav[i]}<Arrow /></a>)}</nav><a className="menu-resume" href={resumeHref} target="_blank" rel="noreferrer">{t.resume}<Arrow external /></a></DetailDialog>}
   </>;
 }
