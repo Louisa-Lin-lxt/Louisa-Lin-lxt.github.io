@@ -41,7 +41,7 @@ The static preview runs at `http://localhost:5175`. `npm test` builds with the e
 
 English uses Arial. Chinese requests DengXian / 等线, with PingFang SC and Microsoft YaHei fallbacks; a licensed DengXian web font is not bundled. Research images use `object-fit: contain`. Cards show organization, position and dates; full project descriptions and institutional links live in details.
 
-The Research section also shows a co-authored 2026 article linked through its DOI and the 2025 SURA poster. The Interests page loads the Three.js scene only for Music and Travel; the Taotao pixel gallery does not download that scene.
+The Research section also shows a co-authored 2026 article linked through its DOI and a first-year 2025 Meeting of the Minds poster presentation. The Interests page loads the Three.js scene only for Music and Travel; the Taotao pixel gallery does not download that scene.
 
 The contact form retains the existing FormSubmit service. Delivery and recipient activation need an authorized real submission to verify. Contact uses platform-logo links and a WeChat copy control; the personal email and duplicate bottom résumé link are intentionally hidden. Personal photo collections, playlists and travel entries are still awaiting source content.
 

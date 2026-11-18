@@ -5,17 +5,17 @@ const articleUrl = "https://doi.org/10.1016/j.ipha.2026.08.008";
 
 const labels = {
   en: {
-    heading: "Selected outputs",
+    heading: "Publication & presentation",
     article: "Co-authored article · 2026",
-    poster: "Research poster · 2025",
-    posterVenue: "CMU SURA · Meeting of the Minds",
+    poster: "First-year poster · 2025",
+    posterVenue: "Meeting of the Minds · Carnegie Mellon University",
     articleLink: "Read the article",
   },
   zh: {
-    heading: "部分学术成果",
+    heading: "论文与学术展示",
     article: "合著论文 · 2026",
-    poster: "学术海报 · 2025",
-    posterVenue: "CMU SURA · Meeting of the Minds",
+    poster: "本科一年级研究海报 · 2025",
+    posterVenue: "Meeting of the Minds · 卡内基梅隆大学",
     articleLink: "查看论文",
   },
 } as const;
@@ -40,7 +40,7 @@ export function SelectedOutputs({ lang }: { lang: Lang }) {
         <p className="selected-output-kind">{t.poster}</p>
         <div className="selected-output-main">
           <h4>Decision Making Along a Semi-continuous Dimension in an Open Field Arena</h4>
-          <p>{t.posterVenue} <span aria-hidden="true">·</span> X. Lin</p>
+          <p>{t.posterVenue} <span aria-hidden="true">·</span> Louisa Lin, Kevin K.M. Wright &amp; Eric A. Yttri</p>
         </div>
       </article>
     </div>

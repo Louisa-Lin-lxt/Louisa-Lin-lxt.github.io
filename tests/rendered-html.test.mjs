@@ -39,10 +39,11 @@ test('research cards identify the labs and retain direct contact links',()=>{
 });
 
 test('selected research outputs are visible in static HTML',()=>{
-  assert.match(home,/Selected outputs/);
+  assert.match(home,/Publication &amp; presentation/);
   assert.match(home,/Co-authored article · 2026/);
   assert.match(home,/https:\/\/doi\.org\/10\.1016\/j\.ipha\.2026\.08\.008/);
   assert.match(home,/Decision Making Along a Semi-continuous Dimension in an Open Field Arena/);
+  assert.match(home,/Louisa Lin, Kevin K\.M\. Wright &amp; Eric A\. Yttri/);
 });
 
 test('static HTML keeps all seven horizontal cards and usable interaction fallbacks',()=>{
