@@ -3,8 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Lang } from './usePersistentLanguage';
 
-const sections=['home','about','research','experience','interests','contact'];
-const names={en:['Home','About','Research','Work Experience','Beyond Academics','Contact'],zh:['首页','关于我','科研','工作经历','学业之外','联系']};
+const sections=['home','about','research','outputs','experience','interests','contact'];
+const names={en:['Home','About','Research','Publications & Projects','Work Experience','Beyond Academics','Contact'],zh:['首页','关于我','科研','论文与项目','工作经历','学业之外','联系']};
+const stopSpacing=50;
 const pixels: {x:number;y:number}[]=[];
 function line(x1:number,y1:number,x2:number,y2:number){
   const steps=Math.max(Math.abs(x2-x1),Math.abs(y2-y1))/4;
@@ -12,7 +13,7 @@ function line(x1:number,y1:number,x2:number,y2:number){
 }
 // A single soma, dendrites and a long branching axon. All squares share one grid.
 line(24,28,8,12);line(8,12,8,0);line(24,28,40,12);line(40,12,44,0);line(24,28,24,8);
-for(let i=0;i<5;i++){const y=44+i*60;line(24,y,24,y+36);line(24,y+36,28,y+40);line(28,y+40,24,y+60);line(24,y+36,i%2?40:8,y+28);}
+for(let i=0;i<sections.length-1;i++){const y=44+i*stopSpacing;line(24,y,24,y+36);line(24,y+36,28,y+40);line(28,y+40,24,y+stopSpacing);line(24,y+36,i%2?40:8,y+28);}
 const uniquePixels=[...new Map(pixels.map(p=>[`${p.x},${p.y}`,p])).values()];
 
 export function NeuralProgress({lang,activeSection}:{lang:Lang;activeSection:string}) {
@@ -41,6 +42,6 @@ export function NeuralProgress({lang,activeSection}:{lang:Lang;activeSection:str
       <g className="progress-lit" clipPath="url(#neuron-progress-fill)">{uniquePixels.map(p=><rect key={`${p.x}-${p.y}`} {...p} width="3" height="3"/>)}</g>
       <path className="progress-soma" d="M20 24h12v4h4v12h-4v4H20v-4h-4V28h4Z"/><rect className="progress-core" x="24" y="32" width="4" height="4"/>
     </svg>
-    {sections.map((id,i)=><a key={id} className={`progress-stop ${i<=active?'is-lit':''}`} href={`#${id}`} aria-current={activeSection===id?'location':undefined} aria-label={names[lang][i]} style={{top:24+i*60}}><i aria-hidden="true"/><span>{names[lang][i]}</span></a>)}
+    {sections.map((id,i)=><a key={id} className={`progress-stop ${i<=active?'is-lit':''}`} href={`#${id}`} aria-current={activeSection===id?'location':undefined} aria-label={names[lang][i]} style={{top:24+i*stopSpacing}}><i aria-hidden="true"/><span>{names[lang][i]}</span></a>)}
   </nav>;
 }

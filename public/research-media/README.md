@@ -1,6 +1,6 @@
 # Research media sources
 
-These are laboratory-authored visual materials, presented within the portfolio research descriptions. They are not authored by the portfolio owner.
+The research detail videos and figures below are laboratory-authored visual materials. The poster PDF is a separate co-authored work by the portfolio owner, Kevin K.M. Wright, and Eric A. Yttri.
 
 ## He Lab
 - Source page: https://www.cmu.edu/bme/helab/
@@ -18,5 +18,10 @@ These are laboratory-authored visual materials, presented within the portfolio r
 - CARL figure: https://labs.bio.cmu.edu/yttri/wp-content/uploads/sites/19/2026/08/fig3-carl-task-v2.png
 - Figure source page: https://labs.bio.cmu.edu/yttri/research/
 - The CARL figure is displayed unchanged, with all labels visible.
+
+## 2025 Meeting of the Minds poster
+- File: yttri-2025-first-year-poster.pdf. This is the one-page poster presented during Louisa Lin's first year at Carnegie Mellon University.
+- Original authors: Louisa Lin, Kevin K.M. Wright, and Eric A. Yttri. The source is the user's supplied presentation file; the editable PowerPoint is not published here.
+- yttri-2025-first-year-poster-thumbnail.jpg is a preview rendered from the same PDF. The PDF was regenerated to remove unrelated Office author metadata while preserving the poster page and visible credits.
 
 Retrieved 2026-11-04. Official source links remain visible in the detail media captions. No third-party player or video is loaded on the homepage; local videos mount only while their detail dialog is open.

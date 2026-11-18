@@ -5,7 +5,7 @@ import { HeroNeuralField } from "./components/HeroNeuralField";
 import { NeuralProgress } from "./components/NeuralProgress";
 import { InterestArtwork } from "./components/InterestArtwork";
 import { ProjectShelf, storyIdentity } from "./components/ProjectShelf";
-import { SelectedOutputs } from "./components/SelectedOutputs";
+import { PublicationsProjects } from "./components/PublicationsProjects";
 import { DetailDialog } from "./components/DetailDialog";
 import { ResearchFilm, ResearchSupplement } from "./components/ResearchMedia";
 import { SmoothLink } from "./components/SmoothLink";
@@ -16,7 +16,7 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const asset = (path: string) => `${basePath}${path}`;
 const emailAddress = "xingtonl@andrew.cmu.edu";
 const categories = ["Research", "Collaboration", "Other"] as const;
-const sectionIds = ["about", "research", "experience", "interests", "contact"];
+const sectionIds = ["about", "research", "outputs", "experience", "interests", "contact"];
 
 function Arrow({ external = false }: { external?: boolean }) {
   return <svg className="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d={external ? "M6 18 18 6M6 6h12v12" : "M4 12h15m-6-6 6 6-6 6"} /></svg>;
@@ -139,9 +139,10 @@ export default function Home() {
       <section id="research" className="section research-section" aria-labelledby="research-heading">
         <div className="content-width"><div className="section-heading" data-reveal><h2 id="research-heading">{t.researchTitle}</h2></div>
           <ProjectShelf kind="research" lang={lang} onOpen={index=>setSelected({kind:'research',index})}/>
-          <SelectedOutputs lang={lang} />
         </div>
       </section>
+
+      <PublicationsProjects lang={lang} />
 
       <section id="experience" className="section content-width experience-section" aria-labelledby="experience-heading">
         <div className="section-heading" data-reveal><h2 id="experience-heading">{t.experienceTitle}</h2></div>

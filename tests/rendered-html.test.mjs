@@ -12,7 +12,7 @@ test('static export renders the portfolio and navigable sections without a worke
   assert.match(home,/Beyond Academics/);
   assert.match(home,/Work Experience/);
   assert.match(home,/Venture Fellow/);
-  for (const id of ['home','about','research','experience','interests','contact']) {
+  for (const id of ['home','about','research','outputs','experience','interests','contact']) {
     assert.ok(home.includes(`id="${id}"`),`Missing section ${id}`);
     assert.ok(home.includes(`href="#${id}"`),`Missing anchor for ${id}`);
   }
@@ -25,6 +25,8 @@ test('all local image, script, stylesheet and PDF references exist in exported p
   await Promise.all([...refs].map(path=>access(new URL(`.${path}`,root))));
   const pdf=await readFile(new URL('Xingtong-Lin-Resume.pdf',root));
   assert.equal(pdf.subarray(0,5).toString(),'%PDF-');
+  const posterPdf=await readFile(new URL('research-media/yttri-2025-first-year-poster.pdf',root));
+  assert.equal(posterPdf.subarray(0,5).toString(),'%PDF-');
   assert.ok((await stat(new URL('optimized/louisa-portrait.jpg',root))).size < 200_000);
   assert.ok((await stat(new URL('optimized/he-lab.jpg',root))).size < 150_000);
 });
@@ -38,19 +40,21 @@ test('research cards identify the labs and retain direct contact links',()=>{
   assert.match(home,/href="https:\/\/www.linkedin.com\/in\/lxt\/"/);
 });
 
-test('selected research outputs are visible in static HTML',()=>{
-  assert.match(home,/Publication &amp; presentation/);
-  assert.match(home,/Co-authored article · 2026/);
-  assert.match(home,/https:\/\/doi\.org\/10\.1016\/j\.ipha\.2026\.08\.008/);
+test('publications and projects render in their own section',()=>{
+  assert.match(home,/Publications &amp; Projects/);
+  assert.match(home,/Publications &amp; presentations/);
+  assert.match(home,/First author · Narrative review/);
   assert.match(home,/Decision Making Along a Semi-continuous Dimension in an Open Field Arena/);
-  assert.match(home,/Louisa Lin, Kevin K\.M\. Wright &amp; Eric A\. Yttri/);
+  assert.match(home,/BCI decoder/);
+  assert.match(home,/Unpublished course project/);
+  assert.equal([...home.matchAll(/class="output-open"/g)].length,3);
 });
 
 test('static HTML keeps all seven horizontal cards and usable interaction fallbacks',()=>{
   assert.equal([...home.matchAll(/class="project-card research-card"/g)].length,3);
   assert.equal([...home.matchAll(/class="project-card experience-card"/g)].length,4);
   assert.equal([...home.matchAll(/class="card-open"/g)].length,7);
-  assert.equal([...home.matchAll(/aria-haspopup="dialog"/g)].length,7);
+  assert.equal([...home.matchAll(/aria-haspopup="dialog"/g)].length,10);
   assert.match(home,/class="hero-neural-field"/);
   assert.match(home,/class="neural-progress"/);
   assert.match(home,/aria-label="Reading progress"/);

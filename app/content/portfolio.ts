@@ -17,7 +17,7 @@ export type Story = {
 
 export const copy = {
   en: {
-    nav: ["About", "Research", "Work Experience", "Beyond Academics", "Contact"],
+    nav: ["About", "Research", "Publications & Projects", "Work Experience", "Beyond Academics", "Contact"],
     navAria: "Primary navigation",
     menu: "Menu",
     menuKicker: "Portfolio navigation",
@@ -80,7 +80,7 @@ export const copy = {
     updated: "Updated November 2026",
   },
   zh: {
-    nav: ["关于我", "科研", "工作经历", "学业之外", "联系"],
+    nav: ["关于我", "科研", "论文与项目", "工作经历", "学业之外", "联系"],
     navAria: "主要导航",
     menu: "菜单",
     menuKicker: "浏览网站",
@@ -208,7 +208,7 @@ export const researchNotes = {
 
 export const ui = {
   en: {
-    nav: ["About", "Research", "Work Experience", "Beyond Academics", "Contact"],
+    nav: ["About", "Research", "Publications & Projects", "Work Experience", "Beyond Academics", "Contact"],
     name: "Xingtong Lin", firstName: "Xingtong", lastName: "Lin",
     heroLabel: "Neuroscience / Neuroengineering",
     heroIntro: "I study neuroscience and biomedical technology at Carnegie Mellon. You can also call me Louisa.",
@@ -228,7 +228,7 @@ export const ui = {
     contactTitle: "Get in touch.", contactBody: "For research, healthcare and technology opportunities, or a conversation about my work.", email: "Email", copy: "Copy email", copied: "Email copied", copyFailed: "Could not copy. Please try again.", wechat: "Copy WeChat ID", wechatCopied: "WeChat ID copied", form: "Send a message", formNote: "You can also email me directly.", footer: "Neuroscience · Technology · Early-stage investing", skip: "Skip to content", caption: "Abstract neural fibres — an illustration, not scientific data.",
   },
   zh: {
-    nav: ["关于我", "科研", "工作经历", "学业之外", "联系"],
+    nav: ["关于我", "科研", "论文与项目", "工作经历", "学业之外", "联系"],
     name: "林星潼", firstName: "林星潼", lastName: "",
     heroLabel: "神经科学 / 神经工程",
     heroIntro: "我在卡内基梅隆大学学习神经科学和生物医学技术。也可以叫我 Louisa。",
