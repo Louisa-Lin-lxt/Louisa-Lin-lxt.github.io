@@ -5,6 +5,7 @@ import { HeroNeuralField } from "./components/HeroNeuralField";
 import { NeuralProgress } from "./components/NeuralProgress";
 import { InterestArtwork } from "./components/InterestArtwork";
 import { ProjectShelf, storyIdentity } from "./components/ProjectShelf";
+import { SelectedOutputs } from "./components/SelectedOutputs";
 import { DetailDialog } from "./components/DetailDialog";
 import { ResearchFilm, ResearchSupplement } from "./components/ResearchMedia";
 import { SmoothLink } from "./components/SmoothLink";
@@ -136,17 +137,18 @@ export default function Home() {
       </section>
 
       <section id="research" className="section research-section" aria-labelledby="research-heading">
-        <div className="content-width"><div className="section-heading" data-reveal><div><h2 id="research-heading">{t.researchTitle}</h2></div><p className="section-summary">{t.researchIntro}</p></div>
+        <div className="content-width"><div className="section-heading" data-reveal><h2 id="research-heading">{t.researchTitle}</h2></div>
           <ProjectShelf kind="research" lang={lang} onOpen={index=>setSelected({kind:'research',index})}/>
+          <SelectedOutputs lang={lang} />
         </div>
       </section>
 
       <section id="experience" className="section content-width experience-section" aria-labelledby="experience-heading">
-        <div className="section-heading" data-reveal><div><h2 id="experience-heading">{t.experienceTitle}</h2></div><p className="section-summary">{t.experienceIntro}</p></div>
+        <div className="section-heading" data-reveal><h2 id="experience-heading">{t.experienceTitle}</h2></div>
         <ProjectShelf kind="experience" lang={lang} onOpen={index=>setSelected({kind:'experience',index})}/>
       </section>
 
-      <section id="interests" className="section interests-section" aria-labelledby="interests-heading"><div className="content-width"><div className="section-heading" data-reveal><div><h2 id="interests-heading">{t.interestsTitle}</h2></div></div><div className="interest-list">{t.interestNames.map((name,index) => <SmoothLink key={name} href={`/interests#${['music','taotao','travel'][index]}`} className="interest-item" ariaLabel={`${t.interestsLink}: ${name}`}><InterestArtwork index={index} /><div><h3>{name}</h3><p>{t.interestDesc[index]}</p></div><Arrow /></SmoothLink>)}</div></div></section>
+      <section id="interests" className="section interests-section" aria-labelledby="interests-heading"><div className="content-width"><div className="section-heading" data-reveal><h2 id="interests-heading">{t.interestsTitle}</h2></div><div className="interest-list">{t.interestNames.map((name,index) => <SmoothLink key={name} href={`/interests#${['music','taotao','travel'][index]}`} className="interest-item" ariaLabel={`${t.interestsLink}: ${name}`}><InterestArtwork index={index} /><div><h3>{name}</h3></div><Arrow /></SmoothLink>)}</div></div></section>
 
       <section id="contact" className="section content-width contact-section" aria-labelledby="contact-heading">
         <div className="contact-info" data-reveal><h2 id="contact-heading">{t.contactTitle}</h2><p>{t.contactBody}</p><div className="contact-links social-links">

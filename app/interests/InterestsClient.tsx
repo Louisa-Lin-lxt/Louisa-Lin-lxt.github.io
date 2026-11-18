@@ -1,7 +1,6 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-import { InterestWorld } from "../components/InterestWorld";
+import { lazy, Suspense, useSyncExternalStore } from "react";
 import { TaotaoPixels } from "../components/TaotaoPixels";
 import { SmoothLink } from "../components/SmoothLink";
 import { usePersistentLanguage } from "../components/usePersistentLanguage";
@@ -35,12 +34,15 @@ const copy = {
 };
 
 const topics = ["music", "taotao", "travel"];
+const InterestWorld = lazy(() => import("../components/InterestWorld").then(module => ({ default: module.InterestWorld })));
+const subscribeHydration = () => () => {};
 function subscribeHash(callback: () => void) { window.addEventListener("hashchange",callback); return () => window.removeEventListener("hashchange",callback); }
 function getTopic() { return Math.max(0,topics.indexOf(window.location.hash.slice(1))); }
 
 export default function InterestsPage() {
   const { lang, toggleLang } = usePersistentLanguage();
   const active = useSyncExternalStore(subscribeHash,getTopic,() => 0);
+  const hydrated = useSyncExternalStore(subscribeHydration, () => true, () => false);
   const t=copy[lang], world=t.worlds[active];
   const select=(index:number) => { window.history.replaceState(null,"",`#${topics[index]}`); window.dispatchEvent(new HashChangeEvent("hashchange")); };
   return <main className="interests-page" lang={lang === 'zh' ? 'zh-CN' : 'en'}>
@@ -50,7 +52,9 @@ export default function InterestsPage() {
       <div className="interest-tabs" role="tablist" aria-label={t.worldsAria}>{t.worlds.map((item,index)=><button key={index} id={`tab-${topics[index]}`} role="tab" aria-selected={active===index} aria-controls="interest-panel" tabIndex={active===index?0:-1} onClick={()=>select(index)} onKeyDown={event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?2:(active+(event.key==='ArrowRight'?1:2))%3;select(next);document.getElementById(`tab-${topics[next]}`)?.focus();}}}>{item.title}</button>)}</div>
       <section className={`interest-stage ${active===1?"is-pixel-gallery":""}`} role="tabpanel" id="interest-panel" aria-labelledby={`tab-${topics[active]}`}>
         {active===1?<TaotaoPixels lang={lang}/>:<>
-        <InterestWorld active={active} label={`${world.title}${lang === "zh" ? "。" : ". "}${t.controlHelp}`} />
+        <Suspense fallback={<div className="interest-world-canvas" aria-hidden="true" />}>
+          {hydrated && getTopic() !== 1 ? <InterestWorld active={active} label={`${world.title}${lang === "zh" ? "。" : ". "}${t.controlHelp}`} /> : <div className="interest-world-canvas" aria-hidden="true" />}
+        </Suspense>
         <div className="interest-story" key={`${lang}-${active}`}><h2>{world.title}</h2><p>{world.body}</p></div>
         <p className="interest-hint">{t.hint}</p>
         </>}

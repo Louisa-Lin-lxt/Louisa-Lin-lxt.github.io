@@ -37,9 +37,11 @@ The static preview runs at `http://localhost:5175`. `npm test` builds with the e
 - `app/interactive-portfolio.css`: scoped hero, horizontal shelf and interaction styling.
 - `app/interests/InterestsClient.tsx`: interest tabs and deep links; normal scrolling.
 - `public/optimized`: resized web images. Original source files remain in `public`.
-- `public/Xingtong-Lin-Resume.pdf`: existing résumé, unchanged.
+- `public/Xingtong-Lin-Resume.pdf`: November 2026 CV used by the résumé button.
 
 English uses Arial. Chinese requests DengXian / 等线, with PingFang SC and Microsoft YaHei fallbacks; a licensed DengXian web font is not bundled. Research images use `object-fit: contain`. Cards show organization, position and dates; full project descriptions and institutional links live in details.
+
+The Research section also shows a co-authored 2026 article linked through its DOI and the 2025 SURA poster. The Interests page loads the Three.js scene only for Music and Travel; the Taotao pixel gallery does not download that scene.
 
 The contact form retains the existing FormSubmit service. Delivery and recipient activation need an authorized real submission to verify. Contact uses platform-logo links and a WeChat copy control; the personal email and duplicate bottom résumé link are intentionally hidden. Personal photo collections, playlists and travel entries are still awaiting source content.
 

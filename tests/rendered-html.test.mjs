@@ -38,6 +38,13 @@ test('research cards identify the labs and retain direct contact links',()=>{
   assert.match(home,/href="https:\/\/www.linkedin.com\/in\/lxt\/"/);
 });
 
+test('selected research outputs are visible in static HTML',()=>{
+  assert.match(home,/Selected outputs/);
+  assert.match(home,/Co-authored article · 2026/);
+  assert.match(home,/https:\/\/doi\.org\/10\.1016\/j\.ipha\.2026\.08\.008/);
+  assert.match(home,/Decision Making Along a Semi-continuous Dimension in an Open Field Arena/);
+});
+
 test('static HTML keeps all seven horizontal cards and usable interaction fallbacks',()=>{
   assert.equal([...home.matchAll(/class="project-card research-card"/g)].length,3);
   assert.equal([...home.matchAll(/class="project-card experience-card"/g)].length,4);

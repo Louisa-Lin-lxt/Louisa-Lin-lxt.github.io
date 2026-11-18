@@ -47,12 +47,6 @@ export function InterestWorld({ active, label }: { active: number; label: string
     const paleBlue = new THREE.MeshPhysicalMaterial({ color: 0xdceeff, roughness: 0.25, clearcoat: .8 });
     const yellow = new THREE.MeshPhysicalMaterial({ color: 0xffd447, roughness: 0.22, clearcoat: 1 });
     const cream = new THREE.MeshPhysicalMaterial({ color: 0xfff8dc, roughness: 0.34, clearcoat: .65 });
-    const dark = new THREE.MeshPhysicalMaterial({ color: 0x09172b, roughness: 0.3, clearcoat: .7 });
-    const dogFur = new THREE.MeshPhysicalMaterial({ color: 0xf7f2e7, roughness: .72, clearcoat: .12 });
-    const dogCream = new THREE.MeshPhysicalMaterial({ color: 0xfffcf4, roughness: .68, clearcoat: .1 });
-    const dogShadow = new THREE.MeshPhysicalMaterial({ color: 0xe6ddcd, roughness: .76, clearcoat: .08 });
-    const vestBlue = new THREE.MeshPhysicalMaterial({ color: 0x4e6385, roughness: .48, clearcoat: .35 });
-    const vestAccent = new THREE.MeshPhysicalMaterial({ color: 0x4e6385, roughness: .4, clearcoat: .5 });
 
     const music = new THREE.Group();
     const record = new THREE.Mesh(new THREE.CylinderGeometry(1.58, 1.58, .22, 72), navy);
@@ -80,86 +74,6 @@ export function InterestWorld({ active, label }: { active: number; label: string
       return bar;
     });
     stage.add(music);
-
-    const animal = new THREE.Group();
-    const body = new THREE.Mesh(new THREE.SphereGeometry(1.02, 48, 34), dogFur);
-    body.scale.set(.7, 1.12, .72);
-    body.position.y = -.86;
-    body.castShadow = true;
-    animal.add(body);
-    const head = new THREE.Mesh(new THREE.SphereGeometry(1.12, 56, 40), dogFur);
-    head.scale.set(1.12, 1, .88);
-    head.position.y = .63;
-    head.castShadow = true;
-    animal.add(head);
-    [[-.94,.9],[-.72,1.28],[-.38,1.52],[0,1.6],[.38,1.52],[.72,1.28],[.94,.9],[-.98,.48],[.98,.48],[-.82,.15],[.82,.15],[-.42,1.23],[0,1.3],[.42,1.23]].forEach(([x,y], index) => {
-      const curl = new THREE.Mesh(new THREE.SphereGeometry(index === 3 ? .48 : .44, 26, 20), index % 6 === 0 ? dogCream : dogFur);
-      curl.scale.set(1.08, 1.02, .72);
-      curl.position.set(x, y, .04 + (index % 2) * .03);
-      animal.add(curl);
-    });
-    [-1, 1].forEach((side) => {
-      const ear = new THREE.Mesh(new THREE.CapsuleGeometry(.38, .37, 10, 24), dogShadow);
-      ear.scale.set(1.05, 1.05, .78);
-      ear.position.set(side * 1.08, .38, .12);
-      ear.rotation.z = side * -.18;
-      animal.add(ear);
-      const eye = new THREE.Mesh(new THREE.SphereGeometry(.095, 20, 14), dark);
-      eye.scale.set(.9, 1.06, .68);
-      eye.position.set(side * .36, .7, 1.08);
-      animal.add(eye);
-      const leg = new THREE.Mesh(new THREE.CapsuleGeometry(.26, .42, 10, 24), dogFur);
-      leg.position.set(side * .58, -1.48, .52);
-      leg.rotation.z = side * -.04;
-      animal.add(leg);
-      const paw = new THREE.Mesh(new THREE.SphereGeometry(.39, 28, 20), dogCream);
-      paw.scale.set(1.1, .7, .86);
-      paw.position.set(side * .58, -1.82, .66);
-      animal.add(paw);
-    });
-    const muzzle = new THREE.Mesh(new THREE.SphereGeometry(.46, 32, 24), dogCream);
-    muzzle.scale.set(1.13, .7, .5);
-    muzzle.position.set(0, .36, 1.05);
-    animal.add(muzzle);
-    const nose = new THREE.Mesh(new THREE.SphereGeometry(.125, 20, 14), dark);
-    nose.scale.set(1.12, .78, .84);
-    nose.position.set(0, .48, 1.43);
-    animal.add(nose);
-    [-1, 1].forEach((side) => {
-      const eyeGlint = new THREE.Mesh(new THREE.SphereGeometry(.028, 10, 8), cream);
-      eyeGlint.position.set(side * .335, .73, 1.158);
-      animal.add(eyeGlint);
-    });
-    // The photo shows narrow patterned straps, rather than a solid vest.
-    const harnessCurve = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(-.62, -.35, .4), new THREE.Vector3(-.43, -.72, .7),
-      new THREE.Vector3(0, -.91, .79), new THREE.Vector3(.43, -.72, .7),
-      new THREE.Vector3(.62, -.35, .4),
-    ]);
-    animal.add(new THREE.Mesh(new THREE.TubeGeometry(harnessCurve, 32, .075, 8, false), vestBlue));
-    const chestStrap = new THREE.Mesh(new THREE.CapsuleGeometry(.075, .69, 6, 12), vestAccent);
-    chestStrap.position.set(0, -1.25, .75);
-    animal.add(chestStrap);
-    const harnessSpot = new THREE.MeshPhysicalMaterial({ color: 0xcbd3dd, roughness: .8 });
-    for (let i = 1; i < 10; i++) {
-      const point = harnessCurve.getPoint(i / 10);
-      const spot = new THREE.Mesh(new THREE.SphereGeometry(.038, 8, 6), i % 3 ? harnessSpot : navy);
-      spot.scale.z = .35;
-      spot.position.copy(point); spot.position.z += .07;
-      animal.add(spot);
-    }
-    const muzzleShade = new THREE.MeshPhysicalMaterial({ color: 0xd5bea0, roughness: .85 });
-    [-1, 1].forEach(side => {
-      const tuft = new THREE.Mesh(new THREE.SphereGeometry(.19, 20, 14), muzzleShade);
-      tuft.scale.set(1, .85, .45);
-      tuft.position.set(side * .24, .32, 1.24);
-      animal.add(tuft);
-    });
-    const tail = new THREE.Mesh(new THREE.TorusGeometry(.4, .16, 14, 34, Math.PI * 1.55), dogFur);
-    tail.position.set(1.02, -.93, -.5);
-    tail.rotation.set(.3, -.4, -.35);
-    animal.add(tail);
-    stage.add(animal);
 
     const travel = new THREE.Group();
     const globe = new THREE.Mesh(new THREE.SphereGeometry(1.5, 48, 34), new THREE.MeshPhysicalMaterial({ color: 0x2f8df0, transparent: true, opacity: .32, roughness: .16, clearcoat: 1 }));
@@ -195,11 +109,11 @@ export function InterestWorld({ active, label }: { active: number; label: string
     });
     stage.add(travel);
 
-    const groups = [music, animal, travel];
-    groups.forEach((group, index) => {
-      const selected = index === activeRef.current;
+    const groups = [{ topic: 0, group: music }, { topic: 2, group: travel }];
+    groups.forEach(({ group, topic }) => {
+      const selected = topic === activeRef.current;
       group.scale.setScalar(selected ? 1 : .001);
-      group.position.x = selected ? 0 : (index < activeRef.current ? -3.2 : 3.2);
+      group.position.x = selected ? 0 : (topic < activeRef.current ? -3.2 : 3.2);
       group.visible = selected;
     });
 
@@ -247,7 +161,7 @@ export function InterestWorld({ active, label }: { active: number; label: string
       rayPointer.set(((event.clientX - rect.left) / rect.width) * 2 - 1, -((event.clientY - rect.top) / rect.height) * 2 + 1);
       scene.updateMatrixWorld(true);
       raycaster.setFromCamera(rayPointer, camera);
-      return raycaster.intersectObject(groups[activeRef.current], true).length > 0;
+      return raycaster.intersectObject(activeRef.current === 2 ? travel : music, true).length > 0;
     };
     const onPointerMove = (event: PointerEvent) => {
       if (dragging) {
@@ -325,13 +239,13 @@ export function InterestWorld({ active, label }: { active: number; label: string
       const time = (performance.now() - animationStarted) * .001;
       stage.rotation.y += ((reducedMotion ? 0 : pointerX) - stage.rotation.y) * .035;
       stage.rotation.x += ((reducedMotion ? 0 : -pointerY) - stage.rotation.x) * .035;
-      groups.forEach((group, index) => {
-        const selected = index === activeRef.current;
+      groups.forEach(({ group, topic }) => {
+        const selected = topic === activeRef.current;
         group.visible = selected || group.scale.x > .015;
         const targetScale = selected ? 1 : .001;
         const nextScale = reducedMotion ? targetScale : group.scale.x + (targetScale - group.scale.x) * .095;
         group.scale.setScalar(nextScale);
-        const targetX = selected ? 0 : (index < activeRef.current ? -3.2 : 3.2);
+        const targetX = selected ? 0 : (topic < activeRef.current ? -3.2 : 3.2);
         group.position.x += (targetX - group.position.x) * (reducedMotion ? 1 : .09);
       });
       const motionScale = reducedMotion ? 0 : 1;
@@ -343,10 +257,6 @@ export function InterestWorld({ active, label }: { active: number; label: string
         dragYaw += dragVelocity;
         dragVelocity *= .94;
       }
-      animal.position.y = Math.sin(time * 1.25) * .13 * motionScale;
-      animal.rotation.y = dragYaw + Math.sin(time * .8) * .055 * motionScale;
-      animal.rotation.x = dragPitch + Math.sin(time * .62) * .02 * motionScale;
-      tail.rotation.z = -.35 + Math.sin(time * 3.4) * .28 * motionScale;
       travel.rotation.y = dragYaw + time * .16 * motionScale;
       travel.rotation.x = dragPitch;
       plane.position.y = 1.35 + Math.sin(time * 1.35) * .22 * motionScale;
