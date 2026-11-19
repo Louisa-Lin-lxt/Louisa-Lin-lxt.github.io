@@ -44,7 +44,7 @@ test('research cards identify the labs and retain direct contact links',()=>{
 
 test('publications and projects render in their own section',()=>{
   assert.match(home,/Publications &amp; Projects/);
-  assert.match(home,/Publications &amp; presentations/);
+  assert.match(home,/Papers &amp; posters/);
   assert.match(home,/First author · Narrative review/);
   assert.match(home,/Decision Making Along a Semi-continuous Dimension in an Open Field Arena/);
   assert.match(home,/BCI decoder/);

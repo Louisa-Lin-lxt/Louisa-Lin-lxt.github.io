@@ -37,6 +37,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: "try{if(!sessionStorage.getItem('xingtong-name-intro-v1')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.dataset.nameIntroLang=localStorage.getItem('xingtong-portfolio-language')==='zh'?'zh':'en';document.documentElement.dataset.nameIntro='play';sessionStorage.setItem('xingtong-name-intro-v1','seen')}}catch(error){/* The full name remains visible when storage is unavailable. */}" }} />
+      </head>
       <body>{children}</body>
     </html>
   );

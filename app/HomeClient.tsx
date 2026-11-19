@@ -108,11 +108,11 @@ export default function Home() {
 
   return <>
     <a className="skip-link" href="#main-content">{t.skip}</a>
-    <header className="site-header">
+    <header className="site-header" style={{ backdropFilter: "var(--site-header-glass)" }}>
       <div className="header-inner">
         <a className="brand home-link" href="#home">{lang === "en" ? "Home" : "首页"}</a>
         <nav className="primary-nav" aria-label={formCopy.navAria}>{sectionIds.map((id,i) => <a key={id} href={`#${id}`} aria-current={activeSection === id ? "location" : undefined}>{t.nav[i]}</a>)}</nav>
-        <div className="header-actions"><button type="button" className="language-control" onClick={toggleLang} aria-label={lang === "en" ? "切换到中文" : "Switch to English"}><span className={lang === "en" ? "selected" : ""}>EN</span><i /><span className={lang === "zh" ? "selected" : ""}>中</span></button><button className="menu-control" aria-label={t.menu} aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16" /></svg></button></div>
+        <div className="header-actions"><button type="button" className="language-control" onClick={() => { if (document.documentElement.dataset.nameIntro === "play") document.documentElement.dataset.nameIntro = "done"; toggleLang(); }} aria-label={lang === "en" ? "切换到中文" : "Switch to English"}><span className={lang === "en" ? "selected" : ""}>EN</span><i /><span className={lang === "zh" ? "selected" : ""}>中</span></button><button className="menu-control" aria-label={t.menu} aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16M4 16h16" /></svg></button></div>
       </div>
     </header>
     <NeuralProgress lang={lang} activeSection={activeSection} />
@@ -121,12 +121,12 @@ export default function Home() {
         <HeroNeuralField />
         <div className="hero-inner content-width">
           <div className="hero-copy">
-            <h1>{t.name}</h1>
+            <h1><span className="hero-name-reveal" onAnimationEnd={event => { if (event.animationName === "hero-name-type" && document.documentElement.dataset.nameIntro === "play") document.documentElement.dataset.nameIntro = "done"; }}>{t.name}</span></h1>
             <p className="hero-intro">{t.heroIntro}</p><p className="hero-work">{t.heroWork}</p>
             <div className="hero-actions"><a className="button button-primary" href="#contact">{t.contact}<Arrow /></a><a className="button button-secondary" href={resumeHref} target="_blank" rel="noreferrer">{t.resume}<Arrow external /></a></div>
           </div>
           <div className="hero-composition">
-            <figure className="hero-portrait"><img src={asset('/optimized/louisa-portrait.jpg')} alt={lang === "en" ? "Portrait of Louisa Lin" : "林星潼的个人照片"} width="722" height="900" fetchPriority="high" /><figcaption><strong>{t.photoCaption}</strong><span>{t.photoMeta}</span></figcaption></figure>
+            <figure className="hero-portrait"><img src={asset('/optimized/louisa-portrait-beach.jpg')} alt={lang === "en" ? "Louisa Lin smiling by the sea" : "林星潼在海边微笑"} width="1350" height="1500" fetchPriority="high" /><figcaption><strong>{t.photoCaption}</strong><span>{t.photoMeta}</span></figcaption></figure>
           </div>
         </div>
 

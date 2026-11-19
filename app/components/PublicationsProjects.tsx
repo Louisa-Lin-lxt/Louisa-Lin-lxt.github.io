@@ -33,7 +33,7 @@ const content: Record<Lang, {
 }> = {
   en: {
     heading: "Publications & Projects",
-    publications: "Publications & presentations",
+    publications: "Papers & posters",
     projects: "Projects",
     details: "View details",
     close: "Close details",
@@ -65,7 +65,7 @@ const content: Record<Lang, {
   },
   zh: {
     heading: "论文与项目",
-    publications: "论文与学术展示",
+    publications: "论文与海报",
     projects: "项目",
     details: "查看详情",
     close: "关闭详情",
@@ -89,7 +89,7 @@ const content: Record<Lang, {
       },
       {
         id: "bci", year: "2026", kind: "未发表的课程项目",
-        title: "BCI decoder · 脑机接口课程项目",
+        title: "脑电光标解码模拟",
         source: "卡内基梅隆大学",
         description: "在 CMU 的脑机接口课程项目中，我使用课程提供的五组脑电试次，对 C3/C4 通道进行空间滤波与 Burg 功率谱估计，提取高 alpha 频段特征，再用两通道特征差模拟光标的水平移动。我比较了原始输出与整体均值校正后的模拟轨迹。",
       },
@@ -114,7 +114,7 @@ export function PublicationsProjects({ lang }: { lang: Lang }) {
         <button type="button" className="output-open" aria-haspopup="dialog" onClick={event => open(event, entry.id)}>
           <span className="output-date"><time>{entry.year}</time><span>{entry.kind}</span></span>
           <span className="output-summary"><strong>{entry.title}</strong><span>{entry.source}</span></span>
-          <span className="output-action">{t.details}<span aria-hidden="true">↗</span></span>
+          <span className="output-action">{t.details}<span aria-hidden="true">→</span></span>
         </button>
       </article>)}</div>
     </div>;
