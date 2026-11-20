@@ -27,7 +27,6 @@ section[id] { scroll-margin-top: 36px; }
 .shelf-card-copy>time { margin-bottom: 14px; }
 .shelf-card-bottom { min-height: 50px; }
 .card-open { font-size: 14px; }
-.shelf-footer { min-height: 48px; }
 .contact-section { grid-template-columns: minmax(0, 1fr) minmax(0, 590px); gap: 72px; }
 .contact-info>p:not(.section-label) { font-size: 16px; }
 .contact-form-panel { padding: 32px; }
@@ -184,8 +183,6 @@ html[data-name-intro="done"] .hero-name-reveal::after { content: ""; position: a
   .education-list dd { font-size: 13px; max-width: 175px; }
   .shelf-image { height: 194px; }
   .experience-card .shelf-image { height: 168px; }
-  .card-rail { scrollbar-width: none; }
-  .card-rail::-webkit-scrollbar { display: none; }
   .shelf-figure, .experience-card .shelf-figure { padding: 0; }
   .shelf-card-copy, .experience-card .shelf-card-copy { padding: 20px; }
   .experience-card .shelf-card-copy h3 { min-height: 0; }

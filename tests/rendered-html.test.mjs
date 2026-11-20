@@ -52,7 +52,7 @@ test('publications and projects render in their own section',()=>{
   assert.equal([...home.matchAll(/class="output-open"/g)].length,3);
 });
 
-test('static HTML keeps all seven horizontal cards and usable interaction fallbacks',()=>{
+test('static HTML keeps all seven visible cards and usable interaction fallbacks',()=>{
   assert.equal([...home.matchAll(/class="project-card research-card"/g)].length,3);
   assert.equal([...home.matchAll(/class="project-card experience-card"/g)].length,4);
   assert.equal([...home.matchAll(/class="card-open"/g)].length,7);

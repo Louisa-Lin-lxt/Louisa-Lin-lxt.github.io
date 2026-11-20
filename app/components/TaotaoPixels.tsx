@@ -62,6 +62,6 @@ export function TaotaoPixels({lang}:{lang:'en'|'zh'}) {
         })}
       </div>
     </div>
-    {photo!==null&&<DetailDialog title={lang==='en'?'Taotao photo':'淘淘的照片'} closeLabel={lang==='en'?'Close photo':'关闭照片'} onClose={()=>setPhoto(null)} className="taotao-photo-dialog"><img src={`${process.env.NEXT_PUBLIC_BASE_PATH??''}${photos[photo].src}`} alt={photos[photo][lang]} width={photos[photo].width} height={photos[photo].height} /><nav className="taotao-photo-controls" aria-label={lang==='en'?'Photo navigation':'照片切换'}><button type="button" onClick={()=>setPhoto((photo-1+photos.length)%photos.length)} aria-label={lang==='en'?'Previous photo':'上一张照片'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 6-6 6 6 6" /></svg></button><span aria-live="polite">{photo+1} / {photos.length}</span><button type="button" onClick={()=>setPhoto((photo+1)%photos.length)} aria-label={lang==='en'?'Next photo':'下一张照片'}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6 6 6-6 6" /></svg></button></nav></DetailDialog>}
+    {photo!==null&&<DetailDialog title={lang==='en'?'Taotao photo':'淘淘的照片'} closeLabel={lang==='en'?'Close photo':'关闭照片'} onClose={()=>setPhoto(null)} className="taotao-photo-dialog"><img src={`${process.env.NEXT_PUBLIC_BASE_PATH??''}${photos[photo].src}`} alt={photos[photo][lang]} width={photos[photo].width} height={photos[photo].height} /></DetailDialog>}
   </>;
 }
