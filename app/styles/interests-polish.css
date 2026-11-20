@@ -43,6 +43,48 @@
   color: #fff;
 }
 
+.interests-page .interest-stage {
+  touch-action: pan-y;
+  overscroll-behavior-x: contain;
+}
+
+.interests-page .interest-slide-content > .taotao-pixel-gallery {
+  transition: transform 180ms ease-out;
+}
+
+.interests-page .interest-stage.is-dragging .taotao-pixel-gallery {
+  animation: none;
+  transform: translateX(var(--drag-offset, 0px));
+  transition: none;
+}
+
+@media (pointer: fine) {
+  .interests-page .interest-stage { cursor: grab; }
+  .interests-page .interest-stage:active { cursor: grabbing; }
+}
+
+.interest-slide-content.from-next > .taotao-pixel-gallery {
+  animation: interest-slide-next 320ms cubic-bezier(.22, .72, .24, 1);
+}
+
+.interest-slide-content.from-previous > .taotao-pixel-gallery {
+  animation: interest-slide-previous 320ms cubic-bezier(.22, .72, .24, 1);
+}
+
+@keyframes interest-slide-next {
+  from { opacity: .7; transform: translateX(42px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes interest-slide-previous {
+  from { opacity: .7; transform: translateX(-42px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interest-slide-content > .taotao-pixel-gallery { animation: none; transition: none; }
+}
+
 .interests-page .interest-stage:not(.is-pixel-gallery) {
   min-height: 500px;
   background: radial-gradient(ellipse at 74% 37%, rgba(214, 233, 246, .74), transparent 51%),
