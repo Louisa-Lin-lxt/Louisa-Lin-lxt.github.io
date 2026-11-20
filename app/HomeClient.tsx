@@ -121,7 +121,7 @@ export default function Home() {
         <HeroNeuralField />
         <div className="hero-inner content-width">
           <div className="hero-copy">
-            <h1><span className="hero-name-reveal" onAnimationEnd={event => { if (event.animationName === "hero-name-type" && document.documentElement.dataset.nameIntro === "play") document.documentElement.dataset.nameIntro = "done"; }}>{t.name}</span></h1>
+            <h1 aria-label={t.name}><span className="hero-name-reveal" onAnimationEnd={event => { if (event.animationName === "hero-name-letter" && event.target === event.currentTarget.lastElementChild && document.documentElement.dataset.nameIntro === "play") document.documentElement.dataset.nameIntro = "done"; }}>{Array.from(t.name).map((letter, index) => <span className="hero-name-letter" key={`${lang}-${index}`} style={{ animationDelay: `${120 + index * (lang === "en" ? 65 : 130)}ms` }}>{letter === " " ? "\u00a0" : letter}</span>)}</span></h1>
             <p className="hero-intro">{t.heroIntro}</p><p className="hero-work">{t.heroWork}</p>
             <div className="hero-actions"><a className="button button-primary" href="#contact">{t.contact}<Arrow /></a><a className="button button-secondary" href={resumeHref} target="_blank" rel="noreferrer">{t.resume}<Arrow external /></a></div>
           </div>
