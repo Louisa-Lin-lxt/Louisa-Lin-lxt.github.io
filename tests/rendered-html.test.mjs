@@ -63,10 +63,10 @@ test('static HTML keeps all seven visible cards and usable interaction fallbacks
   assert.doesNotMatch(home,/Send a signal|Illustrative signal|memo-folder|neural-explorer|shelf-signal|shelf-contribution|topic-controls|contact-resume/);
 });
 
-test('interest route exports direct topic links and keyboard tabs',()=>{
+test('interest route exports direct topic links and a keyboard-accessible stage',()=>{
   for(const topic of ['music','taotao','travel']) assert.ok(home.includes(`/interests#${topic}`));
-  assert.match(interests,/role="tablist"/);
-  assert.match(interests,/role="tabpanel"/);
+  assert.match(interests,/<section class="interest-stage is-pixel-gallery" tabindex="0" aria-label="Music\. Swipe left or right/);
+  assert.doesNotMatch(interests,/role="tablist"|role="tabpanel"|class="interest-tabs"/);
   assert.match(interests,/href="\/" class="brand home-link"/);
   assert.match(interests,/Music, Taotao, and travel are part of my life beyond research/);
   assert.doesNotMatch(interests,/Personal collections are being prepared|Content in preparation|STORIES COMING SOON/);

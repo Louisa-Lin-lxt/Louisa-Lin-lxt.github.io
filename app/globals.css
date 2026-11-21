@@ -1421,25 +1421,6 @@ h3 {
   color:var(--muted);
   margin-top:15px
 }
-.interest-tabs {
-  display:flex;
-  gap:9px;
-  margin-top:32px;
-  flex-wrap:wrap
-}
-.interest-tabs button {
-  padding:10px 22px;
-  border:1px solid var(--line);
-  border-radius:30px;
-  background:#fff8;
-  font-size:13px;
-  transition:background .2s
-}
-.interest-tabs button[aria-selected=true] {
-  background:var(--ink);
-  color:#fff;
-  border-color:var(--ink)
-}
 .interest-stage {
   position:relative;
   min-height:550px;
@@ -2302,14 +2283,6 @@ h3 {
   }
   .interests-intro>p:last-child {
     font-size:13px
-  }
-  .interest-tabs {
-    gap:7px;
-    margin-top:26px
-  }
-  .interest-tabs button {
-    font-size:12px;
-    padding:9px 20px
   }
   .interest-stage {
     min-height:650px;

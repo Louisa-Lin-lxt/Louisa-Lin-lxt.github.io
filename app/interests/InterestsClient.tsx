@@ -1,6 +1,9 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore, type PointerEvent, type WheelEvent } from "react";
+/* The named section is the keyboard surface for swipe navigation and contains Taotao's own pixel buttons. */
+/* eslint-disable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent, type PointerEvent, type WheelEvent } from "react";
+import { InterestStorm, captureStormPixels, type StormHandle, type StormPixel } from "../components/InterestStorm";
 import { TaotaoPixels } from "../components/TaotaoPixels";
 import { InterestPixels } from "../components/InterestPixels";
 import { SmoothLink } from "../components/SmoothLink";
@@ -11,7 +14,7 @@ const copy = {
   en: {
     title: "Beyond Academics",
     intro: "Music, Taotao, and travel are part of my life beyond research.",
-    worldsAria: "Explore interests",
+    stageAria: "Swipe left or right, or use the arrow keys to explore.",
     worlds: [
       { title: "Music", body: "I turn to music to relax or focus, depending on the day." },
       { title: "Taotao", body: "Photos of life with Taotao." },
@@ -21,7 +24,7 @@ const copy = {
   zh: {
     title: "学业之外",
     intro: "音乐、淘淘和旅行，是我研究之外喜欢的事。",
-    worldsAria: "兴趣主题",
+    stageAria: "左右滑动或使用方向键切换。",
     worlds: [
       { title: "音乐", body: "听音乐让我在忙碌时放松下来，也更容易重新集中注意力。" },
       { title: "淘淘", body: "和淘淘在一起的照片。" },
@@ -42,12 +45,42 @@ export default function InterestsPage() {
   const suppressClick = useRef(false);
   const suppressTimer = useRef<number | undefined>(undefined);
   const wheelSwipe = useRef({ distance: 0, last: 0, locked: false });
-  const [slide, setSlide] = useState({ direction: "next", revision: 0 });
+  const stageRef = useRef<HTMLElement>(null);
+  const stormRef = useRef<StormHandle>(null);
+  const pendingStorm = useRef<{ from: StormPixel[]; direction: 1 | -1 } | null>(null);
+  const storming = useRef(false);
+  const [direction, setDirection] = useState<"next" | "previous">("next");
   const t=copy[lang], world=t.worlds[active];
+  useLayoutEffect(() => {
+    const pending = pendingStorm.current;
+    const stage = stageRef.current;
+    if (!pending || !stage) return;
+    pendingStorm.current = null;
+    const to = captureStormPixels(stage);
+    stormRef.current?.play(pending.from, to, pending.direction, () => {
+      storming.current = false;
+      stage.classList.remove("is-storming");
+    });
+  }, [active]);
+  useEffect(() => () => {
+    window.clearTimeout(suppressTimer.current);
+    stormRef.current?.cancel();
+  }, []);
   const select=(index:number) => {
     const current = getTopic();
-    if (index < 0 || index >= topics.length || index === current) return;
-    setSlide(previous => ({ direction: index > current ? "next" : "previous", revision: previous.revision + 1 }));
+    if (index < 0 || index >= topics.length || index === current || stageRef.current?.querySelector("dialog[open]")) return;
+    const stage = stageRef.current;
+    if (storming.current) stormRef.current?.cancel();
+    if (stage && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const from = captureStormPixels(stage);
+      if (from.length) {
+        pendingStorm.current = { from, direction: index > current ? 1 : -1 };
+        storming.current = true;
+        stage.classList.add("is-storming");
+      }
+    }
+    if (stage?.contains(document.activeElement) && document.activeElement !== stage) stage.focus({ preventScroll: true });
+    setDirection(index > current ? "next" : "previous");
     window.history.replaceState(null,"",`#${topics[index]}`);
     window.dispatchEvent(new HashChangeEvent("hashchange"));
   };
@@ -65,12 +98,13 @@ export default function InterestsPage() {
     if (Math.abs(dx) < 16 || Math.abs(dx) < Math.abs(dy) * 1.3) return;
     if (Math.abs(dx) >= swipeThreshold && !event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.setPointerCapture(event.pointerId);
     event.currentTarget.classList.add("is-dragging");
-    event.currentTarget.style.setProperty("--drag-offset", `${Math.max(-90, Math.min(90, dx * .28))}px`);
+    const gallery = event.currentTarget.querySelector<HTMLElement>(".taotao-pixel-gallery");
+    if (gallery) gallery.style.transform = `translateX(${Math.max(-90, Math.min(90, dx * .28))}px)`;
   };
   const resetSwipe = (event: PointerEvent<HTMLElement>) => {
     swipeStart.current = null;
     event.currentTarget.classList.remove("is-dragging");
-    event.currentTarget.style.removeProperty("--drag-offset");
+    event.currentTarget.querySelector<HTMLElement>(".taotao-pixel-gallery")?.style.removeProperty("transform");
   };
   const finishSwipe = (event: PointerEvent<HTMLElement>) => {
     const start = swipeStart.current;
@@ -100,18 +134,26 @@ export default function InterestsPage() {
     gesture.locked = true;
     select(getTopic() + (gesture.distance > 0 ? 1 : -1));
   };
+  const changeWithKeys = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.target !== event.currentTarget || event.defaultPrevented) return;
+    const next = event.key === "ArrowRight" ? active + 1 : event.key === "ArrowLeft" ? active - 1 : event.key === "Home" ? 0 : event.key === "End" ? topics.length - 1 : null;
+    if (next === null) return;
+    event.preventDefault();
+    select(next);
+  };
   return <main className="interests-page" lang={lang === 'zh' ? 'zh-CN' : 'en'}>
     <div className="content-width">
       <header className="interest-header"><SmoothLink href="/" className="brand home-link">{lang === "en" ? "Home" : "首页"}</SmoothLink><button className="language-control" onClick={toggleLang} aria-label={lang === "en" ? "切换到中文" : "Switch to English"}><span className={lang==='en'?'selected':''}>EN</span><i /><span className={lang==='zh'?'selected':''}>中</span></button></header>
       <div className="interests-intro"><h1>{t.title}</h1><p>{t.intro}</p></div>
-      <div className="interest-tabs" role="tablist" aria-label={t.worldsAria}>{t.worlds.map((item,index)=><button key={index} id={`tab-${topics[index]}`} role="tab" aria-selected={active===index} aria-controls="interest-panel" tabIndex={active===index?0:-1} onClick={()=>select(index)} onKeyDown={event=>{if(['ArrowLeft','ArrowRight','Home','End'].includes(event.key)){event.preventDefault();const next=event.key==='Home'?0:event.key==='End'?2:(active+(event.key==='ArrowRight'?1:2))%3;select(next);document.getElementById(`tab-${topics[next]}`)?.focus();}}}>{item.title}</button>)}</div>
-      <section className="interest-stage is-pixel-gallery" role="tabpanel" id="interest-panel" aria-labelledby={`tab-${topics[active]}`} onPointerDown={startSwipe} onPointerMove={moveSwipe} onPointerUp={finishSwipe} onPointerCancel={resetSwipe} onWheel={scrollSwipe} onClickCapture={event => { if (suppressClick.current && event.detail > 0) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; window.clearTimeout(suppressTimer.current); } }}>
-        <div key={`${active}-${slide.revision}`} className={`interest-slide-content${slide.revision ? ` from-${slide.direction}` : ""}`}>
+      <span className="interest-sr-only" role="status" aria-live="polite" aria-atomic="true">{lang === "en" ? `${world.title}, ${active + 1} of ${topics.length}` : `${world.title}，第 ${active + 1} 项，共 ${topics.length} 项`}</span>
+      <section ref={stageRef} className="interest-stage is-pixel-gallery" tabIndex={0} aria-label={`${world.title}${lang === "en" ? ". " : "。"}${t.stageAria}`} onKeyDown={changeWithKeys} onPointerDown={startSwipe} onPointerMove={moveSwipe} onPointerUp={finishSwipe} onPointerCancel={resetSwipe} onWheel={scrollSwipe} onClickCapture={event => { if (suppressClick.current && event.detail > 0) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; window.clearTimeout(suppressTimer.current); } }}>
+        <div key={active} className={`interest-slide-content from-${direction}`}>
         {active===1?<TaotaoPixels lang={lang}/>:<div className="taotao-pixel-gallery">
           <div className="taotao-pixel-copy"><h2>{world.title}</h2><p>{world.body}</p></div>
           <InterestPixels topic={active===0?'music':'travel'}/>
         </div>}
         </div>
+        <InterestStorm ref={stormRef} />
       </section>
       <footer className="interests-footer"><span>© 2026 Xingtong Lin</span></footer>
     </div>
