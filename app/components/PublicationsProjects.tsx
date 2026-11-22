@@ -45,7 +45,7 @@ const content: Record<Lang, {
         source: "Intelligent Pharmacy",
         authors: "Xingtong Lin, Zongwen Yang, Rong Fan, Xinchen Wang & Ya Zhu",
         description: "I co-authored a narrative review on how continuous glucose monitoring could support the management of extreme glycemic risk in intensive care. We examine threshold and trend alerts, predictive models, and the limits of changing sensor reliability, then discuss a decision-support approach that accounts for data confidence and blood-glucose verification.",
-        link: articleUrl, linkLabel: "Read the article",
+        link: articleUrl, linkLabel: "Read article",
       },
       {
         id: "poster", year: "2025", kind: "First-year research poster",
@@ -77,7 +77,7 @@ const content: Record<Lang, {
         source: "Intelligent Pharmacy",
         authors: "Xingtong Lin、Zongwen Yang、Rong Fan、Xinchen Wang、Ya Zhu",
         description: "我以第一作者身份参与撰写了一篇叙述性综述，讨论连续血糖监测如何辅助重症监护中的极端血糖风险管理。文章梳理阈值与趋势预警、预测模型，以及传感器可靠性变化带来的限制，并讨论结合数据置信度和血糖复测的临床决策支持路径。",
-        link: articleUrl, linkLabel: "查看论文",
+        link: articleUrl, linkLabel: "阅读原文",
       },
       {
         id: "poster", year: "2025", kind: "大一阶段研究海报",
@@ -108,14 +108,23 @@ export function PublicationsProjects({ lang }: { lang: Lang }) {
   }
 
   function group(title: string, entries: Entry[]) {
-    return <div className="output-group" key={title}>
+    return <div className="output-group" key={title} data-reveal="support">
       <h3>{title}</h3>
       <div className="output-list">{entries.map(entry => <article className="output-entry" key={entry.id}>
-        <button type="button" className="output-open" aria-haspopup="dialog" onClick={event => open(event, entry.id)}>
-          <span className="output-date"><time>{entry.year}</time><span>{entry.kind}</span></span>
-          <span className="output-summary"><strong>{entry.title}</strong><span>{entry.source}</span></span>
-          <span className="output-action">{t.details}<span aria-hidden="true">→</span></span>
-        </button>
+        {entry.id === "paper" ? <div className="output-paper-row">
+          <span className="output-date"><time>{entry.year}</time><span className="output-authorship">{entry.kind}</span></span>
+          <div className="output-paper-copy">
+            <div className="output-summary"><strong>{entry.title}</strong><span className="output-source">{entry.source}</span></div>
+            <div className="output-paper-actions">
+              <a className="output-article-link" href={entry.link} target="_blank" rel="noopener noreferrer">{entry.linkLabel}<span aria-hidden="true">↗</span></a>
+              <button type="button" className="output-paper-details" aria-haspopup="dialog" aria-label={`${t.details}: ${entry.title}`} onClick={event => open(event, entry.id)}>{t.details}<span aria-hidden="true">→</span></button>
+            </div>
+          </div>
+        </div> : <button type="button" className="output-open" aria-haspopup="dialog" onClick={event => open(event, entry.id)}>
+            <span className="output-date"><time>{entry.year}</time><span>{entry.kind}</span></span>
+            <span className="output-summary"><strong>{entry.title}</strong><span>{entry.source}</span></span>
+            <span className="output-action">{t.details}<span aria-hidden="true">→</span></span>
+          </button>}
       </article>)}</div>
     </div>;
   }
@@ -123,7 +132,7 @@ export function PublicationsProjects({ lang }: { lang: Lang }) {
   return <>
     <section id="outputs" className="section output-section" aria-labelledby="outputs-heading">
       <div className="content-width">
-        <div className="section-heading" data-reveal><h2 id="outputs-heading">{t.heading}</h2></div>
+        <div className="section-heading" data-reveal><div><p className="section-label">03 / {lang === "en" ? "Selected outputs" : "研究与项目成果"}</p><h2 id="outputs-heading">{t.heading}</h2></div></div>
         {group(t.publications, t.entries.filter(entry => entry.id !== "bci"))}
         {group(t.projects, t.entries.filter(entry => entry.id === "bci"))}
       </div>

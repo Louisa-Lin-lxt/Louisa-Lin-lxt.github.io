@@ -1,35 +1,34 @@
-# Latest refinement: pixel background and quiet cards
+# Pearl & Tide: local redesign, 21 November 2026
 
-The latest user direction replaces the 3D hero with the live GitHub site's original background-network behavior in pixel form. `HeroNeuralField` retains pointer proximity and click propagation, now drawn as square nodes and stepped pixel paths. No Three.js scene or control panel is mounted on the home page.
+This iteration is local only. It does not update the published root export or push to GitHub.
 
-A single neuron sits at the right edge. The axon lights progressively as the page scrolls; desktop nodes double as section links and show their names only on hover/focus. Mobile shows a narrow passive indicator, retaining the normal menu for navigation. Reduced motion stops the background animation while progress and section links remain functional.
+## Design direction
 
-Removed from both card shelves: pixel neurons, folder graphics, Send a signal controls, illustrative-signal captions, and redundant browsing tips. Removed duplicate hero/section eyebrow labels and the hero's repeated focus list. Scientific image credits, factual dates/roles and detail controls remain.
+A calm, personal research portfolio with a single portrait, clear academic hierarchy and a few distinctive interactions. ENERGY 2 / RHYTHM 3 / MOTION 2. The supplied references were opened and visually reviewed: Sida Cheng, Azure JX, Yutian Chen, Walk with Zilin, Julie Zhang, Bing Lin, Jackie Hu and Chia. Their common useful traits are authentic imagery, clear identity, intentional spacing and personal detail. See the [reference and source review](reference-source-review.md) for evidence and transferable rules. This is an original composition, not a reproduction of another site's artwork.
 
-The portrait is larger again, with one concise Venture Fellow panel. Research and Experience retain their horizontal structure and detail behavior.
+- Work Sans: open shapes and moderate weights suit both academic information and personal material. IBM Plex Mono is limited to dates and indexing. Both are self-hosted with OFL licenses in public/fonts. Chinese retains native sans-serif fallbacks.
+- Pearl & Tide replaces the rejected mint/coral palette with cool pearl `#F4F8FC`, white surfaces, ice blue `#EAF3FC`, primary blue `#246BCB`, navy ink `#18324B`, muted text `#5D7084`, and borders `#D8E5F0`. Champagne `#C8A35A` is limited to decorative neuron accents and faint background light. The sea-blue/gold portrait and original pixel colors anchor the palette; typography and animation behavior remain intact.
+- The hero pairs one photographic anchor with open text. The name animates letter opacity without changing its measured width.
+- Background and education form an open two-column section. Research uses three comparable image previews. Publications use bibliographic rows. Experience is a compact list with logos and dates. Interests have larger pixel illustrations. This variation follows the content.
+- Selective frosted glass restores depth to the fixed header, portrait rim, the single grouped interests tray and swipe stage, contact form and dialogs. Translucent white, fine luminous edges, soft shadows and 22px blur with 145% saturation form one material family. Research uses bordered, contained image cards with separate text; the image trays are opaque to preserve the source figures. The Resume/CV and social controls echo this material with light surfaces and rounded edges. Prose and publications stay open. Work uses compact two-column cards with small thumbnails and separate date footers. Reading surfaces are more opaque, with solid fallbacks for unsupported or reduced transparency.
+- Arrows identify navigation and detail actions. The email copy control says Copy; it does not imply external navigation.
+- The right-side pixel neuron remains a progress indicator and desktop section navigator. The narrow mobile version is passive; the menu provides navigation.
+- Hero animation runs after pointer interaction for up to 1.5 seconds, then stops. Canvas geometry is cached; offscreen and hidden tabs stop rendering. Interest swipes retain their cancellable 520ms particle transition, keyboard alternatives and reduced-motion fallback.
 
----
-Earlier iteration (superseded where it differs from the update above):
+## Implementation
 
-# Louisa — interactive visual refinement, 2026-11-04
+The existing React/Vinext static export remains. No new runtime dependencies were added. `visual-refinement.css` replaces the previous override stack; dialog-specific rules moved into `story-details.css`. Form submission is isolated in `ContactForm.tsx`; visitor counting is isolated in `VisitorCounter.tsx`.
 
-## Fixed structure
-Research remains three horizontal cards. Experience remains four horizontal cards in its original order. Every card opens its corresponding complete introduction. Small screens retain a horizontal rail, with part of the next card exposed. Navigation, bilingual content, résumé, contact methods and the interests route remain available.
+The production CSS optimizer treated prefixed and standard backdrop-filter declarations as aliases and retained the last declaration. Standard-first, WebKit-last source rules became WebKit-only in the export, leaving Chromium's standard computed filter at `none`. Glass rules now place `-webkit-backdrop-filter` before `backdrop-filter`, preserving both in the current build. A regression test reads the CSS actually linked by the static export and checks the unprefixed declaration on the normal `.interest-list` and `.detail-dialog` rules; it does not rely on source CSS or the header's inline style.
 
-## Visual language
-Cold white, ice blue-grey, ink blue and restrained warm yellow. Arial / DengXian / PingFang fallbacks. One neural connection motif links the silver-blue 3D branches, blue/gold pixel neuron and selected-card border. Translucency is limited to navigation and hero panels; body copy rests on stable light surfaces.
+Installed skills applied: web-artifacts-builder (component organization and visual restraint), fixing-motion-performance (bounded rendering, cached geometry), antislop and antislop-ui (intentional hierarchy, real content, no invented metrics). The artifact scaffolding scripts were not run against this existing repository.
 
-The hero separates name, factual background, portrait, research/résumé actions and an interactive neural form. About separates education and minor from supporting coursework. Research cards expose institution, dates, role, context and contribution. Experience cards expose role, institution, date and concrete responsibilities. Supporting skills remain disclosures; interests and contact follow.
+## Email verification
 
-Images sit in consistent contain-fit frames with source captions. Original images and full descriptions remain available. No outcomes, papers or metrics were invented. Original role dates were retained; see verification notes about discrepancies with the existing PDF.
+The existing FormSubmit recipient is xingtonl@andrew.cmu.edu. One terminal-origin verification request on 21 November 2026 returned HTTP 403 / Cloudflare 1010 (browser signature blocked). No provider acceptance or delivery receipt was obtained. The owner did not find activation mail. A normal browser submission was prepared but automatic approval review refused the retry; it was not sent. No bypass or user-agent spoofing was attempted.
 
-## Interaction model
-- Drag the neural structure within a limited angle, or use the keyboard-operable rotation slider. Click Research, Venture or Interests to send a short gold signal along a branch and update the glass information panel. Its link takes the visitor to the matching section and highlights a relevant research/venture card. Replay and reset controls are explicit.
-- A pixel neuron fires once on card hover/focus, a topic selection, or Send a signal. Topic buttons highlight related cards without filtering or reordering them. Pixels have a reserved strip beneath images and are labelled illustrative.
-- Experience cards use a small CSS 3D folder. Hover/focus opens the cover; the detail view repeats the opening cue without delaying the text.
-- Cards use a consistent lift, border and arrow response. Detail containers animate from the card location. Native dialog handles keyboard containment, Escape, close and focus restoration.
-- Horizontal rails use native scrolling. Arrows and position counts appear only when needed. Arrow keys, Home and End move between card controls. No automatic scrolling or carousel timer.
-- Mobile vertical page scroll is retained; the neural drag captures only horizontal touch intent. Reduced motion removes travel/lift animations while preserving controls and state changes. WebGL failure retains SVG and the same topic controls.
+The form now has a 20-second abort timeout, duplicate-request guard, unmount cleanup and an explicit fallback after failure. Inputs remain intact on errors; only accepted messages clear the form. The website sends visitor inquiries to the owner and sets Reply-To; it is not a mailbox client. End-to-end delivery remains unverified.
 
-## Maintenance
-Keep the existing React/Vinext and GitHub Pages static export. Three.js is dynamically imported; capped resolution, idle/offscreen rendering and lower mobile pixel ratio limit work. Pixel/folder interactions need no new dependencies. The static output uses ordinary anchors rather than server-dependent RSC navigation.
+## Visitor count
+
+The footer uses CounterAPI.com with `unique=false` for cumulative visits in the dedicated `portfolio-2026-11-22` bucket. The English label reads “visits since Nov 22, 2026”; Chinese uses the same date and counting unit. Only the exact published hostname records an event, at most once per document, across home and interests pages. Language changes and client-side remounts do not increment it. Localhost reads with `readOnly=true`, displays preview, and does not increase the count. Counting begins when deployed; earlier unrecorded traffic is not reconstructed. An unavailable response displays a dash, never an invented number. The API is public and approximate, not an audited analytics system.

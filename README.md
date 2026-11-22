@@ -22,28 +22,28 @@ npm run preview:pages
 
 The static preview runs at `http://localhost:5175`. `npm test` builds with the existing GitHub Pages configuration and then checks the exported routes, assets, résumé PDF and core links. To check an already built export, use `npm run test:export`.
 
-`npm run build:pages` writes deployable static files to **`dist/client`**. Publish that directory through the existing GitHub Pages deployment. This redesign does not publish or change the remote site automatically. The canonical site URL is `https://louisa-lin-lxt.github.io/`.
+`npm run build:pages` writes deployable static files to **`dist/client`**. GitHub Pages serves the tracked root export on `main`, so an authorized release must sync that output to the repository root before committing and pushing. Replace generated `_next` assets only; preserve source files and omit `.DS_Store`, `.vite`, `.assetsignore` and `_headers`. Building alone does not publish. The canonical site URL is `https://louisa-lin-lxt.github.io/`.
 
 ## Edit content and presentation
 
-- `app/content/portfolio.ts`: English and Chinese biography, roles, research contributions, source credits and UI copy.
-- `app/HomeClient.tsx`: page structure, navigation, contact form and project details.
-- `app/globals.css`: shared typography, layout, responsive breakpoints and motion.
-- `app/components/DetailDialog.tsx`: native dialog, focus loop, Escape and focus restoration.
-- `app/components/HeroNeuralField.tsx`: original live-site neural background reworked into pixel paths and pointer-triggered signals.
-- `app/components/NeuralProgress.tsx`: one fixed pixel neuron that lights with reading progress; desktop nodes navigate sections.
-- `app/components/ProjectShelf.tsx`: compact horizontal research/experience cards and manual browsing.
-- Project cards contain no decorative neurons, folders or signal controls.
-- `app/interactive-portfolio.css`: scoped hero, horizontal shelf and interaction styling.
-- `app/interests/InterestsClient.tsx`: interest tabs and deep links; normal scrolling.
-- `public/optimized`: resized web images. Original source files remain in `public`.
-- `public/Xingtong-Lin-Resume.pdf`: November 2026 CV used by the résumé button.
+- `app/content/portfolio.ts`: bilingual biography, education, research and experience.
+- `app/HomeClient.tsx`: page structure, navigation and story dialogs.
+- `app/styles/visual-refinement.css`: current design tokens, self-hosted fonts and responsive composition.
+- `app/styles/story-details.css`: story dialog presentation.
+- `app/components/ContactForm.tsx`: in-page submission, timeout and response states.
+- `app/components/VisitorCounter.tsx`: shared visit total from November 22, 2026; localhost only reads it. `npm run test:counter` checks counting and preview behavior without changing the live total.
+- `app/components/HeroNeuralField.tsx`: bounded, pointer-triggered pixel signals.
+- `app/components/NeuralProgress.tsx`: right-side reading progress and section links.
+- `app/components/ProjectShelf.tsx`: research previews and compact work cards.
+- `app/interests/InterestsClient.tsx`: swipe and keyboard navigation with particle transitions.
+- `public/fonts`: Work Sans and IBM Plex Mono WOFF2 assets and OFL licenses.
+- `public/optimized`: web images; original assets remain available.
 
-English uses Arial. Chinese requests DengXian / 等线, with PingFang SC and Microsoft YaHei fallbacks; a licensed DengXian web font is not bundled. Research images use `object-fit: contain`. Cards show organization, position and dates; full project descriptions and institutional links live in details.
+English uses Work Sans. Chinese uses native sans-serif fallbacks. Research imagery stays contain-fit and all full descriptions remain available in dialogs. Beyond Academics retains Music, Taotao and Travel as pixel scenes without visible topic tabs.
 
-The Research section also shows a co-authored 2026 article linked through its DOI and a first-year 2025 Meeting of the Minds poster presentation. The Interests page loads the Three.js scene only for Music and Travel; the Taotao pixel gallery does not download that scene.
+The FormSubmit contact service is not yet verified end to end. The latest request was blocked by its access protection, and no activation or received message has been confirmed. See the current design and verification notes before describing email delivery as working.
 
-The contact form retains the existing FormSubmit service. Delivery and recipient activation need an authorized real submission to verify. Contact uses platform-logo links and a WeChat copy control; the personal email and duplicate bottom résumé link are intentionally hidden. Personal photo collections, playlists and travel entries are still awaiting source content.
+Visitor counting starts when the new component is deployed. There is no historical baseline to recover. The local preview shows a read-only total.
 
 ## Scope of checks
 

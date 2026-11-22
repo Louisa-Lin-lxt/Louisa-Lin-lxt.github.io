@@ -1,9 +1,13 @@
 "use client";
 
-import { Fragment, useEffect, useRef, useState, type FormEvent } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { HeroNeuralField } from "./components/HeroNeuralField";
+import { CourseworkDisclosure } from "./components/CourseworkDisclosure";
+import { useSectionMotion } from "./components/useSectionMotion";
 import { NeuralProgress } from "./components/NeuralProgress";
 import { InterestArtwork } from "./components/InterestArtwork";
+import { ContactForm } from "./components/ContactForm";
+import { VisitorCounter } from "./components/VisitorCounter";
 import { ProjectShelf, storyIdentity } from "./components/ProjectShelf";
 import { PublicationsProjects } from "./components/PublicationsProjects";
 import { DetailDialog } from "./components/DetailDialog";
@@ -15,7 +19,6 @@ import { copy, experience, researchTimeline, ui, type Story } from "./content/po
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 const asset = (path: string) => `${basePath}${path}`;
 const emailAddress = "xingtonl@andrew.cmu.edu";
-const categories = ["Research", "Collaboration", "Other"] as const;
 const sectionIds = ["about", "research", "outputs", "experience", "interests", "contact"];
 
 function Arrow({ external = false }: { external?: boolean }) {
@@ -24,6 +27,7 @@ function Arrow({ external = false }: { external?: boolean }) {
 
 export default function Home() {
   const { lang, toggleLang } = usePersistentLanguage();
+  useSectionMotion(lang);
   const t = ui[lang];
   const formCopy = copy[lang];
   const resumeHref = asset(lang === "zh" ? "/Xingtong-Lin-Resume-ZH.pdf" : "/Xingtong-Lin-Resume.pdf");
@@ -32,7 +36,6 @@ export default function Home() {
   const [activeSection, setActiveSection] = useState("home");
   const [toast, setToast] = useState("");
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [submitState, setSubmitState] = useState<"idle" | "sending" | "success" | "error" | "activation">("idle");
   const activeStory = selected ? (selected.kind === "research" ? researchTimeline[lang] : experience[lang])[selected.index] : null;
   const activeIdentity = activeStory && selected ? storyIdentity(activeStory, selected.kind, selected.index, lang) : null;
 
@@ -47,18 +50,14 @@ export default function Home() {
       setActiveSection(current);
     };
     const onScroll = () => { cancelAnimationFrame(frame); frame = requestAnimationFrame(update); };
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add("is-visible"); observer.unobserve(entry.target); } });
-    }, { threshold: .08 });
-    document.querySelectorAll("[data-reveal]").forEach(item => observer.observe(item));
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     update();
-    return () => { observer.disconnect(); cancelAnimationFrame(frame); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("scroll", onScroll); window.removeEventListener("resize", onScroll); };
   }, []);
   useEffect(() => () => { if (toastTimer.current) clearTimeout(toastTimer.current); }, []);
   useEffect(() => {
-    const media = window.matchMedia("(min-width: 1000px)");
+    const media = window.matchMedia("(min-width: 1100px)");
     const close = () => { if (media.matches) setMenuOpen(false); };
     media.addEventListener("change", close);
     return () => media.removeEventListener("change", close);
@@ -75,33 +74,23 @@ export default function Home() {
     toastTimer.current = setTimeout(() => setToast(""), 2600);
   }
 
-  async function sendMessage(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (submitState === "sending") return;
-    const form = event.currentTarget, data = new FormData(form);
-    const name = String(data.get("name") ?? "").trim(), email = String(data.get("email") ?? "").trim(), message = String(data.get("message") ?? "").trim();
-    const subject = String(data.get("subject") ?? "").trim().replace(/[\r\n]/g," ");
-    const category = String(data.get("category") ?? "Other");
-    if (!name || !subject || !message || !categories.some(item => item === category)) { setSubmitState("error"); return; }
-    if (data.get("_honey")) return;
-    setSubmitState("sending");
-    try {
-      const response = await fetch(`https://formsubmit.co/ajax/${emailAddress}`, { method: "POST", headers: { "Content-Type":"application/json", Accept:"application/json" }, body: JSON.stringify({name,email,message,subject,category,_replyto:email,_subject:`[Website][${category}] ${subject}`,_template:"table",_captcha:"false"}) });
-      const result = await response.json() as {success?: boolean | string; message?: string};
-      if (/needs activation/i.test(result.message ?? "")) { setSubmitState("activation"); return; }
-      if (!response.ok || !(result.success === true || result.success === "true")) throw new Error("Not accepted");
-      form.reset(); setSubmitState("success");
-    } catch { setSubmitState("error"); }
-  }
-
   function renderStoryDetail(story: Story, identity: NonNullable<typeof activeIdentity>) {
-    const researchVideoIndex = selected?.kind === "research" && selected.index < 2 ? selected.index : null;
+    const isResearch = selected?.kind === "research";
+    const researchVideoIndex = isResearch && selected.index < 2 ? selected.index : null;
+    const storyImage = <figure className={`inline-media story-figure ${story.imageClass ?? ""}`}><div className="inline-media-frame"><img src={asset(story.image)} alt={story.alt} /></div><figcaption>{story.alt}</figcaption></figure>;
     return <article className="detail-copy">
       <header className="detail-heading"><h2>{story.sourceUrl ? <a className="detail-heading-link" href={story.sourceUrl} target="_blank" rel="noreferrer" aria-label={`${identity.organization} · ${story.sourceLabel ?? identity.organization}`} title={story.sourceLabel}>{identity.organization}<Arrow external /></a> : identity.organization}</h2><p className="detail-role">{identity.position}</p><p className="detail-context">{identity.affiliation && <span>{identity.affiliation}</span>}<time>{story.date}</time></p></header>
-      <div className="detail-prose">{story.narrative.map((paragraph, index) => <Fragment key={index}>
+      <div className="detail-prose">{isResearch ? <>
+        <div className="research-contribution">
+          {story.narrative.map((paragraph, index) => <p key={index}>{paragraph}</p>)}
+          {selected.index === 1 && <a className="research-output-link" href={asset("/research-media/yttri-2025-first-year-poster.pdf")} target="_blank" rel="noreferrer">{lang === "en" ? "Open my poster" : "查看我的研究海报"}<Arrow external /></a>}
+        </div>
+        <div className="research-lab-context">
+          {researchVideoIndex !== null ? <><ResearchFilm index={researchVideoIndex} lang={lang} /><ResearchSupplement index={researchVideoIndex} lang={lang} /></> : storyImage}
+        </div>
+      </> : story.narrative.map((paragraph, index) => <Fragment key={index}>
         <p>{paragraph}</p>
-        {index === 0 && (researchVideoIndex !== null ? <ResearchFilm index={researchVideoIndex} lang={lang} /> : <figure className={`inline-media story-figure ${story.imageClass ?? ""}`}><div className="inline-media-frame"><img src={asset(story.image)} alt={story.alt} /></div><figcaption>{story.alt}</figcaption></figure>)}
-        {index === 1 && researchVideoIndex !== null && <ResearchSupplement index={researchVideoIndex} lang={lang} />}
+        {index === 0 && storyImage}
       </Fragment>)}</div>
     </article>;
   }
@@ -121,8 +110,9 @@ export default function Home() {
         <HeroNeuralField />
         <div className="hero-inner content-width">
           <div className="hero-copy">
+            <p className="hero-eyebrow">{lang === "en" ? "Carnegie Mellon University" : "卡内基梅隆大学"}</p>
             <h1 aria-label={t.name}><span className="hero-name-reveal" onAnimationEnd={event => { if (event.animationName === "hero-name-letter" && event.target === event.currentTarget.lastElementChild && document.documentElement.dataset.nameIntro === "play") document.documentElement.dataset.nameIntro = "done"; }}>{Array.from(t.name).map((letter, index) => <span className="hero-name-letter" key={`${lang}-${index}`} style={{ animationDelay: `${120 + index * (lang === "en" ? 65 : 130)}ms` }}>{letter === " " ? "\u00a0" : letter}</span>)}</span></h1>
-            <p className="hero-intro">{t.heroIntro}</p><p className="hero-work">{t.heroWork}</p>
+            <p className="hero-intro">{t.heroIntro}</p>
             <div className="hero-actions"><a className="button button-primary" href="#contact">{t.contact}<Arrow /></a><a className="button button-secondary" href={resumeHref} target="_blank" rel="noreferrer">{t.resume}<Arrow external /></a></div>
           </div>
           <div className="hero-composition">
@@ -133,12 +123,12 @@ export default function Home() {
       </section>
 
       <section id="about" className="section about-section content-width" aria-labelledby="about-heading">
-        <div className="about-copy" data-reveal><h2 id="about-heading">{t.aboutTitle}</h2><p>{t.aboutBody}</p></div>
-        <div className="education-panel" data-reveal><div className="education-heading"><img src={asset('/orgs/cmu-logo.png')} alt="" width="44" height="44" loading="lazy" /><div><span className="meta">{t.education}</span><h3>{t.university}</h3></div></div><dl className="education-list"><div><dt>{t.major}</dt><dd>{t.track}</dd></div><div><dt>{t.additional}</dt><dd>{t.additionalTrack}</dd></div><div><dt>{t.minor}</dt><dd>{t.minorLabel}</dd></div></dl><p className="honor">Dean’s List with High Honors</p><details className="supporting-details"><summary>{t.coursework}<span>+</span></summary><ul>{formCopy.courses.map(course => <li key={course}>{course}</li>)}</ul></details></div>
+        <div className="about-copy" data-reveal><p className="section-label">01 / {lang === "en" ? "A little background" : "关于我"}</p><h2 id="about-heading">{t.aboutTitle}</h2><p>{t.aboutBody}</p></div>
+        <div className="education-panel" data-reveal="support"><div className="education-heading"><img src={asset('/orgs/cmu-logo.png')} alt="" width="44" height="44" loading="lazy" /><div><span className="meta">{t.education}</span><h3>{t.university}</h3></div></div><dl className="education-list"><div><dt>{t.major}</dt><dd>{t.track}</dd></div><div><dt>{t.additional}</dt><dd>{t.additionalTrack}</dd></div><div><dt>{t.minor}</dt><dd>{t.minorLabel}</dd></div></dl><p className="honor">Dean’s List with High Honors</p><CourseworkDisclosure label={t.coursework} groups={formCopy.courseGroups} /></div>
       </section>
 
       <section id="research" className="section research-section" aria-labelledby="research-heading">
-        <div className="content-width"><div className="section-heading" data-reveal><h2 id="research-heading">{t.researchTitle}</h2></div>
+        <div className="content-width"><div className="section-heading" data-reveal><div><p className="section-label">02 / {lang === "en" ? "In the lab" : "实验室里"}</p><h2 id="research-heading">{t.researchTitle}</h2></div></div>
           <ProjectShelf kind="research" lang={lang} onOpen={index=>setSelected({kind:'research',index})}/>
         </div>
       </section>
@@ -146,27 +136,22 @@ export default function Home() {
       <PublicationsProjects lang={lang} />
 
       <section id="experience" className="section content-width experience-section" aria-labelledby="experience-heading">
-        <div className="section-heading" data-reveal><h2 id="experience-heading">{t.experienceTitle}</h2></div>
+        <div className="section-heading" data-reveal><div><p className="section-label">04 / {lang === "en" ? "Putting ideas to work" : "从想法到实践"}</p><h2 id="experience-heading">{t.experienceTitle}</h2></div></div>
         <ProjectShelf kind="experience" lang={lang} onOpen={index=>setSelected({kind:'experience',index})}/>
       </section>
 
-      <section id="interests" className="section interests-section" aria-labelledby="interests-heading"><div className="content-width"><div className="section-heading" data-reveal><h2 id="interests-heading">{t.interestsTitle}</h2></div><div className="interest-list">{t.interestNames.map((name,index) => <SmoothLink key={name} href={`/interests#${['music','taotao','travel'][index]}`} className="interest-item" ariaLabel={`${t.interestsLink}: ${name}`}><InterestArtwork index={index} /><div><h3>{name}</h3></div><Arrow /></SmoothLink>)}</div></div></section>
+      <section id="interests" className="section interests-section" aria-labelledby="interests-heading"><div className="content-width"><div className="section-heading" data-reveal><div><p className="section-label">05 / {lang === "en" ? "A few favorite things" : "生活里的小喜欢"}</p><h2 id="interests-heading">{t.interestsTitle}</h2></div><p className="section-intro">{lang === "en" ? "Off the clock, and a little more me." : "忙碌之外，生活的另一面。"}</p></div><div className="interest-list" data-reveal="support">{t.interestNames.map((name,index) => <SmoothLink key={name} href={`/interests#${['music','taotao','travel'][index]}`} className="interest-item" ariaLabel={`${t.interestsLink}: ${name}`}><InterestArtwork index={index} /><div><h3>{name}</h3></div><Arrow /></SmoothLink>)}</div></div></section>
 
       <section id="contact" className="section content-width contact-section" aria-labelledby="contact-heading">
-        <div className="contact-info" data-reveal><h2 id="contact-heading">{t.contactTitle}</h2><p>{t.contactBody}</p><div className="contact-links social-links">
+        <div className="contact-info" data-reveal><p className="section-label">06 / {lang === "en" ? "Start a conversation" : "保持联系"}</p><h2 id="contact-heading">{t.contactTitle}</h2><p>{t.contactBody}</p><button type="button" className="contact-email" onClick={() => copyContact(emailAddress,t.copied)} aria-label={`${t.copy}: ${emailAddress}`}>{emailAddress}<span>{lang === "en" ? "Copy" : "复制"}</span></button><div className="contact-links social-links">
           <a href="https://www.linkedin.com/in/lxt/" target="_blank" rel="noreferrer" aria-label="LinkedIn" title="LinkedIn"><img src={asset('/social/linkedin.svg')} alt="" width="25" height="25"/></a>
           <a href="https://xhslink.cn/m/6kHp1Z9VdG5" target="_blank" rel="noreferrer" aria-label={lang==='en'?'Xiaohongshu':'小红书'} title={lang==='en'?'Xiaohongshu':'小红书'}><img src={asset('/social/xiaohongshu.svg')} alt="" width="32" height="32"/></a>
           <button type="button" onClick={() => copyContact('13910969793',t.wechatCopied)} aria-label={t.wechat} title={lang==='en'?'Copy WeChat ID':'复制微信号'}><img src={asset('/social/wechat.svg')} alt="" width="29" height="29"/></button>
         </div></div>
-        <div className="contact-form-panel" data-reveal><form aria-label={t.form} onSubmit={sendMessage} onChange={() => submitState !== 'sending' && setSubmitState('idle')} aria-busy={submitState==='sending'}>
-          <div className="form-two"><label>{formCopy.formName}<input autoComplete="name" name="name" required /></label><label>{formCopy.formEmail}<input autoComplete="email" type="email" name="email" required placeholder="you@example.com" /></label></div>
-          <label>{formCopy.formCategory}<select name="category" defaultValue="Research">{categories.map((cat,i) => <option key={cat} value={cat}>{formCopy.formCategories[i]}</option>)}</select></label>
-          <label>{formCopy.formSubject}<input name="subject" required maxLength={160} placeholder={formCopy.formSubjectPlaceholder} /></label><label>{formCopy.formMessage}<textarea name="message" rows={4} required /></label><div className="honeypot" aria-hidden="true"><label>Leave blank<input name="_honey" tabIndex={-1} autoComplete="off" /></label></div>
-          <button className="button button-primary submit-button" disabled={submitState==='sending'}>{submitState==='sending'?formCopy.formSending:formCopy.formSubmit}<Arrow /></button><p className={`form-feedback ${submitState}`} role={submitState==='error'||submitState==='activation'?'alert':'status'}>{submitState==='success'?formCopy.formSuccess:submitState==='activation'?formCopy.formActivation:submitState==='error'?formCopy.formError:''}</p>
-        </form></div>
+        <ContactForm lang={lang} />
       </section>
     </main>
-    <footer className="site-footer content-width"><span>© 2026 Xingtong Lin</span></footer>
+    <footer className="site-footer content-width"><span>© 2026 Xingtong Lin</span><VisitorCounter lang={lang} /><a href="#home">{lang === "en" ? "Back to top ↑" : "回到顶部 ↑"}</a></footer>
     <div className={`toast ${toast ? 'is-visible' : ''}`} role="status" aria-live="polite">{toast}</div>
     {activeStory && activeIdentity && <DetailDialog className="story-detail-dialog" title={activeIdentity.organization} closeLabel={t.close} onClose={() => setSelected(null)}>{renderStoryDetail(activeStory, activeIdentity)}</DetailDialog>}
     {menuOpen && <DetailDialog title={formCopy.navAria} closeLabel={t.closeMenu} onClose={() => setMenuOpen(false)} className="mobile-menu-dialog"><nav aria-label={formCopy.navAria}>{sectionIds.map((id,i) => <a href={`#${id}`} key={id} aria-current={activeSection===id?'location':undefined} onClick={() => setMenuOpen(false)}>{t.nav[i]}<Arrow /></a>)}</nav><a className="menu-resume" href={resumeHref} target="_blank" rel="noreferrer">{t.resume}<Arrow external /></a></DetailDialog>}

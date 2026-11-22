@@ -207,8 +207,8 @@ h3 {
   inset:0 0 auto;
   z-index:30;
   background:rgba(250,251,253,.84);
-  backdrop-filter:blur(18px);
   -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(18px);
   border-bottom:1px solid #dce5edb3
 }
 .header-inner {
@@ -382,13 +382,6 @@ h3 {
   max-width:480px;
   letter-spacing:-.015em
 }
-.hero-work {
-  color:var(--muted);
-  font-size:15px;
-  line-height:1.8;
-  max-width:465px;
-  margin-top:14px
-}
 .hero-actions {
   display:flex;
   gap:12px;
@@ -468,8 +461,8 @@ h3 {
   background:rgba(255,255,255,.68);
   border:1px solid #ffffffd9;
   box-shadow:0 14px 40px #1d466b12;
-  backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px)
+  -webkit-backdrop-filter:blur(16px);
+  backdrop-filter:blur(16px)
 }
 .current-role {
   position:absolute;
@@ -1212,8 +1205,8 @@ h3 {
 }
 .detail-dialog::backdrop {
   background:#18314670;
-  backdrop-filter:blur(9px);
   -webkit-backdrop-filter:blur(9px);
+  backdrop-filter:blur(9px);
   animation:backdrop-in .25s
 }
 .dialog-surface {
@@ -1547,7 +1540,7 @@ h3 {
     opacity:0
   }
 }
-.hero-field,.hero h1,.hero-intro,.hero-work,.hero-actions,.hero-copy>.quiet-link {
+.hero-field,.hero h1,.hero-intro,.hero-actions,.hero-copy>.quiet-link {
   animation:enter .65s var(--ease) both
 }
 .hero h1 {
@@ -1555,9 +1548,6 @@ h3 {
 }
 .hero-intro {
   animation-delay:80ms
-}
-.hero-work {
-  animation-delay:110ms
 }
 .hero-actions {
   animation-delay:140ms
@@ -1567,9 +1557,6 @@ h3 {
 }
 .hero-composition {
   animation:enter .9s .12s var(--ease) both
-}
-[data-reveal].is-visible {
-  animation:enter .65s var(--ease) both
 }
 @media(min-width:1500px) {
   .hero-inner {
@@ -1676,9 +1663,6 @@ h3 {
   }
   .hero-intro {
     font-size:17px
-  }
-  .hero-work {
-    font-size:14px
   }
   .hero-field {
     font-size:9px;
@@ -1849,12 +1833,6 @@ h3 {
     font-size:17px;
     line-height:1.6;
     max-width:440px
-  }
-  .hero-work {
-    font-size:13px;
-    line-height:1.85;
-    max-width:450px;
-    margin-top:12px
   }
   .hero-actions {
     gap:10px;

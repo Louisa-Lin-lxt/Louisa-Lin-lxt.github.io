@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./interactive-portfolio.css";
+import "./styles/story-details.css";
 import "./styles/visual-refinement.css";
+import "./styles/coursework-disclosure.css";
+import "./styles/hero-neural-motion.css";
 
 export const dynamic = "force-static";
 

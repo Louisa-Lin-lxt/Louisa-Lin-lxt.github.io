@@ -1,0 +1,6 @@
+/* Preserve the pushed pixel network's fade behind the introduction. */
+.hero-neural-field {
+  opacity: .7;
+  -webkit-mask-image: linear-gradient(90deg, rgba(0, 0, 0, .2), rgba(0, 0, 0, .48) 48%, #000 82%);
+  mask-image: linear-gradient(90deg, rgba(0, 0, 0, .2), rgba(0, 0, 0, .48) 48%, #000 82%);
+}

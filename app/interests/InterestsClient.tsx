@@ -8,6 +8,7 @@ import { TaotaoPixels } from "../components/TaotaoPixels";
 import { InterestPixels } from "../components/InterestPixels";
 import { SmoothLink } from "../components/SmoothLink";
 import { usePersistentLanguage } from "../components/usePersistentLanguage";
+import { VisitorCounter } from "../components/VisitorCounter";
 import "../styles/interests-polish.css";
 
 const copy = {
@@ -155,7 +156,8 @@ export default function InterestsPage() {
         </div>
         <InterestStorm ref={stormRef} />
       </section>
-      <footer className="interests-footer"><span>© 2026 Xingtong Lin</span></footer>
+      <p className="interest-swipe-note">{lang === "en" ? "Drag or swipe to explore" : "左右拖动或滑动，继续探索"}</p>
+      <footer className="interests-footer"><span>© 2026 Xingtong Lin</span><VisitorCounter lang={lang} /></footer>
     </div>
   </main>;
 }

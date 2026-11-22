@@ -42,6 +42,19 @@ test('research cards identify the labs and retain direct contact links',()=>{
   assert.match(home,/href="https:\/\/www.linkedin.com\/in\/lxt\/"/);
 });
 
+test('production glass rules retain the standard backdrop-filter declaration',async()=>{
+  const paths=new Set([...`${home}${interests}`.matchAll(/href="(\/[^"?]+\.css)"/g)].map(match=>match[1]));
+  assert.ok(paths.size>0,'Expected exported stylesheets');
+  const css=(await Promise.all([...paths].map(path=>readFile(new URL(`.${path}`,root),'utf8')))).join('\n');
+  const rules=[...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)];
+  for(const selector of ['.interest-list','.detail-dialog']) {
+    const hasStandardFilter=rules.some(([,selectors,declarations])=>
+      selectors.split(',').some(value=>value.trim()===selector)
+      && /(?:^|;)\s*backdrop-filter\s*:\s*(?!none\b)[^;}]+/.test(declarations));
+    assert.ok(hasStandardFilter,`${selector} lost its standard backdrop-filter during CSS optimization`);
+  }
+});
+
 test('publications and projects render in their own section',()=>{
   assert.match(home,/Publications &amp; Projects/);
   assert.match(home,/Papers &amp; posters/);
@@ -49,12 +62,18 @@ test('publications and projects render in their own section',()=>{
   assert.match(home,/Decision Making Along a Semi-continuous Dimension in an Open Field Arena/);
   assert.match(home,/BCI decoder/);
   assert.match(home,/Unpublished course project/);
-  assert.equal([...home.matchAll(/class="output-open"/g)].length,3);
+  assert.equal([...home.matchAll(/class="output-open"/g)].length,2);
+  assert.equal([...home.matchAll(/class="output-paper-details"/g)].length,1);
+  assert.match(home,/<a class="output-article-link" href="https:\/\/doi\.org\/10\.1016\/j\.ipha\.2026\.08\.008" target="_blank" rel="noopener noreferrer">Read article/);
+  const paperActions = home.match(/<div class="output-paper-actions">([\s\S]*?)<\/div>/)?.[1];
+  assert.ok(paperActions, 'The paper needs both actions in the exported page');
+  assert.match(paperActions,/<\/a><button\b/);
+  assert.doesNotMatch(paperActions,/<button\b[^>]*>[\s\S]*<a\b/);
 });
 
-test('static HTML keeps all seven visible cards and usable interaction fallbacks',()=>{
+test('static HTML keeps three research cards, four compact work cards and usable interaction fallbacks',()=>{
   assert.equal([...home.matchAll(/class="project-card research-card"/g)].length,3);
-  assert.equal([...home.matchAll(/class="project-card experience-card"/g)].length,4);
+  assert.equal([...home.matchAll(/class="project-card work-card"/g)].length,4);
   assert.equal([...home.matchAll(/class="card-open"/g)].length,7);
   assert.equal([...home.matchAll(/aria-haspopup="dialog"/g)].length,10);
   assert.match(home,/class="hero-neural-field"/);

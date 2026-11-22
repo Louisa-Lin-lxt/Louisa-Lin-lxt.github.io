@@ -16,4 +16,4 @@ createServer(async (req,res) => {
     res.writeHead(200, { 'Content-Type':mime[extname(file)] || 'application/octet-stream', 'Cache-Control':'no-store' });
     res.end(req.method === 'HEAD' ? undefined : body);
   } catch { res.writeHead(404,{'Content-Type':'text/plain'}).end('Not found'); }
-}).listen(port,'localhost',()=>console.log(`Static GitHub Pages preview: http://localhost:${port}`));
+}).listen(port,'127.0.0.1',()=>console.log(`Static GitHub Pages preview: http://localhost:${port}`));

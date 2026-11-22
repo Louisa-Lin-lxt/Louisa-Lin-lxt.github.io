@@ -1,3 +1,5 @@
+.interests-page { background: radial-gradient(ellipse at 78% 48%, #d5e8f8a6, transparent 55%), radial-gradient(ellipse at 22% 80%, #efe3c66b, transparent 45%), var(--paper); }
+.interests-page .interest-header { border-bottom: 1px solid var(--line); padding-block: 20px; }
 .interests-page .interests-intro {
   max-width: 680px;
   padding-top: clamp(54px, 7vw, 86px);
@@ -7,12 +9,13 @@
   font-size: clamp(38px, 4.6vw, 56px);
   line-height: 1.08;
   letter-spacing: -.045em;
+  font-weight: 500;
 }
 
 .interests-page .interests-intro > p:last-child {
   max-width: 520px;
   margin-top: 18px;
-  color: #526476;
+  color: var(--muted);
   font-size: 16px;
   line-height: 1.65;
 }
@@ -22,10 +25,20 @@
   overscroll-behavior-x: contain;
   margin-top: 38px;
   outline-offset: 5px;
+  border: 1px solid var(--glass-edge);
+  border-radius: 26px;
+  background: var(--glass-fill);
+  -webkit-backdrop-filter: var(--glass-filter);
+  backdrop-filter: var(--glass-filter);
+  box-shadow: var(--glass-shadow);
 }
 
+.interests-page .taotao-pixel-gallery { background: transparent; padding-block: 38px; }
+.interests-page .taotao-pixel-copy h2 { font-weight: 500; }
+.interest-swipe-note { margin-top: 16px; color: var(--muted); font: 11px var(--font-mono); text-align: right; }
+
 .interests-page .interest-stage:focus-visible {
-  outline: 2px solid #246ba2;
+  outline: 2px solid var(--blue);
 }
 
 .interest-sr-only {
@@ -111,7 +124,7 @@
 
 .interests-page .interest-story > p {
   margin-top: 18px;
-  color: #526476;
+  color: var(--muted);
   font-size: 16px;
   line-height: 1.65;
 }
@@ -131,13 +144,13 @@
 .interests-page .interest-hint {
   right: 30px;
   bottom: 26px;
-  color: #607587;
+  color: var(--muted);
   font-size: 12px;
 }
 
 .interests-page .interests-footer {
-  justify-content: flex-end;
-  color: #708193;
+  justify-content: space-between;
+  color: var(--muted);
   font-size: 12px;
 }
 

@@ -1,0 +1,32 @@
+.visitor-counter {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 3px 6px;
+  color: var(--muted, #68707d);
+  font-size: 11px;
+  line-height: 1.5;
+  max-width: 100%;
+}
+
+.visitor-counter__icon {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  opacity: .8;
+}
+
+.visitor-counter__value {
+  font-variant-numeric: tabular-nums;
+}
+
+.visitor-counter__value,
+.visitor-counter__since {
+  white-space: nowrap;
+}
+
+.visitor-counter__preview {
+  margin-left: 2px;
+  font-size: 10px;
+  opacity: .72;
+}

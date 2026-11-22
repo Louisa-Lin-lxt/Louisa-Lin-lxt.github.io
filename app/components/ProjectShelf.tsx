@@ -12,27 +12,55 @@ export function storyIdentity(story:Story,kind:ShelfKind,index:number,lang:Lang)
     : story.title;
   return {organization,affiliation:affiliation.join(' · '),institution:affiliation[0]??'',position};
 }
-function ShelfCard({kind,index,lang,onOpen}:{kind:ShelfKind;index:number;lang:Lang;onOpen:(index:number)=>void}) {
-  const story=(kind==='research'?researchTimeline:experience)[lang][index];
-  const {organization,institution,position}=storyIdentity(story,kind,index,lang);
-  const titleId=`${kind}-card-${index}-title`;
-  return <article className={`project-card ${kind}-card`} aria-labelledby={titleId}>
+type EntryProps = { index:number; lang:Lang; onOpen:(index:number)=>void };
+
+function DetailsButton({organization,index,lang,onOpen}:EntryProps & {organization:string}) {
+  return <button type="button" className="card-open" aria-haspopup="dialog" aria-label={`${lang==='en'?'View details':'查看详情'}: ${organization}`} onClick={event=>{event.currentTarget.focus({preventScroll:true});onOpen(index);}}>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg>
+  </button>;
+}
+
+function ResearchCard({index,lang,onOpen}:EntryProps) {
+  const story=researchTimeline[lang][index];
+  const {organization,position}=storyIdentity(story,'research',index,lang);
+  const titleId=`research-card-${index}-title`;
+  return <article className="project-card research-card" aria-labelledby={titleId}>
     <figure className="shelf-figure"><div className={`shelf-image ${story.imageClass ?? ''}`}><img src={`${basePath}${story.image}`} alt={story.alt} loading="lazy"/></div></figure>
     <div className="shelf-card-copy">
-      <h3 id={titleId}>{organization}</h3>
-      {kind==='research'&&institution&&<p className="shelf-institution">{institution}</p>}
-      <p className="shelf-position">{position}</p>
+      <h3 id={titleId}><span>{position}</span><span className="shelf-organization">{organization}</span></h3>
+      <div className="shelf-card-bottom">
+        <time>{story.date}</time>
+        <DetailsButton organization={organization} index={index} lang={lang} onOpen={onOpen}/>
+      </div>
+    </div>
+  </article>;
+}
+
+function ExperienceCard({index,lang,onOpen}:EntryProps) {
+  const story=experience[lang][index];
+  const {organization,position}=storyIdentity(story,'experience',index,lang);
+  const titleId=`experience-${index}-title`;
+  return <article className="project-card work-card" aria-labelledby={titleId}>
+    <div className="work-card-heading">
+      <img className={`work-card-logo ${story.imageClass ?? ''}`} src={`${basePath}${story.image}`} alt={story.alt} loading="lazy"/>
+      <div className="work-card-copy">
+        <h3 id={titleId}>{position}</h3>
+        <p>{organization}</p>
+      </div>
+    </div>
+    <div className="shelf-card-bottom work-card-footer">
       <time>{story.date}</time>
-      <div className="shelf-card-bottom"><button type="button" className="card-open" aria-haspopup="dialog" aria-label={`${lang==='en'?'View details':'查看详情'}: ${organization}`} onClick={event=>{event.currentTarget.focus({preventScroll:true});onOpen(index);}}><span>{lang==='en'?'View details':'查看详情'}</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></button></div>
+      <DetailsButton organization={organization} index={index} lang={lang} onOpen={onOpen}/>
     </div>
   </article>;
 }
 
 export function ProjectShelf({kind,lang,onOpen}:{kind:ShelfKind;lang:Lang;onOpen:(index:number)=>void}) {
   const stories=(kind==='research'?researchTimeline:experience)[lang];
-  return <div className={`project-shelf ${kind}-shelf`}>
-    <div className="card-grid" role="region" aria-label={lang==='en'?`${kind==='research'?'Research':'Experience'} cards`:`${kind==='research'?'科研':'经历'}卡片`}>
-      {stories.map((_,index)=><ShelfCard key={index} kind={kind} index={index} lang={lang} onOpen={onOpen}/>)}
+  const Entry=kind==='research'?ResearchCard:ExperienceCard;
+  return <div className={`project-shelf ${kind}-shelf`} data-reveal="support">
+    <div className={kind==='research'?'card-grid':'work-card-grid'} role="region" aria-label={lang==='en'?(kind==='research'?'Research cards':'Work experience'):(kind==='research'?'科研卡片':'工作经历')}>
+      {stories.map((_,index)=><Entry key={index} index={index} lang={lang} onOpen={onOpen}/>)}
     </div>
   </div>;
 }
