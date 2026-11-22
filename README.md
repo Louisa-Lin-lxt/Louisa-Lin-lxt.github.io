@@ -41,7 +41,7 @@ The static preview runs at `http://localhost:5175`. `npm test` builds with the e
 
 English uses Work Sans. Chinese uses native sans-serif fallbacks. Research imagery stays contain-fit and all full descriptions remain available in dialogs. Beyond Academics retains Music, Taotao and Travel as pixel scenes without visible topic tabs.
 
-The FormSubmit contact service is not yet verified end to end. The latest request was blocked by its access protection, and no activation or received message has been confirmed. See the current design and verification notes before describing email delivery as working.
+The contact form submits in-page through Formspree to the owner's verified mailbox. Its public endpoint and delivery-verification flag are in `app/components/contactDelivery.ts`. A real test was accepted, recorded in the Formspree inbox, and confirmed received in the CMU inbox on November 22, 2026. See `docs/contact-delivery.md` for the verification record and reply workflow.
 
 Visitor counting starts when the new component is deployed. There is no historical baseline to recover. The local preview shows a read-only total.
 

@@ -15,6 +15,7 @@
     "db:generate": "drizzle-kit generate",
     "test:export": "node --test tests/rendered-html.test.mjs",
     "test:counter": "node --experimental-strip-types --test tests/visit-counter.test.mjs",
+    "test:contact": "node --experimental-strip-types --test tests/contact-delivery.test.mjs",
     "typecheck:frontend": "tsc -p tsconfig.frontend.json",
     "preview:pages": "node scripts/preview-pages.mjs"
   },
