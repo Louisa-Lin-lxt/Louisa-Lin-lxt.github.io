@@ -9,6 +9,8 @@ type SubmitState = "idle" | "sending" | ContactResult;
 
 export function ContactForm({ lang }: { lang: Lang }) {
   const t = copy[lang];
+  const [open, setOpen] = useState(false);
+  const [instant, setInstant] = useState(false);
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const activeRequest = useRef<AbortController | null>(null);
 
@@ -51,25 +53,32 @@ export function ContactForm({ lang }: { lang: Lang }) {
     : submitState === "rate-limited" ? t.formRateLimited
     : submitState === "error" ? t.formError : "";
 
-  return <div className="contact-form-panel" data-reveal="support">
-    <form aria-label={ui[lang].form} aria-describedby="contact-delivery-note" onSubmit={sendMessage} onChange={() => { if (!sending) setSubmitState("idle"); }} aria-busy={sending}>
-      <p id="contact-delivery-note" className="contact-delivery-note">{contactDeliveryVerified ? t.formPrivacyNote : t.formDeliveryNotice}</p>
-      <div className="form-two">
-        <label>{t.formName}<input autoComplete="name" name="name" required maxLength={100} placeholder={t.formNamePlaceholder} disabled={sending} /></label>
-        <label>{t.formEmail}<input autoComplete="email" type="email" name="email" required maxLength={254} placeholder={t.formEmailPlaceholder} disabled={sending} /></label>
+  return <div className="contact-form-panel" data-reveal="support" data-open={open} data-instant={instant}>
+    <button type="button" className="contact-form-toggle" aria-expanded={open} aria-controls="contact-form-content" disabled={sending} onClick={event => { setInstant(event.detail === 0); setOpen(!open); }}>
+      <span><span className="contact-form-title">{t.formToggle}</span><span className="contact-form-hint">{t.formHint}</span></span>
+      <span className="contact-form-plus" aria-hidden="true">+</span>
+    </button>
+    <div id="contact-form-content" className="contact-form-content" inert={!open} aria-hidden={!open}>
+      <div className="contact-form-inner">
+        <form aria-label={ui[lang].form} aria-describedby="contact-delivery-note" onSubmit={sendMessage} onChange={() => { if (!sending) setSubmitState("idle"); }} aria-busy={sending}>
+          <label>{t.formCategory}<select name="category" defaultValue="Coffee chat" disabled={sending}>{categories.map((category, index) => <option key={category} value={category}>{t.formCategories[index]}</option>)}</select></label>
+          <div className="form-two">
+            <label>{t.formName}<input autoComplete="name" name="name" maxLength={100} placeholder={t.formNamePlaceholder} disabled={sending} /></label>
+            <label>{t.formEmail}<input autoComplete="email" type="email" name="email" required maxLength={254} placeholder={t.formEmailPlaceholder} disabled={sending} /></label>
+          </div>
+          <label>{t.formMessage}<textarea name="message" rows={4} required maxLength={10000} placeholder={t.formMessagePlaceholder} disabled={sending} /></label>
+          <p id="contact-delivery-note" className="contact-delivery-note">{contactDeliveryVerified ? t.formPrivacyNote : t.formDeliveryNotice}</p>
+          <div className="honeypot" aria-hidden="true"><label>Leave blank<input name="_gotcha" tabIndex={-1} autoComplete="off" /></label></div>
+          <button type="submit" className="button button-primary submit-button" disabled={sending}>
+            {sending ? t.formSending : t.formSubmit}
+            <svg className="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" /></svg>
+          </button>
+          <p className={`form-feedback ${hasError ? "error" : submitState}`} role={hasError ? "alert" : "status"}>
+            {feedback}
+            {needsFallback && <> <a className="form-fallback" href={`mailto:${emailAddress}`}>{lang === "en" ? "Open email app" : "打开邮件应用"}</a></>}
+          </p>
+        </form>
       </div>
-      <label>{t.formCategory}<select name="category" defaultValue="Research" disabled={sending}>{categories.map((category, index) => <option key={category} value={category}>{t.formCategories[index]}</option>)}</select></label>
-      <label>{t.formSubject}<input name="subject" required maxLength={160} placeholder={t.formSubjectPlaceholder} disabled={sending} /></label>
-      <label>{t.formMessage}<textarea name="message" rows={4} required maxLength={10000} placeholder={t.formMessagePlaceholder} disabled={sending} /></label>
-      <div className="honeypot" aria-hidden="true"><label>Leave blank<input name="_gotcha" tabIndex={-1} autoComplete="off" /></label></div>
-      <button type="submit" className="button button-primary submit-button" disabled={sending}>
-        {sending ? t.formSending : t.formSubmit}
-        <svg className="arrow-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h15m-6-6 6 6-6 6" /></svg>
-      </button>
-      <p className={`form-feedback ${hasError ? "error" : submitState}`} role={hasError ? "alert" : "status"}>
-        {feedback}
-        {needsFallback && <> <a className="form-fallback" href={`mailto:${emailAddress}`}>{lang === "en" ? "Open email app" : "打开邮件应用"}</a></>}
-      </p>
-    </form>
+    </div>
   </div>;
 }

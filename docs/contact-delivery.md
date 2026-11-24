@@ -2,6 +2,10 @@
 
 The website is a static GitHub Pages site. Visitors submit within the existing page; Formspree stores the submission and sends a notification to the owner's verified mailbox. The visitor's `email` field becomes the reply address. The owner replies from their mail client.
 
+The contact section prioritizes a direct email link and a separate copy action. The secondary form expands in place and retains drafts when collapsed. Topics are `Coffee chat`, `Research`, and `Recruiting`; name is optional, while email and message are required. The subject is generated as `[Website][Topic] Message from Name/Email` rather than asking the visitor to fill another field.
+
+The November 23 local UI revision passed seven mocked delivery tests, seven export checks, frontend typechecking and targeted lint. Browser checks covered English/Chinese labels, keyboard expansion, hidden-field focus exclusion, retained drafts and 390px/320px layouts. No new real submission was sent for this UI-only revision; the previously verified endpoint is unchanged.
+
 ## Configuration
 
 - Owner confirmed `xingtonl@andrew.cmu.edu` is correct and receives normal email on November 22, 2026.

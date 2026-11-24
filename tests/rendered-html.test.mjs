@@ -37,7 +37,7 @@ test('research cards identify the labs and retain direct contact links',()=>{
   assert.match(home,/Bin He Lab/);
   assert.match(home,/Yttri Lab/);
   assert.match(home,/Wang Lab/);
-  assert.doesNotMatch(home,/href="mailto:/);
+  assert.match(home,/href="mailto:xingtonl@andrew\.cmu\.edu"/);
   for (const name of ["linkedin", "wechat", "xiaohongshu"]) assert.ok(home.includes(`/social/${name}.svg`));
   assert.match(home,/href="https:\/\/www.linkedin.com\/in\/lxt\/"/);
 });

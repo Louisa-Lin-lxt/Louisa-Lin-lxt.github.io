@@ -143,7 +143,13 @@ export default function Home() {
       <section id="interests" className="section interests-section" aria-labelledby="interests-heading"><div className="content-width"><div className="section-heading" data-reveal><div><p className="section-label">05 / {lang === "en" ? "A few favorite things" : "生活里的小喜欢"}</p><h2 id="interests-heading">{t.interestsTitle}</h2></div><p className="section-intro">{lang === "en" ? "Off the clock, and a little more me." : "忙碌之外，生活的另一面。"}</p></div><div className="interest-list" data-reveal="support">{t.interestNames.map((name,index) => <SmoothLink key={name} href={`/interests#${['music','taotao','travel'][index]}`} className="interest-item" ariaLabel={`${t.interestsLink}: ${name}`}><InterestArtwork index={index} /><div><h3>{name}</h3></div><Arrow /></SmoothLink>)}</div></div></section>
 
       <section id="contact" className="section content-width contact-section" aria-labelledby="contact-heading">
-        <div className="contact-info" data-reveal><p className="section-label">06 / {lang === "en" ? "Start a conversation" : "保持联系"}</p><h2 id="contact-heading">{t.contactTitle}</h2><p>{t.contactBody}</p><button type="button" className="contact-email" onClick={() => copyContact(emailAddress,t.copied)} aria-label={`${t.copy}: ${emailAddress}`}>{emailAddress}<span>{lang === "en" ? "Copy" : "复制"}</span></button><div className="contact-links social-links">
+        <div className="contact-info" data-reveal><p className="section-label">06 / {lang === "en" ? "Start a conversation" : "保持联系"}</p><h2 id="contact-heading">{t.contactTitle}</h2><p>{t.contactBody}</p>
+          <a className="contact-email" href={`mailto:${emailAddress}`}>{emailAddress}</a>
+          <div className="contact-email-actions">
+            <a className="button button-primary" href={`mailto:${emailAddress}`}>{formCopy.email}<Arrow /></a>
+            <button type="button" className="contact-copy" onClick={() => copyContact(emailAddress,t.copied)} aria-label={`${t.copy}: ${emailAddress}`}>{lang === "en" ? "Copy address" : "复制邮箱"}</button>
+          </div>
+          <div className="contact-links social-links">
           <a href="https://www.linkedin.com/in/lxt/" target="_blank" rel="noreferrer" aria-label="LinkedIn" title="LinkedIn"><img src={asset('/social/linkedin.svg')} alt="" width="25" height="25"/></a>
           <a href="https://xhslink.cn/m/6kHp1Z9VdG5" target="_blank" rel="noreferrer" aria-label={lang==='en'?'Xiaohongshu':'小红书'} title={lang==='en'?'Xiaohongshu':'小红书'}><img src={asset('/social/xiaohongshu.svg')} alt="" width="32" height="32"/></a>
           <button type="button" onClick={() => copyContact('13910969793',t.wechatCopied)} aria-label={t.wechat} title={lang==='en'?'Copy WeChat ID':'复制微信号'}><img src={asset('/social/wechat.svg')} alt="" width="29" height="29"/></button>

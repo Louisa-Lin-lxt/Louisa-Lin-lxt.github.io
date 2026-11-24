@@ -8,7 +8,7 @@ function message(overrides = {}) {
   const data = new FormData();
   for (const [name, value] of Object.entries({
     name: ' Test Visitor ', email: 'visitor@example.com', category: 'Research',
-    subject: ' A research question ', message: ' Hello from the portfolio. ', _gotcha: '', ...overrides,
+    message: ' Hello from the portfolio. ', _gotcha: '', ...overrides,
   })) data.set(name, value);
   return data;
 }
@@ -23,12 +23,34 @@ test('submits reply address, category and subject without mutating the form data
     assert.equal(options.referrerPolicy, 'strict-origin-when-cross-origin');
     assert.deepEqual(JSON.parse(options.body), {
       name: 'Test Visitor', email: 'visitor@example.com', category: 'Research',
-      subject: '[Website][Research] A research question', message: 'Hello from the portfolio.', _gotcha: '',
+      subject: '[Website][Research] Message from Test Visitor', message: 'Hello from the portfolio.', _gotcha: '',
     });
     return Response.json({ next: '/thanks' });
   });
   assert.equal(result, 'success');
   assert.deepEqual([...data], original);
+});
+
+test('routes all three inquiry categories with an optional name and generated subject', async () => {
+  for (const category of ['Coffee chat', 'Research', 'Recruiting']) {
+    const data = message({ category });
+    data.delete('name');
+    assert.equal(await submitContact(data, signal, endpoint, async (_url, options) => {
+      const payload = JSON.parse(options.body);
+      assert.equal(payload.name, '');
+      assert.equal(payload.category, category);
+      assert.equal(payload.email, 'visitor@example.com');
+      assert.equal(payload.subject, `[Website][${category}] Message from visitor@example.com`);
+      return Response.json({ next: '/thanks' });
+    }), 'success');
+  }
+});
+
+test('generated subjects remain on one line and ignore obsolete subject input', async () => {
+  assert.equal(await submitContact(message({ name: ' Visitor\r\nTest ', subject: 'Untrusted subject' }), signal, endpoint, async (_url, options) => {
+    assert.equal(JSON.parse(options.body).subject, '[Website][Research] Message from Visitor Test');
+    return Response.json({ next: '/thanks' });
+  }), 'success');
 });
 
 test('missing or invalid public endpoint never sends visitor data', async () => {
@@ -41,7 +63,8 @@ test('missing or invalid public endpoint never sends visitor data', async () => 
 test('rejects bot fields, invalid emails, empty fields and oversized content before submission', async () => {
   const neverSend = async () => assert.fail('Invalid fields must not make a request');
   for (const fields of [{ _gotcha: 'spam' }, { email: 'not-an-email' }, { email: 'a@b.com\r\nBcc: other@example.com' },
-    { name: ' ' }, { category: 'unknown' }, { subject: 'x'.repeat(161) }, { message: 'x'.repeat(10001) }]) {
+    { email: ' ' }, { message: ' ' }, { category: '' }, { category: 'unknown' }, { category: 'Other' },
+    { name: 'x'.repeat(101) }, { email: `${'x'.repeat(250)}@example.com` }, { message: 'x'.repeat(10001) }]) {
     assert.equal(await submitContact(message(fields), signal, endpoint, neverSend), 'invalid');
   }
 });
