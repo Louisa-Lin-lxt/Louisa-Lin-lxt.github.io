@@ -1,4 +1,6 @@
-import type { CSSProperties } from "react";
+"use client";
+
+import { useRef, useState, type CSSProperties, type KeyboardEvent } from "react";
 
 // The same 32 × 36 pixel scale and quiet palette as Taotao's photo silhouette.
 const columns = 32;
@@ -91,8 +93,55 @@ const illustrations = {
   travel: createPixels(travelColor),
 };
 
-export function InterestPixels({ topic }: { topic: "music" | "travel" }) {
-  return <div className="taotao-pixel-board interest-pixel-board" aria-hidden="true" style={{ "--columns": columns, "--rows": rows } as CSSProperties}>
-    {illustrations[topic].map(({ x, y, color }) => <span className="interest-pixel" key={`${x}-${y}`} style={{ gridColumn: x + 1, gridRow: y + 1, "--pixel-color": palette[color] } as CSSProperties} />)}
+type Props = { topic: "travel" } | {
+  topic: "music";
+  lang: "en" | "zh";
+  titles: readonly string[];
+  onSelect: (index: number) => void;
+  onPreview: (index: number | null) => void;
+};
+
+export function InterestPixels(props: Props) {
+  const [lit, setLit] = useState<number | null>(null);
+  const [focused, setFocused] = useState(0);
+  const buttons = useRef<(HTMLButtonElement | null)[]>([]);
+  const cells = illustrations[props.topic];
+  if (props.topic === "travel") return <div className="taotao-pixel-board interest-pixel-board" aria-hidden="true" style={{ "--columns": columns, "--rows": rows } as CSSProperties}>
+    {cells.map(({ x, y, color }) => <span className="interest-pixel" key={`${x}-${y}`} style={{ gridColumn: x + 1, gridRow: y + 1, "--pixel-color": palette[color] } as CSSProperties} />)}
+  </div>;
+
+  // Stable sectors keep neighboring pixels associated with the same show.
+  const musicalAt = ({ x, y }: Pixel) => Math.floor(((Math.atan2(y - 17, x - 15.5) + Math.PI * 2.5) % (Math.PI * 2)) / (Math.PI * 2) * props.titles.length);
+  const preview = (index: number | null) => { setLit(index); props.onPreview(index === null ? null : musicalAt(cells[index])); };
+  const navigate = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const directions: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+    const direction = directions[event.key];
+    if (!direction && event.key !== "Home" && event.key !== "End") return;
+    event.preventDefault();
+    let next = event.key === "Home" ? 0 : event.key === "End" ? cells.length - 1 : index;
+    if (direction) {
+      const current = cells[index];
+      const candidates = cells.map((cell, i) => ({ i, dx: cell.x - current.x, dy: cell.y - current.y }))
+        .filter(({ dx, dy }) => direction[0] ? dx * direction[0] > 0 : dy * direction[1] > 0);
+      const distance = ({ dx, dy }: { dx: number; dy: number }) => Math.abs(dx) + Math.abs(dy) + (direction[0] ? Math.abs(dy) : Math.abs(dx)) * 20;
+      candidates.sort((a, b) => distance(a) - distance(b));
+      next = candidates[0]?.i ?? index;
+    }
+    setFocused(next);
+    buttons.current[next]?.focus();
+  };
+  const active = lit === null ? null : cells[lit];
+  return <div className="taotao-pixel-board music-pixel-board" role="group" aria-label={props.lang === "en" ? "Music and theatre pixels. Use arrow keys to explore; Enter opens a show’s story." : "音乐与戏剧像素。方向键选择，回车打开故事。"} onPointerLeave={() => preview(null)} style={{ "--columns": columns, "--rows": rows } as CSSProperties}>
+    {cells.map((cell, index) => {
+      const distance = active ? Math.hypot(cell.x - active.x, cell.y - active.y) : Infinity;
+      const show = musicalAt(cell);
+      return <button key={`${cell.x}-${cell.y}`} ref={node => { buttons.current[index] = node; }} type="button"
+        className={`taotao-pixel${distance < 3.8 ? " is-lit" : ""}${distance < 1 ? " is-center" : ""}`}
+        tabIndex={focused === index ? 0 : -1} aria-haspopup="dialog"
+        aria-label={props.lang === "en" ? `Open ${props.titles[show]}, pixel ${index + 1}` : `打开 ${props.titles[show]}，像素 ${index + 1}`}
+        style={{ gridColumn: cell.x + 1, gridRow: cell.y + 1, "--pixel-color": palette[cell.color] } as CSSProperties}
+        onPointerEnter={() => preview(index)} onPointerDown={() => preview(index)} onFocus={() => { setFocused(index); preview(index); }} onBlur={() => preview(null)}
+        onKeyDown={event => navigate(event, index)} onClick={() => { setFocused(index); props.onSelect(show); }} />;
+    })}
   </div>;
 }

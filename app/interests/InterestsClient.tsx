@@ -9,6 +9,8 @@ import { InterestPixels } from "../components/InterestPixels";
 import { SmoothLink } from "../components/SmoothLink";
 import { usePersistentLanguage } from "../components/usePersistentLanguage";
 import { VisitorCounter } from "../components/VisitorCounter";
+import { MusicPixels } from "../components/MusicPixels";
+import { SeasonalHeader } from "../components/SeasonalHeader";
 import "../styles/interests-polish.css";
 
 const copy = {
@@ -17,7 +19,7 @@ const copy = {
     intro: "Music, Taotao, and travel are part of my life beyond research.",
     stageAria: "Swipe left or right, or use the arrow keys to explore.",
     worlds: [
-      { title: "Music", body: "I turn to music to relax or focus, depending on the day." },
+      { title: "Music", body: "Music is part of my everyday life, and I’m especially drawn to musicals." },
       { title: "Taotao", body: "Photos of life with Taotao." },
       { title: "Travel", body: "I like exploring new places and noticing the details of everyday life there." },
     ],
@@ -27,7 +29,7 @@ const copy = {
     intro: "音乐、淘淘和旅行，是我研究之外喜欢的事。",
     stageAria: "左右滑动或使用方向键切换。",
     worlds: [
-      { title: "音乐", body: "听音乐让我在忙碌时放松下来，也更容易重新集中注意力。" },
+      { title: "音乐", body: "音乐是我生活的一部分，我也很喜欢音乐剧。" },
       { title: "淘淘", body: "和淘淘在一起的照片。" },
       { title: "旅行", body: "我喜欢去新的地方走走，留意当地生活的细节。" },
     ],
@@ -144,14 +146,16 @@ export default function InterestsPage() {
   };
   return <main className="interests-page" lang={lang === 'zh' ? 'zh-CN' : 'en'}>
     <div className="content-width">
-      <header className="interest-header"><SmoothLink href="/" className="brand home-link">{lang === "en" ? "Home" : "首页"}</SmoothLink><button className="language-control" onClick={toggleLang} aria-label={lang === "en" ? "切换到中文" : "Switch to English"}><span className={lang==='en'?'selected':''}>EN</span><i /><span className={lang==='zh'?'selected':''}>中</span></button></header>
+      <header className="interest-header"><SeasonalHeader /><SmoothLink href="/" className="brand home-link">{lang === "en" ? "Home" : "首页"}</SmoothLink><button className="language-control" onClick={toggleLang} aria-label={lang === "en" ? "切换到中文" : "Switch to English"}><span className={lang==='en'?'selected':''}>EN</span><i /><span className={lang==='zh'?'selected':''}>中</span></button></header>
       <div className="interests-intro"><h1>{t.title}</h1><p>{t.intro}</p></div>
       <span className="interest-sr-only" role="status" aria-live="polite" aria-atomic="true">{lang === "en" ? `${world.title}, ${active + 1} of ${topics.length}` : `${world.title}，第 ${active + 1} 项，共 ${topics.length} 项`}</span>
       <section ref={stageRef} className="interest-stage is-pixel-gallery" tabIndex={0} aria-label={`${world.title}${lang === "en" ? ". " : "。"}${t.stageAria}`} onKeyDown={changeWithKeys} onPointerDown={startSwipe} onPointerMove={moveSwipe} onPointerUp={finishSwipe} onPointerCancel={resetSwipe} onWheel={scrollSwipe} onClickCapture={event => { if (suppressClick.current && event.detail > 0) { event.preventDefault(); event.stopPropagation(); suppressClick.current = false; window.clearTimeout(suppressTimer.current); } }}>
         <div key={active} className={`interest-slide-content from-${direction}`}>
-        {active===1?<TaotaoPixels lang={lang}/>:<div className="taotao-pixel-gallery">
-          <div className="taotao-pixel-copy"><h2>{world.title}</h2><p>{world.body}</p></div>
-          <InterestPixels topic={active===0?'music':'travel'}/>
+        {active===0?<MusicPixels lang={lang}/>:active===1?<TaotaoPixels lang={lang}/>:<div className="taotao-pixel-gallery">
+          <div className="taotao-pixel-copy">
+            <h2>{world.title}</h2><p>{world.body}</p>
+          </div>
+          <InterestPixels topic="travel"/>
         </div>}
         </div>
         <InterestStorm ref={stormRef} />

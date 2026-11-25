@@ -1,0 +1,38 @@
+/* Festive details belong to the header; they never cover the page content. */
+.seasonal-header { display: none; position: absolute; inset: 0; pointer-events: none; }
+html[data-season='christmas'] .seasonal-header { display: block; }
+.interest-header { position: relative; }
+.seasonal-header__garland { position: absolute; inset: auto 0 -26px; height: 28px; background: var(--garland-base) repeat-x top left / 144px 28px; }
+.seasonal-header__garland::before, .seasonal-header__garland::after { content: ''; position: absolute; inset: 0; background: var(--garland-warm) repeat-x top left / 144px 28px; animation: festive-lights 2.8s ease-in-out infinite alternate; }
+.seasonal-header__garland::after { background-image: var(--garland-cool); animation-delay: -2.8s; }
+/* The portal escapes the navigation's backdrop root and samples the real page. */
+.seasonal-header__garland[data-live='true'] { visibility: hidden; }
+.seasonal-header__garland--live { position: fixed; inset: auto; z-index: 31; background: none; pointer-events: none; }
+.seasonal-header__garland--live[hidden] { display: none; }
+.seasonal-header__garland--live::before, .seasonal-header__garland--live::after { z-index: 2; }
+.glass-garland__filters { position: absolute; pointer-events: none; }
+.glass-garland__backdrop { position: absolute; inset: 0; mask-repeat: repeat-x; mask-size: 36px 28px; -webkit-mask-repeat: repeat-x; -webkit-mask-size: 36px 28px; }
+.glass-garland__shell { position: absolute; inset: 0; z-index: 1; background: var(--garland-glass-base) repeat-x top left / 144px 28px; }
+.glass-garland__reflections { position: absolute; inset: 0; z-index: 3; overflow: hidden; }
+.glass-bulb { position: absolute; top: 9.24px; width: 9.96px; height: 15.12px; border-radius: 50%; overflow: hidden; }
+.glass-bulb__shade { position: absolute; inset: 0; background: radial-gradient(ellipse 70% 68% at 22% 32%, transparent 67%, #42667538 83%, #a6d8e72b 93%, transparent 100%); }
+.glass-bulb__reflection { position: absolute; inset: -2px; opacity: .72; background: radial-gradient(ellipse 1.25px 4.1px at 28% 34%, #fff 24%, #ffffffe6 48%, #fff0 100%), radial-gradient(ellipse 2px 1.15px at 43% 20%, #fff 5%, #ffffffc7 42%, #fff0 100%), radial-gradient(ellipse 2.5px .8px at 64% 82%, #f5ffff 18%, #e9faffb3 58%, #fff0 100%); transform-origin: center; }
+.seasonal-header__snow { position: absolute; inset: 0; overflow: hidden; }
+.seasonal-header__flake { position: absolute; top: -14px; color: #83a4b9; stroke: currentColor; stroke-width: 1; stroke-linecap: round; opacity: 0; animation: festive-snow var(--flake-duration) var(--flake-delay) linear infinite; }
+@keyframes festive-lights { from { opacity: .2; } to { opacity: 1; } }
+@keyframes festive-snow {
+  0% { opacity: 0; transform: translate3d(0, 0, 0) rotate(0); }
+  18%, 65% { opacity: .38; }
+  100% { opacity: 0; transform: translate3d(var(--flake-drift), 100px, 0) rotate(65deg); }
+}
+/* The existing ornament pause control also pauses the header decorations. */
+html:has(.seasonal-opening[data-paused='true']) .seasonal-header__flake,
+html:has(.seasonal-opening[data-paused='true']) .seasonal-header__garland::before,
+html:has(.seasonal-opening[data-paused='true']) .seasonal-header__garland::after { animation-play-state: paused; }
+@media (max-width: 700px) {
+  .seasonal-header__flake:nth-child(even) { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .seasonal-header__garland::before, .seasonal-header__garland::after { animation: none; opacity: .6; }
+  .seasonal-header__flake { animation: none; top: var(--flake-rest); opacity: .28; }
+}

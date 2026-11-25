@@ -30,3 +30,30 @@
   font-size: 10px;
   opacity: .72;
 }
+
+/* The homepage count sits with the introduction, without adding another card. */
+.visitor-counter--hero {
+  display: flex;
+  width: fit-content;
+  margin-top: 25px;
+  gap: 4px 8px;
+  font-size: 12px;
+}
+
+.visitor-counter--hero .visitor-counter__icon {
+  width: 18px;
+  height: 18px;
+  color: var(--blue, #246bcb);
+  opacity: 1;
+}
+
+.visitor-counter--hero .visitor-counter__value {
+  color: var(--blue, #246bcb);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.visitor-counter--hero .visitor-counter__preview {
+  color: var(--muted, #68707d);
+  opacity: 1;
+}

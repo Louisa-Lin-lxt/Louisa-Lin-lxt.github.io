@@ -6,7 +6,7 @@ import "../styles/visitor-counter.css";
 
 type CounterState = { value: number | null; status: "loading" | "ready" | "unavailable"; preview: boolean };
 
-export function VisitorCounter({ lang }: { lang: "en" | "zh" }) {
+export function VisitorCounter({ lang, placement = "footer" }: { lang: "en" | "zh"; placement?: "footer" | "hero" }) {
   const [counter, setCounter] = useState<CounterState>({ value: null, status: "loading", preview: false });
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export function VisitorCounter({ lang }: { lang: "en" | "zh" }) {
   const unavailable = lang === "en" ? "Visit count unavailable. " : "访问统计暂不可用。";
   const number = counter.value === null ? "—" : counter.value.toLocaleString(lang === "en" ? "en-US" : "zh-CN");
 
-  return <span className="visitor-counter" title={`${counter.status === "unavailable" ? unavailable : ""}${counter.preview ? previewDescription : ""}${description}`}>
+  return <span className={`visitor-counter${placement === "hero" ? " visitor-counter--hero" : ""}`} title={`${counter.status === "unavailable" ? unavailable : ""}${counter.preview ? previewDescription : ""}${description}`}>
     <svg className="visitor-counter__icon" viewBox="0 0 16 16" aria-hidden="true">
       <path d="M5 1h6v1h2v2h1v8h-1v2h-2v1H5v-1H3v-2H2V4h1V2h2V1Zm0 1v1H4v2H3v6h1v2h1v1h6v-1h1v-2h1V5h-1V3h-1V2H5Z" fill="currentColor" />
       <path d="M5 5h1v2H5zm5 0h1v2h-1zM5 9h1v1h4V9h1v2H5Z" fill="currentColor" />

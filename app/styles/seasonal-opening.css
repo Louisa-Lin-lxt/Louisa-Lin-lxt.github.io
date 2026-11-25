@@ -1,0 +1,54 @@
+/* The large opening settles onto the photo corner, without changing page layout. */
+.seasonal-opening {
+  position: absolute;
+  left: -86px;
+  top: -64px;
+  width: 236px;
+  height: 214px;
+  z-index: 4;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+}
+.seasonal-opening[data-phase] { opacity: 1; visibility: visible; }
+.christmas-ornament { position: relative; display: block; width: 100%; height: 184px; border: 0; padding: 0; background: transparent; border-radius: 50%; cursor: pointer; touch-action: pan-y; pointer-events: auto; -webkit-tap-highlight-color: transparent; }
+.christmas-ornament canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
+.christmas-ornament[data-renderer='ready'] canvas { opacity: 1; }
+.christmas-ornament[data-renderer='ready'] .ornament-fallback { opacity: 0; }
+.christmas-ornament:focus-visible { outline: 2px solid var(--blue); outline-offset: -10px; }
+.seasonal-controls { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 1px; width: 96px; margin-left: -14px; opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .2s; }
+.seasonal-opening[data-phase='docked'] .seasonal-controls { visibility: visible; }
+.seasonal-opening[data-phase='docked']:is(:hover, :focus-within) .seasonal-controls { opacity: 1; pointer-events: auto; }
+.seasonal-pause, .seasonal-replay { display: grid; place-items: center; width: 30px; height: 30px; padding: 8px; border: 0; border-radius: 50%; background: #f8fcff38; color: var(--muted); cursor: pointer; pointer-events: inherit; }
+.seasonal-pause:hover, .seasonal-replay:hover { background: #fff9; color: var(--ink); }
+.seasonal-controls button:focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+.seasonal-controls svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.4; stroke-linejoin: round; }
+.ornament-fallback { position: absolute; width: 104px; height: 104px; border-radius: 50%; top: 51px; left: calc(50% - 62px); border: 1px solid #ffffffd0; background: radial-gradient(circle at 28% 24%, #ffffffb0 0%, #ffffff20 18%, #c5e7e509 48%, #92bcb830 95%); box-shadow: inset 3px 0 8px #ffffff80, inset -3px -4px 8px #7fa6b02b, 0 12px 20px #365c7208; }
+.ornament-fallback::before { content: ''; position: absolute; height: 34px; width: 1px; background: #b6a16e; top: -34px; left: 50%; }
+.ornament-tree { position: absolute; inset: 26px 26px 18px; background: linear-gradient(100deg, #b4dacd, #4e8874); clip-path: polygon(50% 0, 78% 34%, 68% 34%, 91% 65%, 78% 65%, 100% 100%, 0 100%, 22% 65%, 9% 65%, 32% 34%, 22% 34%); }
+.ornament-star { position: absolute; top: 6px; left: 40px; color: #bba367; font-size: 19px; font-style: normal; }
+.ornament-sparkles { position: absolute; inset: 0; pointer-events: none; }
+.ornament-sparkles i { position: absolute; opacity: .65; color: #b3a16d; font-size: 15px; font-style: normal; }
+.ornament-sparkles i:nth-child(1) { top: 28%; left: 10%; }
+.ornament-sparkles i:nth-child(2) { top: 60%; right: 8%; font-size: 20px; color: #82a8aa; }
+.ornament-sparkles i:nth-child(3) { top: 8%; right: 26%; font-size: 10px; }
+[data-sparkle='true'] .ornament-sparkles i { animation: holiday-sparkle 1.8s ease-out both; }
+[data-sparkle='true'] .ornament-sparkles i:nth-child(2) { animation-delay: .1s; }
+@keyframes holiday-sparkle { 0% { opacity: .4; transform: scale(.7); } 25% { opacity: 1; transform: scale(1.35) rotate(18deg); } 100% { opacity: .65; transform: scale(1); } }
+@media (max-width: 1099px) and (min-width: 701px) {
+  .seasonal-opening { left: -64px; top: -54px; width: 204px; height: 182px; }
+  .christmas-ornament { height: 152px; }
+  .seasonal-controls { position: absolute; top: -26px; left: 64px; width: 64px; margin-left: 0; flex-wrap: nowrap; }
+}
+@media (max-width: 700px) {
+  .seasonal-opening { top: -30px; left: -38px; width: 190px; height: 200px; }
+  .christmas-ornament { height: 156px; }
+  .seasonal-controls { position: absolute; top: 160px; left: -12px; width: 44px; margin-left: 0; }
+  .seasonal-pause, .seasonal-replay { width: 44px; height: 44px; padding: 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-sparkle='true'] .ornament-sparkles i { animation: none; }
+  .seasonal-controls { transition: none; }
+  [data-sparkle='true'] .ornament-sparkles i { color: var(--blue); opacity: 1; }
+}
