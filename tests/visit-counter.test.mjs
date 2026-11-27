@@ -11,10 +11,29 @@ test('production records one visit per document even when mounted repeatedly', a
   assert.deepEqual(await Promise.all([readCount(productionHost), readCount(productionHost)]), [42, 42]);
   assert.equal(await readCount(productionHost), 42);
   assert.equal(requests.length, 1);
-  assert.equal(requests[0].url.searchParams.get('unique'), 'false');
-  assert.equal(requests[0].url.searchParams.get('readOnly'), 'false');
+  assert.equal(requests[0].url.searchParams.has('unique'), false);
+  assert.equal(requests[0].url.searchParams.has('readOnly'), false);
   assert.ok(requests[0].url.pathname.endsWith(`/portfolio-${counterStartDate}`));
   assert.equal(requests[0].options.credentials, 'omit');
+  assert.equal(requests[0].options.referrerPolicy, 'strict-origin');
+});
+
+test('a zero increment response is unconfirmed, never displayed as zero visitors', async () => {
+  let attempts = 0;
+  const readCount = createVisitCounter(async () => {
+    attempts += 1;
+    return Response.json({ value: 0 });
+  });
+  await assert.rejects(readCount(productionHost), /Visit recording not confirmed/);
+  await assert.rejects(readCount(productionHost), /Visit recording not confirmed/);
+  assert.equal(attempts, 1);
+});
+
+test('rejected service responses and malformed payloads cannot become a visit total', async () => {
+  for (const response of [new Response('Access denied', { status: 403 }), new Response('rate limited', { status: 429 }), new Response('<html>Unavailable</html>'), Response.json({})]) {
+    const readCount = createVisitCounter(async () => response);
+    await assert.rejects(readCount(productionHost));
+  }
 });
 
 test('localhost and non-production previews only read the shared total', async () => {

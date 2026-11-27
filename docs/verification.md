@@ -1,3 +1,11 @@
+## Visit recording investigation — 2026-11-26
+
+- Owner reports repeated production visits but a persistent zero. A read-only service response also returned zero. Earlier mocked tests verified URL construction and client deduplication, not actual service persistence; they did not establish working production counting.
+- Production now uses the provider's documented default increment URL, omitting optional false-valued flags. Preview requests alone send `readOnly=true`. `strict-origin` supplies only the website origin to the service. These remove integration ambiguities; the exact server-side reason for the previous zero is not yet proven.
+- A zero returned by a production increment is treated as unconfirmed and shown through the existing unavailable state, rather than presented as zero visitors. Preview may still show a genuine read-only zero. No optimistic increment, fabricated baseline, or retry of ambiguous writes is used.
+- Independent diagnostic requests were blocked with HTTP 403 / Cloudflare 1010 (browser signature banned), so no successful diagnostic increment was recorded. The production-page browser check was separately blocked because automatic approval review could not connect (DNS/502); it was not bypassed. Actual increment and persistence remain unverified.
+- Counter regression coverage includes zero increment responses, denied/rate-limited responses, malformed payloads, preview isolation and one request per document. Historical traffic before successful tracking cannot be recovered from this counter.
+
 ## Approved Pages release preparation — 2026-11-22
 
 - User approved publishing the current local version. Remote `main` matches the starting commit, and the live homepage's asset references match the tracked root export.
